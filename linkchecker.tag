@@ -7,7 +7,7 @@
 		<span name="message"></span>
 	</div>
 
-	<div class="panel panel-default" style="width: 500px; max-width: 100%;">
+	<div class="panel panel-default" style="width: 550px; max-width: 100%;">
 		<div class="panel-heading">Stats</div>
 		<table class="table table-bordered">
 			<tr>
