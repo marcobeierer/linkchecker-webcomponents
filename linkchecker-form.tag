@@ -6,7 +6,7 @@
 		</div>
 		<div class="form-group">
 			<label>Token</label>
-			<textarea name="token" class="form-control" style="min-height: 100px" placeholder="A token is only necessary to check a website with more than 500 internal or external URLs." disabled="{ disabled }"></textarea>
+			<textarea name="token" class="form-control" style="min-height: 100px" placeholder="A token is only necessary to check a website with more than 500 internal or external links." disabled="{ disabled }"></textarea>
 		</div>
 		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
 	</form>
