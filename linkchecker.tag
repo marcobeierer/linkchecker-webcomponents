@@ -61,6 +61,7 @@
 		setMessage(text, type) {
 			self.message.innerHTML = text;
 			self.messageType = type;
+			self.update();
 		}
 
 		var resultsMessage = 'Link check not started yet.';
@@ -90,7 +91,7 @@
 			self.links = null;
 			self.urlsWithDeadImages = null;
 
-			self.setMessage('Your website is being checked. Please wait a moment.', 'warning');
+			self.setMessage('Your website is being checked. Please wait a moment. You could watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
 
 			var url64 = window.btoa(encodeURIComponent(self.websiteURL).replace(/%([0-9A-F]{2})/g, function(match, p1) {
