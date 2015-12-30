@@ -1,10 +1,15 @@
 # Link Checker
 
 ## TODO
-- implement tables tag (nested?)
+- disable input field and token if a check is active
+- submit form on enter in input field (websiteURL)
+- check if form is valid on submit
+
 - update links
-	- currently still to wordpress-plugins/link-checker-professional
-- Add token support
-- Add input field for token and url
-	- oberserver pattern so that the app could also be used for the WordPress plugin?
-- hide broken images if no token is set
+	- create own link checker pro site for standalone
+	- currently only purchase
+
+- show enddate of check
+	- indicates if fetched old result
+
+- remove style attributes and create custom CSS file

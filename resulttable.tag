@@ -51,7 +51,6 @@
 		self.on('update', function() {
 			self.resultsMessage = opts.resultsMessage;
 			self.data = opts.data;
-			console.log(data);
 		});
 
 	</script>

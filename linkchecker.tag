@@ -1,11 +1,11 @@
 <linkchecker>
+	<form onsubmit="{ submit }" style="margin-bottom: 20px;">
+		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
+	</form>
+
 	<div class="alert alert-{ messageType }">
 		<span name="message"></span>
 	</div>
-
-	<form name="linkCheckerForm" onsubmit="{ submit }">
-		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
-	</form>
 
 	<div class="panel panel-default" style="width: 500px; max-width: 100%;">
 		<div class="panel-heading">Stats</div>
@@ -30,8 +30,8 @@
 		data="{ links }">
 	</resulttable>
 
-	<h3>Broken Images</h3>
-	<resulttable 
+	<h3 if="{ token }">Broken Images</h3>
+	<resulttable if="{ token }"
 		th-col1="URL where the broken images were found" 
 		th-col2="Broken Images" 
 		th-col3="Status Code" 
@@ -48,6 +48,14 @@
 		}
 
 		var resultsMessage = 'Link check not started yet.';
+
+		self.websiteURL = opts.websiteUrl; // TODO merge with on update
+		self.token = opts.token; // TODO merge with on update
+
+		self.on('update', function() {
+			self.websiteURL = opts.websiteUrl;
+			self.token = opts.token;
+		});
 
 		self.disabled = false;
 
@@ -74,19 +82,24 @@
 			self.setMessage('Your website is being checked. Please wait a moment.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
 
-			var url64 = window.btoa(encodeURIComponent('http://www.aboutcms.de').replace(/%([0-9A-F]{2})/g, function(match, p1) {
+			var url64 = window.btoa(encodeURIComponent(self.websiteURL).replace(/%([0-9A-F]{2})/g, function(match, p1) {
 				return String.fromCharCode('0x' + p1);
 			}));
 			url64.replace(/\+/g, '-').replace(/\//g, '_'); // convert to base64 url encoding
 
 			self.doRequest = function() {
+				var tokenHeader = '';
+				if (self.token != '') {
+					tokenHeader = 'BEARER ' + self.token;
+				}
+
 				$.ajax({
 					method: 'GET',
-					url: 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot'
-					/*headers: { TODO
-						'Authorization': 'BEARER ' + ajaxObject.token,
-					}*/
-				}).done(function(data, statusCode, xhr) {
+					url: 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot',
+					headers: {
+						'Authorization': tokenHeader,
+					}
+				}).done(function(data) {
 					self.urlsCrawledCount = data.URLsCrawledCount;
 					self.checkedLinksCount = data.CheckedLinksCount;
 
@@ -94,12 +107,12 @@
 						self.disabled = false;
 
 						if (data.LimitReached) {
-							self.setMessage("The link limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/wordpress-plugins/link-checker-professional\">Link Checker Professional</a> to check up to 50'000 links.", 'danger');
+							self.setMessage("The URL limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 50'000 URLs.", 'danger');
 						} else {
 							var message = "Your website has been checked successfully. Please see the result below.";
 
-							if (xhr.getResponseHeader('X-Used-Token') != 1) {
-								message += " If you additionally like to check your site for <strong>broken images</strong>, then check out the <a href=\"https://www.marcobeierer.com/wordpress-plugins/link-checker-professional\">Link Checker Professional</a>.";
+							if (self.token == '') {
+								message += " If you additionally like to check your site for <strong>broken images</strong>, then check out the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
 							}
 
 							self.setMessage(message, 'success');
@@ -117,8 +130,9 @@
 					} else {
 						setTimeout(self.doRequest, 1000);
 					}
-				}).fail(function(xhr, statusCode, error) {
+				}).fail(function(xhr) {
 					self.disabled = false;
+					var statusCode = xhr.status;
 
 					if (statusCode == 401) { // unauthorized
 						self.setMessage("The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.", 'danger');
