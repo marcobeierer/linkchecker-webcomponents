@@ -1,5 +1,5 @@
 <linkchecker>
-	<form onsubmit="{ submit }" style="margin-bottom: 20px;">
+	<form if="{ showButton }" onsubmit="{ start }" style="margin-bottom: 20px;">
 		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
 	</form>
 
@@ -42,6 +42,22 @@
 	<script>
 		var self = this;
 
+		opts.linkchecker.on('start', function(websiteURL, token) {
+			self.websiteURL = websiteURL;
+			self.token = token;
+			
+			self.start();
+		});
+
+		opts.linkchecker.on('started', function() {
+			self.disabled = true;
+		});
+
+		opts.linkchecker.on('stopped', function() {
+			self.disabled = false;
+			self.update();
+		});
+
 		setMessage(text, type) {
 			self.message.innerHTML = text;
 			self.messageType = type;
@@ -49,15 +65,12 @@
 
 		var resultsMessage = 'Link check not started yet.';
 
-		self.websiteURL = opts.websiteUrl; // TODO merge with on update
-		self.token = opts.token; // TODO merge with on update
+		self.websiteURL = opts.websiteUrl || '';
+		self.token = opts.token || '';
 
-		self.on('update', function() {
-			self.websiteURL = opts.websiteUrl;
-			self.token = opts.token;
-		});
-
-		self.disabled = false;
+		if (self.websiteURL != '') {
+			self.showButton = true;
+		}
 
 		self.urlsCrawledCount = 0;
 		self.checkedLinksCount = 0;
@@ -68,10 +81,8 @@
 		self.links = null;
 		self.urlsWithDeadImages = null;
 
-		submit(e) {
-			e.preventDefault();
-
-			self.disabled = true;
+		start() {
+			opts.linkchecker.trigger('started');
 
 			self.urlsCrawledCount = 0;
 			self.checkedLinksCount = 0;
@@ -104,7 +115,7 @@
 					self.checkedLinksCount = data.CheckedLinksCount;
 
 					if (data.Finished) { // successfull
-						self.disabled = false;
+						opts.linkchecker.trigger('stopped');
 
 						if (data.LimitReached) {
 							self.setMessage("The URL limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 50'000 URLs.", 'danger');
@@ -131,7 +142,8 @@
 						setTimeout(self.doRequest, 1000);
 					}
 				}).fail(function(xhr) {
-					self.disabled = false;
+					opts.linkchecker.trigger('stopped');
+
 					var statusCode = xhr.status;
 
 					if (statusCode == 401) { // unauthorized

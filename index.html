@@ -40,6 +40,7 @@
 		
 		<div class="container-fluid" style="margin-top: 20px;">
 			<linkchecker-with-config></linkchecker-with-config>
+			<linkchecker></linkchecker>
 		</div>
 
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -49,8 +50,8 @@
 		<script src="https://cdn.rawgit.com/riot/riot/master/riot+compiler.min.js"></script>
 
 		<script>
-			var linkchecker = riot.observable();
-			riot.mount('*', linkchecker);
+			//var linkchecker = riot.observable();
+			riot.mount('*', { linkchecker: riot.observable() });
 		</script>
 	</body>
 </html>
