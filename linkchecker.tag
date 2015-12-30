@@ -124,7 +124,7 @@
 							var message = "Your website has been checked successfully. Please see the result below.";
 
 							if (self.token == '') {
-								message += " If you additionally like to check your site for <strong>broken images</strong>, then check out the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
+								message += " If you additionally like to check your site for <strong>broken images</strong> or like to use the scheduler for an <strong>automatically triggered daily check</strong>, then have a look at the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
 							}
 
 							self.setMessage(message, 'success');
