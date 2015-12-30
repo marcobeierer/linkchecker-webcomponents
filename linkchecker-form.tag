@@ -1,4 +1,4 @@
-<linkchecker-with-config>
+<linkchecker-form>
 	<form onsubmit="{ submit }" style="margin-bottom: 20px;">
 		<div class="form-group">
 			<label>Website URL</label>
@@ -31,4 +31,4 @@
 			self.update();
 		});
 	</script>
-</linkchecker-with-config>
+</linkchecker-form>

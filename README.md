@@ -1,5 +1,12 @@
 # Link Checker
 
+## Elements
+- linkchecker-form
+- linkchecker
+	- website-url (note: translated to opts.websiteUrl)
+	- token
+- resulttable
+
 ## TODO
 - disable input field and token if a check is active
 - submit form on enter in input field (websiteURL)
