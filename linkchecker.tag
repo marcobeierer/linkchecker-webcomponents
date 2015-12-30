@@ -1,11 +1,11 @@
 <linkchecker>
-	<div class="alert alert-info">
+	<div class="alert alert-{ messageType }">
 		<span name="message"></span>
 	</div>
+
 	<form name="linkCheckerForm" onsubmit="{ submit }">
 		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
 	</form>
-
 
 	<div class="panel panel-default" style="width: 500px; max-width: 100%;">
 		<div class="panel-heading">Stats</div>
@@ -42,8 +42,9 @@
 	<script>
 		var self = this;
 
-		setMessage(str) {
-			self.message.innerHTML = str;
+		setMessage(text, type) {
+			self.message.innerHTML = text;
+			self.messageType = type;
 		}
 
 		var resultsMessage = 'Link check not started yet.';
@@ -53,7 +54,7 @@
 		self.urlsCrawledCount = 0;
 		self.checkedLinksCount = 0;
 
-		self.setMessage('The link checker was not started yet.');
+		self.setMessage('The link checker was not started yet.', 'info');
 		self.resultsMessage = resultsMessage;
 
 		self.links = null;
@@ -70,7 +71,7 @@
 			self.links = null;
 			self.urlsWithDeadImages = null;
 
-			self.setMessage('Your website is being checked. Please wait a moment.');
+			self.setMessage('Your website is being checked. Please wait a moment.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
 
 			var url64 = window.btoa(encodeURIComponent('http://www.aboutcms.de').replace(/%([0-9A-F]{2})/g, function(match, p1) {
@@ -93,7 +94,7 @@
 						self.disabled = false;
 
 						if (data.LimitReached) {
-							self.setMessage("The link limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/wordpress-plugins/link-checker-professional\">Link Checker Professional</a> to check up to 50'000 links.");
+							self.setMessage("The link limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/wordpress-plugins/link-checker-professional\">Link Checker Professional</a> to check up to 50'000 links.", 'danger');
 						} else {
 							var message = "Your website has been checked successfully. Please see the result below.";
 
@@ -101,7 +102,7 @@
 								message += " If you additionally like to check your site for <strong>broken images</strong>, then check out the <a href=\"https://www.marcobeierer.com/wordpress-plugins/link-checker-professional\">Link Checker Professional</a>.";
 							}
 
-							self.setMessage(message);
+							self.setMessage(message, 'success');
 						}
 
 						self.resultsMessage = 'No broken links found.';
@@ -120,24 +121,24 @@
 					self.disabled = false;
 
 					if (statusCode == 401) { // unauthorized
-						self.setMessage("The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.");
+						self.setMessage("The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.", 'danger');
 					} else if (statusCode == 500) {
 						if (xhr.responseText == '') {
-							self.setMessage("The check of your website failed. Please try it again.");
+							self.setMessage("The check of your website failed. Please try it again.", 'danger');
 						} else {
-							self.setMessage("The check of your website failed with the error:<br/><strong>" + JSON.parse(xhr.responseText) + "</strong>.");
+							self.setMessage("The check of your website failed with the error:<br/><strong>" + JSON.parse(xhr.responseText) + "</strong>.", 'danger');
 						}
 					} else if (statusCode == 503) {
-						self.setMessage("The backend server is temporarily unavailable. Please try it again later.");
+						self.setMessage("The backend server is temporarily unavailable. Please try it again later.", 'danger');
 					} else if (statusCode == 504 && xhr.getResponseHeader('X-CURL-Error') == 1) {
 						var message = JSON.parse(xhr.responseText);
 						if (message == '') {
-							self.setMessage("A cURL error occurred. Please contact the developer of the extensions.");
+							self.setMessage("A cURL error occurred. Please contact the developer of the extensions.", 'danger');
 						} else {
-							self.setMessage("A cURL error occurred with the error message:<br/><strong>" + message + "</strong>.");
+							self.setMessage("A cURL error occurred with the error message:<br/><strong>" + message + "</strong>.", 'danger');
 						}
 					} else {
-						self.setMessage("The check of your website failed. Please try it again or contact the developer of the extensions.");
+						self.setMessage("The check of your website failed. Please try it again or contact the developer of the extensions.", 'danger');
 					}
 
 					self.resultsMessage = resultsMessage;
