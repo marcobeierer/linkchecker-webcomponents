@@ -15,7 +15,7 @@
 					<td></td>
 				</tr>
 				<tr each="{ foundOnURL, deadResources in data }">
-					<td><a href="{ foundOnURL }">{ foundOnURL }</a></td>
+					<td><a href="{ foundOnURL }" target="_blank">{ foundOnURL }</a></td>
 					<td colspan="2">
 						<div class="panel panel-default" style="margin-bottom: 0;">
 							<table class="table">
