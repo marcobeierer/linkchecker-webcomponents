@@ -1,5 +1,5 @@
 <linkchecker>
-	<form if="{ showButton }" onsubmit="{ start }" style="margin-bottom: 20px;">
+	<form if="{ showButton }" onsubmit="{ submit }" style="margin-bottom: 20px;">
 		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
 	</form>
 
@@ -82,6 +82,11 @@
 		self.links = null;
 		self.urlsWithDeadImages = null;
 
+		submit(e) {
+			e.preventDefault();
+			self.start();
+		}
+
 		start() {
 			opts.linkchecker.trigger('started');
 
@@ -105,7 +110,7 @@
 					tokenHeader = 'BEARER ' + self.token;
 				}
 
-				$.ajax({
+				jQuery.ajax({
 					method: 'GET',
 					url: 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot',
 					headers: {
