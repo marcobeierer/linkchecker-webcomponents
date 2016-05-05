@@ -42,9 +42,10 @@
 	<script>
 		var self = this;
 
-		opts.linkchecker.on('start', function(websiteURL, token) {
+		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
 			self.token = token;
+			self.maxFetchers = maxFetchers;
 			
 			self.start();
 		});
@@ -68,6 +69,7 @@
 
 		self.websiteURL = opts.websiteUrl || '';
 		self.token = opts.token || '';
+		self.maxFetchers = opts.maxFetchers || 10;
 
 		if (self.websiteURL != '') {
 			self.showButton = true;
@@ -112,7 +114,7 @@
 
 				jQuery.ajax({
 					method: 'GET',
-					url: 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot',
+					url: 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot&max_fetchers=' + self.maxFetchers,
 					headers: {
 						'Authorization': tokenHeader,
 					}
