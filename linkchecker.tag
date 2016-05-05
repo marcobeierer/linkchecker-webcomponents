@@ -45,7 +45,7 @@
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
 			self.token = token;
-			self.maxFetchers = maxFetchers;
+			self.maxFetchers = maxFetchers || 10;
 			
 			self.start();
 		});
