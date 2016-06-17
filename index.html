@@ -15,7 +15,7 @@
 		<!--[if lt IE 9]>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.5/es5-shim.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-		<script>html5.addElements('linkchecker-form', 'linkchecker', 'resulttable')</script>
+		<script>html5.addElements('linkchecker-form', 'linkchecker-scheduler', 'linkchecker', 'resulttable')</script>
 		<![endif]-->
 	</head>
 	<body>
@@ -39,14 +39,17 @@
 		</div>
 		
 		<div class="container-fluid" style="margin-top: 20px;">
-			<linkchecker-form></linkchecker-form>
-			<linkchecker></linkchecker>
+			<!--<linkchecker-form></linkchecker-form>
+	 		<linkchecker></linkchecker>-->
+			<linkchecker-scheduler website-url="https://www.marcobeierer.com" token="eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJEb21haW4iOiJ3d3cubWFyY29iZWllcmVyLmNvbSIsIlBhZ2VMaW1pdCI6MTUwMDAsIlNlcnZpY2UiOiJMaW5rIENoZWNrZXIiLCJleHAiOjE0Njg3OTUzNTYsImlzcyI6Ik1hcmNvIEJlaWVyZXIiLCJzdWIiOiJsaW5rY2hlY2tlciJ9.r1iaj2GpF5PmULk9FTmvZL5w-uvHNbc0HTSMjWgbKyWJ4oAgjKfik_4MncEtRUmAgoN5LQyQMcwFcPe8YvzMbIBcwSJ7BIBecMsyuKjIV_cNjr4ikXAqiVPNoGYcgu_oMyVesLiGrrV2UkpO6UojJ1LtVYPW3bCNBVVJK3imVyxw733S2cHw7qPk_OvkDGG7i7TTSUfgumB03fPjlT9Fna2TH8OQba06DGZdT5QFIxtORSW7sUh622HtNe36b4nPyVFANyMXEMmmKoL2KmBjAysfWolM9rbuZZDIXKSY3Pc4DuLgiaQ2f8TNZUHpKPmUE1vY1fAIcd3L3nscBxiSyBkhiB3LKGnSlLGFnyR-_x7YZJdP7hdY3cheasRsRkU8KPz2MMNLHg-6a1zG4RM9Q6ae48OSoV-1gpuf82CjV0OejtiFK3s7LL-vOKmkTGlNvyfN_uXwom3nzWrjMuiMmkjRCvJ36_Y4E9uscaqp4RZWIul7xdXOXPUCNEIj5mcdhuIhpF9Q_GMkiYlhiirQATPVgmnHJwiaZWsGHC9S4H-gamgGtdnO2hGnTqhTN88woUfVkRDnvhcjcJt1af2sxvfryRNQcDgeV5_8Ce1fcqVOVCt66wNGACT0bEzC37Na7DHPFxrNt2GmMq-qq8qdFHvjs59YA98hlVwsVeT9SAE" dev="1"></linkchecker-scheduler>
 		</div>
 
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script><!-- TODO move this to linkchecker-scheduler -->
 		<script src="resulttable.tag" type="riot/tag"></script>
 		<script src="linkchecker.tag" type="riot/tag"></script>
 		<script src="linkchecker-form.tag" type="riot/tag"></script>
+		<script src="linkchecker-scheduler.tag" type="riot/tag"></script>
 		<script src="https://cdn.rawgit.com/riot/riot/master/riot+compiler.min.js"></script>
 
 		<script>

@@ -1,5 +1,8 @@
 # Link Checker
 
+## next step
+- intervalInNs as int64 instead of string
+
 ## Elements
 - linkchecker-form
 - linkchecker

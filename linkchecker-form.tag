@@ -11,7 +11,6 @@
 		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
 	</form>
 
-
 	<script>
 		var self = this;
 
