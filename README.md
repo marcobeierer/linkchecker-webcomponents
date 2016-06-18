@@ -1,10 +1,10 @@
 # Link Checker
 
-## next step
-- intervalInNs as int64 instead of string
-
 ## Elements
 - linkchecker-form
+- linkchecker-scheduler
+	- website-url
+	- token
 - linkchecker
 	- website-url (note: translated to opts.websiteUrl)
 	- token
