@@ -104,7 +104,7 @@
 		register(e) {
 			e.preventDefault();
 
-			var obj = $(e.target).serializeObject();
+			var obj = jQuery(e.target).serializeObject();
 			obj.IntervalInNs = parseInt(obj.IntervalInNs); // TODO use type=number as soon as available in serialize-object lib
 			var data = JSON.stringify(obj);
 
@@ -135,7 +135,7 @@
 
 		deregister(e) {
 			e.preventDefault();
-			var data = $(e.target).serializeJSON();
+			var data = jQuery(e.target).serializeJSON();
 
 			jQuery.ajax({
 				method: 'DELETE',
