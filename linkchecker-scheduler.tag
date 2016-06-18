@@ -63,6 +63,8 @@
 			self.update();
 		}
 
+		self.setMessage('Loading status.', 'info');
+
 		tokenHeader() {
 			if (self.token != '') {
 				return 'BEARER ' + self.token;
