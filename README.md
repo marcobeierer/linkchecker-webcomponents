@@ -5,6 +5,7 @@
 - linkchecker-scheduler
 	- website-url
 	- token
+	- email
 - linkchecker
 	- website-url (note: translated to opts.websiteUrl)
 	- token

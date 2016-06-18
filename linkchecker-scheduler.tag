@@ -18,7 +18,7 @@
 
 				<div class="form-group">
 					<label>Email address for notifications</label>
-					<input class="form-control" type="email" name="Email" required />
+					<input class="form-control" type="email" name="Email" value="{ email }" required />
 				</div>
 
 				<button class="btn btn-default" type="submit">Register</button>
@@ -49,6 +49,7 @@
 		self.registered = false;
 		self.websiteURL = opts.websiteUrl || '';
 		self.token = opts.token || '';
+		self.email = opts.email || '';
 
 		self.apiURL = 'https://api.marcobeierer.com/scheduler/v1/';
 		if (opts.dev === '1') {
