@@ -1,10 +1,4 @@
 <linkchecker-scheduler>
-	<h2>Link Checker Scheduler</h2>
-
-	<div class="alert alert-{ messageType }">
-		<span name="message"></span>
-	</div>
-
 	<div class="panel panel-default">
 		<div class="panel-heading">Description</div>
 		<div class="panel-body">
@@ -12,6 +6,10 @@
 		</div>
 	</div>
 	
+	<div class="alert alert-{ messageType }">
+		<span name="message"></span>
+	</div>
+
 	<div class="panel panel-primary" if="{ !registered }">
 		<div class="panel-heading">Register your website</div>
 		<div class="panel-body">
@@ -107,30 +105,34 @@
 
 		register(e) {
 			e.preventDefault();
-			var data = $(e.target).serializeJSON();
+
+			var obj = $(e.target).serializeObject();
+			obj.IntervalInNs = parseInt(obj.IntervalInNs); // TODO use type=number as soon as available in serialize-object lib
+			var data = JSON.stringify(obj);
 
 			jQuery.ajax({
 				method: 'POST',
 				url: self.apiURL,
 				data: data,
+				dataType: 'text',
 				headers: {
 					'Authorization': self.tokenHeader(),
 				}
-			}).then(
-				function successCallback(response) {
-					self.setMessage('You have successfully registered your website to the scheduler.', 'success');
-					self.registered = true;
-				},
-				function errorCallback(response) { 
-					if (response.status == 401) { // unauthorized
-						self.setMessage('The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.', 'error');
-					} else if (response.status == 504 || response.status == 503) {
-						self.setMessage('The backend server is temporarily unavailable. Please try it again later.', 'error');
-					} else {
-						self.setMessage('Something went wrong. Please try it again later.', 'error');
-					}
+			}).done(function(data, textStatus, xhr) {
+				self.setMessage('You have successfully registered your website to the scheduler.', 'success');
+				self.registered = true;
+			}).fail(function(xhr, textStatus, error) {
+				console.log(xhr.status);
+				if (xhr.status == 401) { // unauthorized
+					self.setMessage('The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.', 'error');
+				} else if (xhr.status == 504 || xhr.status == 503) {
+					self.setMessage('The backend server is temporarily unavailable. Please try it again later.', 'error');
+				} else {
+					self.setMessage('Something went wrong. Please try it again later.', 'error');
 				}
-			);
+			}).always(function() {
+				self.update();
+			});
 		}
 
 		deregister(e) {
@@ -141,18 +143,18 @@
 				method: 'DELETE',
 				url: self.apiURL,
 				data: data,
+				dataType: 'text',
 				headers: {
 					'Authorization': self.tokenHeader(),
 				}
-			}).then(
-				function successCallback(response) {
-					self.setMessage('You have successfully deregistered your website from the scheduler.', 'success');
-					self.registered = false;
-				},
-				function errorCallback(response) { 
-					self.setMessage('Something went wrong. Please try it again later.', 'error');
-				}
-			);
+			}).done(function(data, textStatus, xhr) {
+				self.setMessage('You have successfully deregistered your website from the scheduler.', 'success');
+				self.registered = false;
+			}).fail(function(xhr, textStatus, error) {
+				self.setMessage('Something went wrong. Please try it again later.', 'error');
+			}).always(function() {
+				self.update();
+			});
 		}
 	</script>
 </linkchecker-scheduler>
