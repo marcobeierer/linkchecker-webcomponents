@@ -1,11 +1,4 @@
 <linkchecker-scheduler>
-	<div class="panel panel-default">
-		<div class="panel-heading">Description</div>
-		<div class="panel-body">
-			The scheduler is an additional service for all users who have bought a token for the <a href="https://www.marcobeierer.com/tools/link-checker-professional">Link Checker Professional</a>. If you register your site to the scheduler, a link check is automatically triggered once a day and you receive an email notification with a summary report after the check has finished. If a dead link was found, you could use the default Link Checker interface to fetch the detailed results.
-		</div>
-	</div>
-	
 	<div class="alert alert-{ messageType }">
 		<span name="message"></span>
 	</div>
@@ -13,11 +6,12 @@
 	<div class="panel panel-primary" if="{ !registered }">
 		<div class="panel-heading">Register your website</div>
 		<div class="panel-body">
+			<p>If you register your site to the scheduler, a link check is automatically triggered once a day and you receive an email notification with a summary report after the check has finished. If a dead link was found, you could use the default Link Checker interface to fetch the detailed results.</p>
 			<form onsubmit="{ register }">
 				<input type="hidden" name="Service" value="Link Checker" />
 				<input type="hidden" name="IntervalInNs" value="86400000000000" />
 
-				<div class="form-group">
+				<div style="display: none;" class="form-group">
 					<label>Website URL</label>
 					<input class="form-control" name="URL" type="text" value="{ websiteURL }" readonly="readonly" required />
 				</div>
@@ -35,10 +29,11 @@
 	<div class="panel panel-primary" if="{ registered }">
 		<div class="panel-heading">Deregister your website</div>
 		<div class="panel-body">
+			<p>Your site is registered to the scheduler and you should receive status emails regularly. Use the button below if you like to disable the automated checks.</p>
 			<form onsubmit="{ deregister }">
 				<input type="hidden" name="Service" value="Link Checker" />
 
-				<div class="form-group">
+				<div style="display: none;" class="form-group">
 					<label>Website URL</label>
 					<input class="form-control" name="URL" type="text" value="{ websiteURL }" readonly="readonly" required />
 				</div>
@@ -86,7 +81,7 @@
 					self.setMessage('Your website isn\'t registered for the scheduler currently. Please use the form below to register your site.', 'info');
 					self.registered = false;
 				} else {
-					self.setMessage('Your website is registered to the scheduler currently. Please use the form below to deregister your site.', 'info');
+					self.setMessage('Your website is registered to the scheduler currently. You can use the form below to deregister your site.', 'info');
 					self.registered = true;
 				}
 			}).fail(function(xhr, textStatus, error) {
