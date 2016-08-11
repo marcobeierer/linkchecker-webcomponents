@@ -39,6 +39,14 @@
 		data="{ urlsWithDeadImages }">
 	</resulttable>
 
+	<h3>Custom Status Codes</h3>
+	<p>The Link Checker uses the following custom status codes:</p>
+	<ul>
+		<li>598 - Blocked by robots: The Link Checker was not able to access the page because the access was blocked by the robots exclusion protocol.</li>
+		<li>599 - HTML parse error: The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</li>
+	</ul>
+	<p><em>Please note that it is possible that a server also returns this status codes and in this case they probably have another meaning.</em></p>
+
 	<script>
 		var self = this;
 
