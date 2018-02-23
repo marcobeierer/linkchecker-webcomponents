@@ -1,6 +1,6 @@
 <linkchecker-scheduler>
 	<div class="alert alert-{ messageType }">
-		<span name="message"></span>
+		<span>{ message }</span>
 	</div>
 
 	<div class="panel panel-primary" if="{ !registered }">
@@ -53,12 +53,12 @@
 
 		self.apiURL = 'https://api.marcobeierer.com/scheduler/v1/';
 		if (opts.dev === '1') {
-			self.apiURL = 'http://192.168.1.47:9999/scheduler/v1/';
+			self.apiURL = 'http://marco-desktop:9999/scheduler/v1/';
 		}
 
 		// TODO merge with linkchecker function
 		setMessage(text, type) {
-			self.message.innerHTML = text;
+			self.message = text;
 			self.messageType = type;
 			self.update();
 		}

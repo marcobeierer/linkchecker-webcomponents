@@ -4,7 +4,7 @@
 	</form>
 
 	<div class="alert alert-{ messageType }">
-		<span name="message"></span>
+		<span>{ message }</span>
 	</div>
 
 	<div class="panel panel-default" style="width: 550px; max-width: 100%;">
@@ -50,6 +50,8 @@
 	<script>
 		var self = this;
 
+		self.message = '';
+
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
 			self.token = token;
@@ -68,7 +70,7 @@
 		});
 
 		setMessage(text, type) {
-			self.message.innerHTML = text;
+			self.message = text;
 			self.messageType = type;
 			self.update();
 		}
