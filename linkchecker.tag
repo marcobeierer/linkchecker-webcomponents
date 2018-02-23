@@ -4,7 +4,7 @@
 	</form>
 
 	<div class="alert alert-{ messageType }">
-		<span>{ message }</span>
+		<raw content="{ message }" />
 	</div>
 
 	<div class="panel panel-default" style="width: 550px; max-width: 100%;">

@@ -1,6 +1,6 @@
 <linkchecker-scheduler>
 	<div class="alert alert-{ messageType }">
-		<span>{ message }</span>
+		<raw content="{ message }" />
 	</div>
 
 	<div class="panel panel-primary" if="{ !registered }">
