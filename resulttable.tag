@@ -9,7 +9,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr if="{ !data }">
+				<tr if="{ !data || Object.keys(data).length === 0 }">
 					<td>{ resultsMessage }</td>
 					<td></td>
 					<td></td>

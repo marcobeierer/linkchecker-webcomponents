@@ -27,7 +27,17 @@
 		th-col2="Broken Links" 
 		th-col3="Status Code" 
 		results-message="{ resultsMessage }"
-		data="{ links }">
+		data="{ urlsWithBrokenLinks }">
+	</resulttable>
+
+	<h3>Links blocked by robots.txt</h3>
+	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol. You find all links the Link Checker was not allowed to access in the table below. If the blocked links were found on your on website, you could add rules for the Link Checker to your robots.txt file. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq">FAQs</a> for further information.</p>
+	<resulttable
+		th-col1="URL where the links were found" 
+		th-col2="Blocked Links" 
+		th-col3="Status Code" 
+		results-message="{ resultsMessage }"
+		data="{ urlsWithLinksBlockedByRobots }">
 	</resulttable>
 
 	<h3 if="{ token }">Broken Images</h3>
@@ -88,10 +98,11 @@
 		self.urlsCrawledCount = 0;
 		self.checkedLinksCount = 0;
 
-		self.setMessage('The link checker was not started yet.', 'info');
+		self.setMessage('The Link Checker was not started yet.', 'info');
 		self.resultsMessage = resultsMessage;
 
-		self.links = null;
+		self.urlsWithBrokenLinks = null;
+		self.urlsWithLinksBlockedByRobots = null;
 		self.urlsWithDeadImages = null;
 
 		submit(e) {
@@ -105,7 +116,8 @@
 			self.urlsCrawledCount = 0;
 			self.checkedLinksCount = 0;
 
-			self.links = null;
+			self.urlsWithBrokenLinks = null;
+			self.urlsWithLinksBlockedByRobots = null;
 			self.urlsWithDeadImages = null;
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
@@ -147,10 +159,34 @@
 							self.setMessage(message, 'success');
 						}
 
-						self.resultsMessage = 'No broken links found.';
+						self.resultsMessage = 'Nothing found, everything seems fine here.';
 
 						if (!jQuery.isEmptyObject(data.DeadLinks)) { // necessary for placeholder
-							self.links = data.DeadLinks;
+							self.urlsWithBrokenLinks = {};
+							self.urlsWithLinksBlockedByRobots = {};
+
+							for (var url in data.DeadLinks) {
+								var linksArray = data.DeadLinks[url];
+
+								self.urlsWithBrokenLinks[url] = [];
+								self.urlsWithLinksBlockedByRobots[url] = [];
+
+								linksArray.forEach(function(obj) {
+									if (obj.StatusCode === 598) {
+										self.urlsWithLinksBlockedByRobots[url].push(obj);
+									} else {
+										self.urlsWithBrokenLinks[url].push(obj);
+									}
+								});
+
+								if (self.urlsWithBrokenLinks[url].length == 0) {
+									delete self.urlsWithBrokenLinks[url];
+								}
+
+								if (self.urlsWithLinksBlockedByRobots[url].length == 0) {
+									delete self.urlsWithLinksBlockedByRobots[url];
+								}
+							}
 						}
 
 						if (!jQuery.isEmptyObject(data.DeadEmbeddedImages)) { // necessary for placeholder
