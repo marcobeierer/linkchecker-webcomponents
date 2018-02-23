@@ -57,6 +57,12 @@
 	</ul>
 	<p><em>Please note that it is also possible that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>
 
+	<h3>Common Status Codes</h3>
+	<ul>
+		<li>502 - Bad Gateway: The server returned an invalid response when the Link Checker tried to access the URL.</li>
+		<li>504 - Gateway Timeout: The Link Checker was not able to access the URL because it timed out.</li>
+	</ul>
+
 	<script>
 		var self = this;
 
