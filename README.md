@@ -20,3 +20,7 @@
 	- indicates if the user has fetched an old result
 
 - remove style attributes and create custom CSS file
+
+
+## Libraries
+- [lscache](https://github.com/pamelafox/lscache) by Pamela Fox

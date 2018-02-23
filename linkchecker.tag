@@ -22,32 +22,29 @@
 	</div>
 
 	<h3>Broken Links</h3>
-	<resulttable
-		th-col1="URL where the broken links were found" 
-		th-col2="Broken Links" 
-		th-col3="Status Code" 
-		results-message="{ resultsMessage }"
-		data="{ urlsWithBrokenLinks }">
-	</resulttable>
+	<datatable
+		table-class="table-striped responsive-table"
+		columns="{ urlsWithBrokenLinksColumns }"
+		data="{ urlsWithBrokenLinks }"
+		message="{ resultsMessage }">
+	</datatable>
 
 	<h3>Links blocked by robots.txt</h3>
 	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol. You find all links the Link Checker was not allowed to access in the table below. If the blocked links were found on your on website, you could add rules for the Link Checker to your robots.txt file. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq">FAQs</a> for further information.</p>
-	<resulttable
-		th-col1="URL where the links were found" 
-		th-col2="Blocked Links" 
-		th-col3="Status Code" 
-		results-message="{ resultsMessage }"
-		data="{ urlsWithLinksBlockedByRobots }">
-	</resulttable>
+	<datatable
+		table-class="table-striped responsive-table"
+		columns="{ urlsWithLinksBlockedByRobotsColumns }"
+		data="{ urlsWithLinksBlockedByRobots }"
+		message="{ resultsMessage }">
+	</datatable>
 
 	<h3 if="{ token }">Broken Images</h3>
-	<resulttable if="{ token }"
-		th-col1="URL where the broken images were found" 
-		th-col2="Broken Images" 
-		th-col3="Status Code" 
-		results-message="{ resultsMessage }"
-		data="{ urlsWithDeadImages }">
-	</resulttable>
+	<datatable if="{ token }"
+		table-class="table-striped responsive-table"
+		columns="{ urlsWithDeadImagesColumns}"
+		data="{ urlsWithDeadImages }"
+		message="{ resultsMessage }">
+	</datatable>
 
 	<h3>Custom Status Codes</h3>
 	<p>The Link Checker uses the following custom status codes:</p>
@@ -67,6 +64,93 @@
 		var self = this;
 
 		self.message = '';
+
+		self.urlsWithBrokenLinksColumns = [
+			{
+				label: 'URL where the broken links were found',
+				width: '35%',
+				callback: function(info, url) {
+					return url;
+				},
+				linkCallback: function(info, url) {
+					return url;
+				},
+			},
+			{
+				label: 'Broken Links',
+				type: 'subtable',
+				colspan: '2',
+				callback: subtableCallback,
+			},
+			{
+				label: 'StatusCode',
+				width: '10em',
+				showBody: false,
+			}
+		];
+
+		self.urlsWithLinksBlockedByRobotsColumns = [
+			{
+				label: 'URL where the links were found',
+				width: '35%',
+				callback: function(info, url) {
+					return url;
+				},
+				linkCallback: function(info, url) {
+					return url;
+				},
+			},
+			{
+				label: 'Blocked Links',
+				type: 'subtable',
+				colspan: '2',
+				callback: subtableCallback,
+			},
+			{
+				label: 'StatusCode',
+				width: '10em',
+				showBody: false,
+			}
+		];
+
+		self.urlsWithDeadImagesColumns = [
+			{
+				label: 'URL where the broken images were found',
+				width: '35%',
+				callback: function(info, url) {
+					return url;
+				},
+				linkCallback: function(info, url) {
+					return url;
+				},
+			},
+			{
+				label: 'Broken Images',
+				type: 'subtable',
+				colspan: '2',
+				callback: subtableCallback,
+			},
+			{
+				label: 'StatusCode',
+				width: '10em',
+				showBody: false,
+			}
+		];
+
+		function subtableCallback(info, url) {
+			return [
+				{
+					label: 'URL',
+					linkCallback: function(elem) {
+						return elem.URL;
+					},
+				},
+				{
+					label: 'StatusCode',
+					width: '9em',
+				}
+			]
+		}
 
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
@@ -107,9 +191,9 @@
 		self.setMessage('The Link Checker was not started yet.', 'info');
 		self.resultsMessage = resultsMessage;
 
-		self.urlsWithBrokenLinks = null;
-		self.urlsWithLinksBlockedByRobots = null;
-		self.urlsWithDeadImages = null;
+		self.urlsWithBrokenLinks = {};
+		self.urlsWithLinksBlockedByRobots = {};
+		self.urlsWithDeadImages = {};
 
 		submit(e) {
 			e.preventDefault();
@@ -122,9 +206,9 @@
 			self.urlsCrawledCount = 0;
 			self.checkedLinksCount = 0;
 
-			self.urlsWithBrokenLinks = null;
-			self.urlsWithLinksBlockedByRobots = null;
-			self.urlsWithDeadImages = null;
+			self.urlsWithBrokenLinks = {};
+			self.urlsWithLinksBlockedByRobots = {};
+			self.urlsWithDeadImages = {};
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
@@ -140,9 +224,14 @@
 					tokenHeader = 'BEARER ' + self.token;
 				}
 
+				var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot&max_fetchers=' + self.maxFetchers;
+				if (opts.dev == '1') {
+					var url = 'example.json';
+				}
+
 				jQuery.ajax({
 					method: 'GET',
-					url: 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot&max_fetchers=' + self.maxFetchers,
+					url: url,
 					headers: {
 						'Authorization': tokenHeader,
 					}
@@ -168,9 +257,6 @@
 						self.resultsMessage = 'Nothing found, everything seems fine here.';
 
 						if (!jQuery.isEmptyObject(data.DeadLinks)) { // necessary for placeholder
-							self.urlsWithBrokenLinks = {};
-							self.urlsWithLinksBlockedByRobots = {};
-
 							for (var url in data.DeadLinks) {
 								var linksArray = data.DeadLinks[url];
 

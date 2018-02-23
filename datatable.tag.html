@@ -1,0 +1,239 @@
+'use strict';
+
+<datatable>
+	<div class="panel panel-default table-responsive" style="margin-bottom: { opts.marginBottom }">
+		<table class="table { opts.tableClass }">
+			<thead if="{ showTableHeader }">
+				<tr>
+					<th each={ column, index in columns } style="width: { column.width }">
+						{ tr(column.label) }
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr if="{ !dataFiltered || (Array.isArray(dataFiltered) && dataFiltered.length == 0) || Object.keys(dataFiltered).length == 0 }">
+					<td colspan="{ columns.length }">{ message }</td>
+				</tr>
+				<tr class="{ rowClassCallback(elem) }" each="{ elem, index in dataFiltered }">
+					<td each="{ column, index2 in columns }" colspan="{ column.colspan }" if="{ column.showBody == undefined }" style="width: { column.width }">
+						<!--
+						<a href="{ linkBaseURL }/?id={ encodeURIComponent(elem['ID']) }" if="{ index2 == 0 && !disableLinking }">
+							{ elem[column.label] }
+						</a>-->
+
+						<virtual if="{ column.linkCallback == undefined }">
+							<span if="{ column.callback != undefined && column.type == 'subtable' }">
+								<datatable columns="{ column.callback(elem, index) }" data="{ elem }" no-table-footer no-table-header margin-bottom="0"></datatable>
+							</span>
+
+							<span if="{ column.callback != undefined && column.type != 'subtable'}">
+								{ column.callback(elem, index) }
+							</span>
+
+							<span if="{ column.callback == undefined && elem[column.value] != undefined }">
+								{ elem[column.value] }
+							</span>
+
+							<span if="{ column.callback == undefined && elem[column.label] != undefined }">
+								{ elem[column.label] }
+							</span>
+						</virtual>
+
+						<a if="{ column.linkCallback != undefined }" href="{ column.linkCallback(elem, index) }" target="_blank">
+							<span if="{ column.callback != undefined && column.type != 'subtable'}">
+								{ column.callback(elem, index) }
+							</span>
+							<span if="{ column.callback == undefined && elem[column.label] != undefined }">
+								{ elem[column.label] }
+							</span>
+						</a>
+
+						<virtual each="{ action in actions }" if="{ column.label == 'Actions' }">
+							<a onclick="{ download.bind(this, elem, action.fieldName, action.urlSuffix) }" if="{ action.action == 'download' }"  class="btn-flat">{ tr(action.label) }</a>
+							<a onclick="{ delete.bind(this, elem, action.fieldName) }" if="{ action.action == 'delete' }"  class="btn-flat red">{ tr(action.label) }</a>
+							<a href="{ action.url }/?id={ encodeURIComponent(elem['ID']) }" if="{ action.action == 'link' }"  class="btn-flat">{ tr(action.label) }</a>
+							<a data-toggle="modal" data-target="{ action.target }" onclick="{ modalOpened }" if="{ action.action == 'modal-link' }"  class="btn">{ tr(action.label) }</a>
+						</virtual>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot if="{ showTableFooter }">
+				<tr>
+					<th each={ column, index in columns }>
+						{ tr(column.label) }
+					</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+
+	<script>
+		var self = this;
+
+		self.columns = opts.columns || [];
+		self.columnNames = opts.columnNames;
+		self.events = opts.events || riot.observable();
+
+		self.disableLinking = opts.disableLinking === 'true';
+		self.rowClassCallback = opts.rowClassCallback || function() {};
+
+		self.showTableHeader = opts.noTableHeader === undefined;
+		self.showTableFooter = opts.noTableFooter === undefined;
+
+		self.data = [];
+		self.dataFiltered = [];
+		setData(opts.data);
+
+		self.lastFilterText = '';
+
+		self.tr = opts.trFunc || function(str) {
+			return str;
+		};
+
+		self.modalOpened = function(e) {
+			self.events.trigger('modal-opened', e, this.elem, self);
+		}
+
+		self.linkBaseURL = opts.linkBaseurl || '';
+		self.actions = opts.actions;
+
+		if (self.actions != undefined && self.actions.length > 0) {
+			self.columns.push({
+				label: 'Actions'
+			});
+		}
+
+		if (opts.url == undefined) {
+			self.url = '';
+		} else {
+			self.url = replacePlaceholdersWithQueryVariables(opts.url);
+		}
+
+		self.message = 'No data loaded or available yet.';
+
+		self.on('mount', function() {
+			self.events.on('create', onCreate);
+			self.events.on('filter', onFilter);
+
+			if (opts.data !== undefined) {
+				setData(opts.data);
+				return;
+			}
+		});
+
+		self.on('unmount', function() {
+			self.events.off('create', onCreate);
+			self.events.off('filter', onFilter);
+		});
+
+		self.on('update', function() {
+			if (opts.data !== undefined) {
+				setData(opts.data);
+			}
+
+			if (opts.message !== undefined) {
+				self.message = opts.message;
+			}
+		});
+
+		var onCreate = function(elem) {
+			self.data.unshift(elem);
+			self.update();
+		};
+
+		var onFilter = function(filterText) {
+			applyFilter(filterText);
+			self.update();
+		};
+
+		function includes(elem, filterText) {
+			if (elem === undefined || elem === null || typeof elem == 'boolean') {
+				return false;
+			}
+
+			if (typeof elem == 'object') {
+				for (var index in elem) {
+					if (includes(elem[index], filterText)) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			if (typeof elem == 'number') {
+				// includes() just works on strings
+				elem = elem.toString();
+			}
+
+			elem = elem.toLowerCase();
+			filterText = filterText.toLowerCase();
+
+			return elem.includes(filterText);
+		}
+
+		function applyFilter(filterText) {
+			if (!filterText.startsWith(self.lastFilterText)) {
+				// use self.data if filterText was not narrowed down, but completely changed
+				self.dataFiltered = self.data.slice(); // copy
+			}
+
+			self.dataFiltered = self.dataFiltered.filter(function(company) {
+				return includes(company, filterText);
+			});
+
+			self.lastFilterText = filterText;
+		}
+
+		function setData(data) {
+			self.data = data;
+
+			if (Array.isArray(self.data)) {
+				self.dataFiltered = self.data.slice(); // copy
+			} else {
+				self.dataFiltered = JSON.parse(JSON.stringify(self.data)); // deep copy of object, prototype functions are lost
+			}
+
+			self.lastFilterText = '';
+		};
+
+		self.delete = function(elem, fieldName) {
+			// TODO if necessary
+		}
+
+		self.download = function(elem, fieldName, urlSuffix) {
+			var resourceURL = self.url + encodeURIComponent(elem[fieldName] + urlSuffix);
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', resourceURL);
+			xhr.responseType = 'arraybuffer';
+
+			xhr.withCredentials = true;
+			xhr.setRequestHeader('X-CSRF-Token', Cookies.get('CSRFToken'));
+
+			xhr.onload = function(event) {
+				if (xhr.status == 200) {
+					var data = new Uint8Array(this.response);
+					var contentType = xhr.getResponseHeader('Content-Type');
+
+					var blob = new Blob([data], { type: contentType });
+
+					var blobURL = (window.URL || window.webkitURL).createObjectURL(blob);
+					var filename = xhr.getResponseHeader('X-Filename');
+
+					if (window.navigator.msSaveOrOpenBlob) {
+						window.navigator.msSaveOrOpenBlob(blob, filename);
+					} else {
+						var a = document.createElement('a');
+						a.href = blobURL;
+						a.download = filename;
+						a.click();
+					}
+					(window.URL || window.webkitURL).revokeObjectURL(blobURL);
+				}
+			};
+
+			xhr.send();
+		}
+	</script>
+</datatable>

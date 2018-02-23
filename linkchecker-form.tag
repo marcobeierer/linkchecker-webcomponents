@@ -16,6 +16,12 @@
 
 		self.disabled = false;
 
+		self.on('mount', function() {
+			if (opts.websiteUrl != undefined) {
+				this.refs.websiteURL.value = opts.websiteUrl;
+			}
+		});
+
 		submit(e) {
 			e.preventDefault();
 			opts.linkchecker.trigger('start', this.refs.websiteURL.value, this.refs.token.value);
