@@ -20,7 +20,7 @@
 						<div class="panel panel-default" style="margin-bottom: 0;">
 							<table class="table">
 								<tr each="{ deadResource in deadResources }">
-									<td>{ deadResource.URL }</td>
+									<td><a href="{ deadResource.URL }" target="_blank">{ deadResource.URL }</a></td>
 									<td style="width: 9em;">{ deadResource.StatusCode }</td>
 								</tr>
 							</table>

@@ -89,11 +89,11 @@
 				}
 			}).fail(function(xhr, textStatus, error) {
 				if (xhr.status == 401) { // unauthorized
-					self.setMessage('The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.', 'error');
+					self.setMessage('The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.', 'danger');
 				} else if (xhr.status == 504 || xhr.status == 503) {
-					self.setMessage('The backend server is temporarily unavailable. Please try it again later.', 'error');
+					self.setMessage('The backend server is temporarily unavailable. Please try it again later.', 'danger');
 				} else {
-					self.setMessage('Something went wrong. Please try it again later.', 'error');
+					self.setMessage('Something went wrong. Please try it again later.', 'danger');
 				}
 			}).always(function() {
 				self.update();
@@ -122,11 +122,11 @@
 			}).fail(function(xhr, textStatus, error) {
 				console.log(xhr.status);
 				if (xhr.status == 401) { // unauthorized
-					self.setMessage('The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.', 'error');
+					self.setMessage('The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.', 'danger');
 				} else if (xhr.status == 504 || xhr.status == 503) {
-					self.setMessage('The backend server is temporarily unavailable. Please try it again later.', 'error');
+					self.setMessage('The backend server is temporarily unavailable. Please try it again later.', 'danger');
 				} else {
-					self.setMessage('Something went wrong. Please try it again later.', 'error');
+					self.setMessage('Something went wrong. Please try it again later.', 'danger');
 				}
 			}).always(function() {
 				self.update();
@@ -149,7 +149,7 @@
 				self.setMessage('You have successfully deregistered your website from the scheduler.', 'success');
 				self.registered = false;
 			}).fail(function(xhr, textStatus, error) {
-				self.setMessage('Something went wrong. Please try it again later.', 'error');
+				self.setMessage('Something went wrong. Please try it again later.', 'danger');
 			}).always(function() {
 				self.update();
 			});
