@@ -280,27 +280,14 @@
 			delete list[elem.FoundOnURL][elem.URL];
 
 			if (Object.keys(list[elem.FoundOnURL]).length == 0) {
-				delete list[elem.FoundOnURL];
+				// TODO fix the underlying issue where the table gets messed up when we delete the item. 
+				// The origin might be that this function is called from a callback function from within a for loop that created child of 'list' 
+				// see also http://riotjs.com/guide/ (for example: Event handlers with looped items)
+				
+				// delete list[elem.FoundOnURL];
+				// self.update();
 			} 
 		}
-
-/*
-		function markLinkInList(elem, list) {
-			var arr = list[elem.FoundOnURL];
-
-			arr = arr.filter(function(e) {
-				return e.URL != elem.URL;
-			});
-
-			if (arr.length == 0) {
-				delete list[elem.FoundOnURL];
-			} else {
-				list[elem.FoundOnURL] = arr;
-			}
-
-			self.update();
-		}
-*/
 
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
