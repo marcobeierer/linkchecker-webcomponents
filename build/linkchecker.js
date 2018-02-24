@@ -163,7 +163,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 				btnType: 'primary',
 				action: 'callback',
 				callback: function(elem) {
-					lscache.set(elem.FoundOnURL + '|' + elem.URL, Date.now(), 60 * 60 * 24 * 31);
+					lscache.set(elem.FoundOnURL + '|' + elem.URL, Date.now(), 60 * 24 * 30);
 				},
 				isDisabledCallback: wasAlreadyMarkedToday
 			}
@@ -183,7 +183,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 				btnType: 'primary',
 				action: 'callback',
 				callback: function(elem) {
-					markLinkInList(elem, self.urlsWithBrokenImages);
+					markLinkInList(elem, self.urlsWithDeadImages);
 				}
 			}
 		];
