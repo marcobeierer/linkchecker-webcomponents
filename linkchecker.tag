@@ -363,7 +363,7 @@
 
 				var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot&max_fetchers=' + self.maxFetchers;
 				if (opts.dev == '1') {
-					var url = 'example.json';
+					var url = 'sample_data/current.json';
 				}
 
 				jQuery.ajax({
