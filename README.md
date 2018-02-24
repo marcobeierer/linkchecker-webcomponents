@@ -32,4 +32,5 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 
 ## Libraries
-- [lscache](https://github.com/pamelafox/lscache) by Pamela Fox
+- [lscache](https://github.com/pamelafox/lscache)
+- [Riot.js](http://riotjs.com/)
