@@ -22,27 +22,33 @@
 	</div>
 
 	<h3>Broken Links</h3>
+	<p>The table below shows all broken links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
 	<datatable
 		table-class="table-striped responsive-table"
 		columns="{ urlsWithBrokenLinksColumns }"
 		data="{ urlsWithBrokenLinks }"
+		actions="{ brokenLinksActions }"
 		message="{ resultsMessage }">
 	</datatable>
 
 	<h3>Links blocked by robots.txt</h3>
-	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol. You find all links the Link Checker was not allowed to access in the table below. If the blocked links were found on your on website, you could add rules for the Link Checker to your robots.txt file. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq">FAQs</a> for further information.</p>
+	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol. You find all links the Link Checker was not allowed to access in the table below. If the blocked links were found on your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq">FAQs</a> for further information.</p>
+	<p>External links that are blocked by a robots.txt file cannot be checked by the Link Checker and need to be verified manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
 	<datatable
 		table-class="table-striped responsive-table"
 		columns="{ urlsWithLinksBlockedByRobotsColumns }"
 		data="{ urlsWithLinksBlockedByRobots }"
+		actions="{ blockedLinksActions }"
 		message="{ resultsMessage }">
 	</datatable>
 
 	<h3 if="{ token }">Broken Images</h3>
+	<p>The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
 	<datatable if="{ token }"
 		table-class="table-striped responsive-table"
 		columns="{ urlsWithDeadImagesColumns}"
 		data="{ urlsWithDeadImages }"
+		actions="{ brokenImagesActions }"
 		message="{ resultsMessage }">
 	</datatable>
 
@@ -65,6 +71,11 @@
 
 		self.message = '';
 
+		self.on('mount', function() {
+			lscache.setBucket('linkchecker');
+			lscache.flushExpired();
+		});
+
 		self.urlsWithBrokenLinksColumns = [
 			{
 				label: 'URL where the broken links were found',
@@ -79,12 +90,17 @@
 			{
 				label: 'Broken Links',
 				type: 'subtable',
-				colspan: '2',
+				colspan: '3',
 				callback: subtableCallback,
 			},
 			{
 				label: 'StatusCode',
-				width: '10em',
+				width: '9em',
+				showBody: false,
+			},
+			{
+				label: 'Actions',
+				width: '11em',
 				showBody: false,
 			}
 		];
@@ -103,12 +119,22 @@
 			{
 				label: 'Blocked Links',
 				type: 'subtable',
-				colspan: '2',
-				callback: subtableCallback,
+				colspan: '4',
+				callback: subtableBlockedLinksCallback,
 			},
 			{
 				label: 'StatusCode',
-				width: '10em',
+				width: '9em',
+				showBody: false,
+			},
+			{
+				label: 'Marked As Working On',
+				width: '14em',
+				showBody: false,
+			},
+			{
+				label: 'Actions',
+				width: '11em',
 				showBody: false,
 			}
 		];
@@ -127,15 +153,51 @@
 			{
 				label: 'Broken Images',
 				type: 'subtable',
-				colspan: '2',
+				colspan: '3',
 				callback: subtableCallback,
 			},
 			{
 				label: 'StatusCode',
-				width: '10em',
+				width: '9em',
+				showBody: false,
+			},
+			{
+				label: 'Actions',
+				width: '11em',
 				showBody: false,
 			}
 		];
+
+		function subtableBlockedLinksCallback(info, url) {
+			return [
+				{
+					label: 'URL',
+					linkCallback: function(elem) {
+						return elem.URL;
+					},
+				},
+				{
+					label: 'StatusCode',
+					width: '9em',
+				},
+				{
+					label: 'Marked As Working On',
+					width: '14em',
+					callback: function(elem) {
+						var markedOn = lscache.get(elem.FoundOnURL + '|' + elem.URL);
+						if (markedOn == undefined) {
+							return 'never';
+						}
+
+						return new Date(markedOn).toLocaleDateString();
+					},
+				},
+				{
+					label: 'Actions',
+					width: '10em', // one em less than table header because of margin-right between inner and outer table
+				}
+			]
+		}
 
 		function subtableCallback(info, url) {
 			return [
@@ -148,8 +210,75 @@
 				{
 					label: 'StatusCode',
 					width: '9em',
+				},
+				{
+					label: 'Actions',
+					width: '10em', // one em less than table header because of margin-right between inner and outer table
 				}
 			]
+		}
+
+		self.blockedLinksActions = [
+			{
+				labelCallback: function(elem) {
+					if (wasAlreadyMarkedToday(elem)) {
+						return 'Already marked';
+					}
+					return 'Mark as Working';
+				},
+				btnType: 'primary',
+				action: 'callback',
+				callback: function(elem) {
+					lscache.set(elem.FoundOnURL + '|' + elem.URL, Date.now(), 60 * 60 * 24 * 31); // one month
+				},
+				isDisabledCallback: wasAlreadyMarkedToday 
+			}
+		];
+
+		function wasAlreadyMarkedToday(elem) {
+			var markedOn = lscache.get(elem.FoundOnURL + '|' + elem.URL);
+			if (markedOn == undefined) {
+				return false;
+			}
+			return new Date(Date.now()).toLocaleDateString() == new Date(markedOn).toLocaleDateString();
+		}
+
+		self.brokenImagesActions = [
+			{
+				label: 'Mark as Fixed',
+				btnType: 'primary',
+				action: 'callback',
+				callback: function(elem) {
+					markLinkInList(elem, self.urlsWithBrokenImages);
+				}
+			}
+		];
+
+		self.brokenLinksActions = [
+			{
+				label: 'Mark as Fixed',
+				btnType: 'primary',
+				action: 'callback',
+				callback: function(elem) {
+					markLinkInList(elem, self.urlsWithBrokenLinks);
+				}
+			}
+		];
+
+		function markLinkInList(elem, list) {
+			var arr = list[elem.FoundOnURL];
+
+			arr = arr.filter(function(e) {
+				return e.URL != elem.URL;
+			});
+
+			if (arr.length == 0) {
+				delete list[elem.FoundOnURL];
+			} else {
+				list[elem.FoundOnURL] = arr;
+			}
+
+			self.update();
 		}
 
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
@@ -264,6 +393,7 @@
 								self.urlsWithLinksBlockedByRobots[url] = [];
 
 								linksArray.forEach(function(obj) {
+									obj.FoundOnURL = url;
 									if (obj.StatusCode === 598) {
 										self.urlsWithLinksBlockedByRobots[url].push(obj);
 									} else {

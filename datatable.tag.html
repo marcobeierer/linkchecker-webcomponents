@@ -23,7 +23,7 @@
 
 						<virtual if="{ column.linkCallback == undefined }">
 							<span if="{ column.callback != undefined && column.type == 'subtable' }">
-								<datatable columns="{ column.callback(elem, index) }" data="{ elem }" no-table-footer no-table-header margin-bottom="0"></datatable>
+								<datatable columns="{ column.callback(elem, index) }" data="{ elem }" actions="{ actions }" no-table-footer no-table-header margin-bottom="0"></datatable>
 							</span>
 
 							<span if="{ column.callback != undefined && column.type != 'subtable'}">
@@ -49,6 +49,12 @@
 						</a>
 
 						<virtual each="{ action in actions }" if="{ column.label == 'Actions' }">
+							<a if="{ action.action == 'callback' }" 
+								disabled="{ action.isDisabledCallback !== undefined && action.isDisabledCallback(elem) }" 
+								onclick="{ action.callback.bind(this, elem) }" 
+								class="btn btn-sm btn-{ action.btnType }">
+								{ (action.labelCallback !== undefined && action.labelCallback(elem)) || tr(action.label) }</a>
+
 							<a onclick="{ download.bind(this, elem, action.fieldName, action.urlSuffix) }" if="{ action.action == 'download' }"  class="btn-flat">{ tr(action.label) }</a>
 							<a onclick="{ delete.bind(this, elem, action.fieldName) }" if="{ action.action == 'delete' }"  class="btn-flat red">{ tr(action.label) }</a>
 							<a href="{ action.url }/?id={ encodeURIComponent(elem['ID']) }" if="{ action.action == 'link' }"  class="btn-flat">{ tr(action.label) }</a>
@@ -97,12 +103,6 @@
 		self.linkBaseURL = opts.linkBaseurl || '';
 		self.actions = opts.actions;
 
-		if (self.actions != undefined && self.actions.length > 0) {
-			self.columns.push({
-				label: 'Actions'
-			});
-		}
-
 		if (opts.url == undefined) {
 			self.url = '';
 		} else {
@@ -117,7 +117,10 @@
 
 			if (opts.data !== undefined) {
 				setData(opts.data);
-				return;
+			}
+
+			if (opts.actions !== undefined) {
+				self.actions = opts.actions;
 			}
 		});
 
@@ -133,6 +136,10 @@
 
 			if (opts.message !== undefined) {
 				self.message = opts.message;
+			}
+
+			if (opts.actions !== undefined) {
+				self.actions = opts.actions;
 			}
 		});
 
