@@ -1,5 +1,11 @@
 # Link Checker
 
+## Next steps
+- Test images
+
+## Important Notes
+It is necessary to hold all the data in object trees and prevent the use of arrays because arrays are passed down the datatable tree by value and this makes updates very slow. Objects are passed by reference and the updates are very smooth.
+
 ## Elements
 - linkchecker-form
 - linkchecker-scheduler

@@ -92,6 +92,7 @@
 				type: 'subtable',
 				colspan: '3',
 				callback: subtableCallback,
+				message: 'No broken links left.',
 			},
 			{
 				label: 'StatusCode',
@@ -155,6 +156,7 @@
 				type: 'subtable',
 				colspan: '3',
 				callback: subtableCallback,
+				message: 'No broken images left.',
 			},
 			{
 				label: 'StatusCode',
@@ -265,6 +267,24 @@
 			}
 		];
 
+		// resetObject is used because just assigning {} creates a new object with another reference, but the child tags still have a reference to the old object
+		function resetObject(obj) {
+			Object.keys(obj).forEach(
+				function(key) { 
+					delete obj[key]; 
+				}
+			);
+		}
+
+		function markLinkInList(elem, list) {
+			delete list[elem.FoundOnURL][elem.URL];
+
+			if (Object.keys(list[elem.FoundOnURL]).length == 0) {
+				delete list[elem.FoundOnURL];
+			} 
+		}
+
+/*
 		function markLinkInList(elem, list) {
 			var arr = list[elem.FoundOnURL];
 
@@ -280,6 +300,7 @@
 
 			self.update();
 		}
+*/
 
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
@@ -335,9 +356,9 @@
 			self.urlsCrawledCount = 0;
 			self.checkedLinksCount = 0;
 
-			self.urlsWithBrokenLinks = {};
-			self.urlsWithLinksBlockedByRobots = {};
-			self.urlsWithDeadImages = {};
+			resetObject(self.urlsWithBrokenLinks);
+			resetObject(self.urlsWithLinksBlockedByRobots);
+			resetObject(self.urlsWithDeadImages);
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
@@ -386,33 +407,47 @@
 						self.resultsMessage = 'Nothing found, everything seems fine here.';
 
 						if (!jQuery.isEmptyObject(data.DeadLinks)) { // necessary for placeholder
+							// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
+							
 							for (var url in data.DeadLinks) {
-								var linksArray = data.DeadLinks[url];
+								self.urlsWithBrokenLinks[url] = {};
+								self.urlsWithLinksBlockedByRobots[url] = {};
 
-								self.urlsWithBrokenLinks[url] = [];
-								self.urlsWithLinksBlockedByRobots[url] = [];
-
-								linksArray.forEach(function(obj) {
+								data.DeadLinks[url].forEach(function(obj) {
 									obj.FoundOnURL = url;
+
 									if (obj.StatusCode === 598) {
-										self.urlsWithLinksBlockedByRobots[url].push(obj);
+										self.urlsWithLinksBlockedByRobots[url][obj.URL] = obj;
 									} else {
-										self.urlsWithBrokenLinks[url].push(obj);
+										self.urlsWithBrokenLinks[url][obj.URL] = obj;
 									}
 								});
 
-								if (self.urlsWithBrokenLinks[url].length == 0) {
+								if (Object.keys(self.urlsWithBrokenLinks[url]).length == 0) {
 									delete self.urlsWithBrokenLinks[url];
 								}
 
-								if (self.urlsWithLinksBlockedByRobots[url].length == 0) {
+								if (Object.keys(self.urlsWithLinksBlockedByRobots[url]).length == 0) {
 									delete self.urlsWithLinksBlockedByRobots[url];
 								}
 							}
 						}
 
 						if (!jQuery.isEmptyObject(data.DeadEmbeddedImages)) { // necessary for placeholder
-							self.urlsWithDeadImages = data.DeadEmbeddedImages;
+							// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
+							
+							for (var url in data.DeadEmbeddedImages) {
+								self.urlsWithDeadImages[url] = {};
+
+								data.DeadEmbeddedImages[url].forEach(function(obj) {
+									obj.FoundOnURL = url;
+									self.urlsWithDeadImages[url][obj.URL] = obj;
+								});
+
+								if (Object.keys(self.urlsWithDeadImages[url]).length == 0) {
+									delete self.urlsWithDeadImages[url];
+								}
+							}
 						}
 					} else {
 						setTimeout(self.doRequest, 1000);

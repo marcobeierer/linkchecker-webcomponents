@@ -11,19 +11,14 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr if="{ !dataFiltered || (Array.isArray(dataFiltered) && dataFiltered.length == 0) || Object.keys(dataFiltered).length == 0 }">
+				<tr if="{ !data || (Array.isArray(data) && data.length == 0) || Object.keys(data).length == 0 }">
 					<td colspan="{ columns.length }">{ message }</td>
 				</tr>
-				<tr class="{ rowClassCallback(elem) }" each="{ elem, index in dataFiltered }">
+				<tr class="{ rowClassCallback(elem) }" each="{ elem, index in data }">
 					<td each="{ column, index2 in columns }" colspan="{ column.colspan }" if="{ column.showBody == undefined }" style="width: { column.width }">
-						<!--
-						<a href="{ linkBaseURL }/?id={ encodeURIComponent(elem['ID']) }" if="{ index2 == 0 && !disableLinking }">
-							{ elem[column.label] }
-						</a>-->
-
 						<virtual if="{ column.linkCallback == undefined }">
 							<span if="{ column.callback != undefined && column.type == 'subtable' }">
-								<datatable columns="{ column.callback(elem, index) }" data="{ elem }" actions="{ actions }" no-table-footer no-table-header margin-bottom="0"></datatable>
+								<datatable message="{ column.message }" columns="{ column.callback(elem, index) }" data="{ elem }" actions="{ actions }" no-table-footer no-table-header margin-bottom="0"></datatable>
 							</span>
 
 							<span if="{ column.callback != undefined && column.type != 'subtable'}">
@@ -55,10 +50,8 @@
 								class="btn btn-sm btn-{ action.btnType }">
 								{ (action.labelCallback !== undefined && action.labelCallback(elem)) || tr(action.label) }</a>
 
-							<a onclick="{ download.bind(this, elem, action.fieldName, action.urlSuffix) }" if="{ action.action == 'download' }"  class="btn-flat">{ tr(action.label) }</a>
-							<a onclick="{ delete.bind(this, elem, action.fieldName) }" if="{ action.action == 'delete' }"  class="btn-flat red">{ tr(action.label) }</a>
 							<a href="{ action.url }/?id={ encodeURIComponent(elem['ID']) }" if="{ action.action == 'link' }"  class="btn-flat">{ tr(action.label) }</a>
-							<a data-toggle="modal" data-target="{ action.target }" onclick="{ modalOpened }" if="{ action.action == 'modal-link' }"  class="btn">{ tr(action.label) }</a>
+							<a data-toggle="modal" data-target="{ action.target }" onclick="{ modalOpened }" if="{ action.action == 'modal-link' }" class="btn">{ tr(action.label) }</a>
 						</virtual>
 					</td>
 				</tr>
@@ -86,11 +79,7 @@
 		self.showTableHeader = opts.noTableHeader === undefined;
 		self.showTableFooter = opts.noTableFooter === undefined;
 
-		self.data = [];
-		self.dataFiltered = [];
-		setData(opts.data);
-
-		self.lastFilterText = '';
+		self.data = opts.data;
 
 		self.tr = opts.trFunc || function(str) {
 			return str;
@@ -113,11 +102,6 @@
 
 		self.on('mount', function() {
 			self.events.on('create', onCreate);
-			self.events.on('filter', onFilter);
-
-			if (opts.data !== undefined) {
-				setData(opts.data);
-			}
 
 			if (opts.actions !== undefined) {
 				self.actions = opts.actions;
@@ -126,14 +110,9 @@
 
 		self.on('unmount', function() {
 			self.events.off('create', onCreate);
-			self.events.off('filter', onFilter);
 		});
 
 		self.on('update', function() {
-			if (opts.data !== undefined) {
-				setData(opts.data);
-			}
-
 			if (opts.message !== undefined) {
 				self.message = opts.message;
 			}
@@ -147,100 +126,5 @@
 			self.data.unshift(elem);
 			self.update();
 		};
-
-		var onFilter = function(filterText) {
-			applyFilter(filterText);
-			self.update();
-		};
-
-		function includes(elem, filterText) {
-			if (elem === undefined || elem === null || typeof elem == 'boolean') {
-				return false;
-			}
-
-			if (typeof elem == 'object') {
-				for (var index in elem) {
-					if (includes(elem[index], filterText)) {
-						return true;
-					}
-				}
-
-				return false;
-			}
-
-			if (typeof elem == 'number') {
-				// includes() just works on strings
-				elem = elem.toString();
-			}
-
-			elem = elem.toLowerCase();
-			filterText = filterText.toLowerCase();
-
-			return elem.includes(filterText);
-		}
-
-		function applyFilter(filterText) {
-			if (!filterText.startsWith(self.lastFilterText)) {
-				// use self.data if filterText was not narrowed down, but completely changed
-				self.dataFiltered = self.data.slice(); // copy
-			}
-
-			self.dataFiltered = self.dataFiltered.filter(function(company) {
-				return includes(company, filterText);
-			});
-
-			self.lastFilterText = filterText;
-		}
-
-		function setData(data) {
-			self.data = data;
-
-			if (Array.isArray(self.data)) {
-				self.dataFiltered = self.data.slice(); // copy
-			} else {
-				self.dataFiltered = JSON.parse(JSON.stringify(self.data)); // deep copy of object, prototype functions are lost
-			}
-
-			self.lastFilterText = '';
-		};
-
-		self.delete = function(elem, fieldName) {
-			// TODO if necessary
-		}
-
-		self.download = function(elem, fieldName, urlSuffix) {
-			var resourceURL = self.url + encodeURIComponent(elem[fieldName] + urlSuffix);
-
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', resourceURL);
-			xhr.responseType = 'arraybuffer';
-
-			xhr.withCredentials = true;
-			xhr.setRequestHeader('X-CSRF-Token', Cookies.get('CSRFToken'));
-
-			xhr.onload = function(event) {
-				if (xhr.status == 200) {
-					var data = new Uint8Array(this.response);
-					var contentType = xhr.getResponseHeader('Content-Type');
-
-					var blob = new Blob([data], { type: contentType });
-
-					var blobURL = (window.URL || window.webkitURL).createObjectURL(blob);
-					var filename = xhr.getResponseHeader('X-Filename');
-
-					if (window.navigator.msSaveOrOpenBlob) {
-						window.navigator.msSaveOrOpenBlob(blob, filename);
-					} else {
-						var a = document.createElement('a');
-						a.href = blobURL;
-						a.download = filename;
-						a.click();
-					}
-					(window.URL || window.webkitURL).revokeObjectURL(blobURL);
-				}
-			};
-
-			xhr.send();
-		}
 	</script>
 </datatable>
