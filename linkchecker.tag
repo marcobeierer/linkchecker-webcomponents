@@ -24,6 +24,7 @@
 	<h3>Broken Links</h3>
 	<p>The table below shows all broken links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
 	<datatable
+		ref="brokenLinks"
 		table-class="table-striped responsive-table"
 		columns="{ urlsWithBrokenLinksColumns }"
 		data="{ urlsWithBrokenLinks }"
@@ -35,6 +36,7 @@
 	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol. You find all links the Link Checker was not allowed to access in the table below. If the blocked links were found on your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq">FAQs</a> for further information.</p>
 	<p>External links that are blocked by a robots.txt file cannot be checked by the Link Checker and need to be verified manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
 	<datatable
+		ref="linksBlockedByRobots"
 		table-class="table-striped responsive-table"
 		columns="{ urlsWithLinksBlockedByRobotsColumns }"
 		data="{ urlsWithLinksBlockedByRobots }"
@@ -186,7 +188,7 @@
 					label: 'Marked As Working On',
 					width: '14em',
 					callback: function(elem) {
-						var markedOn = lscache.get(elem.FoundOnURL + '|' + elem.URL);
+						var markedOn = lscache.get(elem.URL);
 						if (markedOn == undefined) {
 							return 'never';
 						}
@@ -231,14 +233,15 @@
 				btnType: 'primary',
 				action: 'callback',
 				callback: function(elem) {
-					lscache.set(elem.FoundOnURL + '|' + elem.URL, Date.now(), 60 * 24 * 30); // in minutes; 60 * 24 * 30 is one month
+					lscache.set(elem.URL, Date.now(), 60 * 24 * 30); // in minutes; 60 * 24 * 30 is one month
+					self.refs.linksBlockedByRobots.update(); // update all in this table because each link should just be checked once, even if it is used on multiple pages
 				},
 				isDisabledCallback: wasAlreadyMarkedToday 
 			}
 		];
 
 		function wasAlreadyMarkedToday(elem) {
-			var markedOn = lscache.get(elem.FoundOnURL + '|' + elem.URL);
+			var markedOn = lscache.get(elem.URL);
 			if (markedOn == undefined) {
 				return false;
 			}
@@ -285,7 +288,7 @@
 				// see also http://riotjs.com/guide/ (for example: Event handlers with looped items)
 				
 				// delete list[elem.FoundOnURL];
-				// self.update();
+				// self.update(); // TODO add argument with reference to tag and use it (like self.refs.brokenLinks.update());
 			} 
 		}
 
@@ -363,7 +366,7 @@
 
 				var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot&max_fetchers=' + self.maxFetchers;
 				if (opts.dev == '1') {
-					var url = 'sample_data/current.json';
+					var url = 'sample_data/current.json?_=' + Date.now();
 				}
 
 				jQuery.ajax({
