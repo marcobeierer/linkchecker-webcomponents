@@ -394,7 +394,7 @@
 							self.setMessage(message, 'success');
 						}
 
-						self.resultsMessage = 'Nothing found, everything seems fine here.';
+						self.resultsMessage = 'Nothing is broken, everything seems to be fine.';
 
 						if (!jQuery.isEmptyObject(data.DeadLinks)) { // necessary for placeholder
 							// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value

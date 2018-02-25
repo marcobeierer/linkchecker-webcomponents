@@ -4967,7 +4967,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 							self.setMessage(message, 'success');
 						}
 
-						self.resultsMessage = 'Nothing found, everything seems fine here.';
+						self.resultsMessage = 'Nothing is broken, everything seems to be fine.';
 
 						if (!jQuery.isEmptyObject(data.DeadLinks)) {
 
