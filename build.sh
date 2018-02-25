@@ -2,7 +2,9 @@
 
 rm build/*
 riot --ext tag . build
-cp libs/* build/
 
-cat build/*.js > release/linkchecker-latest.js
-closure-compiler build/*.js > release/linkchecker-latest.min.js
+cat libs/*.js > release/linkchecker-latest.js
+cat build/*.js >> release/linkchecker-latest.js
+
+closure-compiler libs/*.js > release/linkchecker-latest.min.js
+closure-compiler build/*.js >> release/linkchecker-latest.min.js
