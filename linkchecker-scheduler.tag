@@ -1,12 +1,20 @@
 <linkchecker-scheduler>
-	<div class="alert alert-{ messageType }">
+	<div if="{ token }" class="alert alert-{ messageType }">
 		<raw content="{ message }" />
 	</div>
 
-	<div class="panel panel-primary" if="{ !registered }">
+	<div class="panel panel-default" if="{ !token }">
+		<div class="panel-heading">Description</div>
+		<div class="panel-body">
+			<p>The scheduler is an additional service for all users who have bought a token for the <a href="https://www.marcobeierer.com/wordpress-plugins/link-checker-professional" target="_blank">Link Checker Professional</a>.</p>
+			<p>If you register your site to the scheduler, a link check is automatically triggered once a day and you receive an email notification with a summary report after the check has finished. If a dead link was found, you can use the default Link Checker interface to fetch the detailed results.</p>
+		</div>
+	</div>
+
+	<div class="panel panel-primary" if="{ token && !registered }">
 		<div class="panel-heading">Register your website</div>
 		<div class="panel-body">
-			<p>If you register your site to the scheduler, a link check is automatically triggered once a day and you receive an email notification with a summary report after the check has finished. If a dead link was found, you could use the default Link Checker interface to fetch the detailed results.</p>
+			<p>If you register your site to the scheduler, a link check is automatically triggered once a day and you receive an email notification with a summary report after the check has finished. If a dead link was found, you can use the default Link Checker interface to fetch the detailed results.</p>
 			<form onsubmit="{ register }">
 				<input type="hidden" name="Service" value="Link Checker" />
 				<input type="hidden" name="IntervalInNs" value="86400000000000" />
@@ -26,7 +34,7 @@
 		</div>
 	</div>
 
-	<div class="panel panel-primary" if="{ registered }">
+	<div class="panel panel-primary" if="{ token && registered }">
 		<div class="panel-heading">Deregister your website</div>
 		<div class="panel-body">
 			<p>Your site is registered to the scheduler and you should receive status emails regularly. Use the button below if you like to disable the automated checks.</p>
