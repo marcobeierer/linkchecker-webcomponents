@@ -30,6 +30,17 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 - impl auto resume
 - impl cancel option
 
+## Changelog
+
+### 1.3.1
+- Just add riot.js without compiler to release file.
+
+### 1.3.0
+- Update riot version
+- Fixed broken links could be removed from the results table with the _Mark as fixed_ button. 
+- Added section for links blocked by robots.txt and a _Mark as working_ button to mark them as working after a manual check.
+- Added common status code information.
+- Broken links in the result table are linked know for the case that someone likes to verify that a link is really broken.
 
 ## Libraries
 - [lscache](https://github.com/pamelafox/lscache)
