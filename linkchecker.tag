@@ -297,7 +297,7 @@
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
 			self.token = token;
-			self.maxFetchers = maxFetchers || 10;
+			self.maxFetchers = maxFetchers || self.maxFetchers; // self.maxFetchers because it is the value of linkchecker tag and should be used if form has no fetchers provided
 			
 			self.start();
 		});
