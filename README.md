@@ -32,6 +32,9 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 ## Changelog
 
+### 1.3.3
+- 1.3.2 release did not contain new build.
+
 ### 1.3.2
 - Fixed max fetchers if started from form.
 - Added origin system parameter.
