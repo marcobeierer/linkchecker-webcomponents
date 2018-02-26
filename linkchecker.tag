@@ -44,8 +44,9 @@
 		message="{ resultsMessage }">
 	</datatable>
 
-	<h3 if="{ token }">Broken Images</h3>
-	<p>The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
+	<h3>Broken Images</h3>
+	<p if="{ !token }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
+	<p if="{ token }">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
 	<datatable if="{ token }"
 		table-class="table-striped responsive-table"
 		columns="{ urlsWithDeadImagesColumns}"
