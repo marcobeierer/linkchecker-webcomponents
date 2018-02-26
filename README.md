@@ -32,6 +32,12 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 ## Changelog
 
+### 1.3.2
+- Fixed max fetchers if started from form.
+- Added origin system parameter.
+- Added info box to scheduler and hide register form if no token is present
+- Hide broken images string and show info that not available.
+
 ### 1.3.1
 - Just add riot.js without compiler to release file.
 
