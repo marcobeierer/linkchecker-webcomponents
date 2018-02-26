@@ -73,6 +73,7 @@
 		var self = this;
 
 		self.message = '';
+		self.originSystem = opts.originSystem || 'riot';
 
 		self.on('mount', function() {
 			lscache.setBucket('linkchecker');
@@ -365,7 +366,7 @@
 					tokenHeader = 'BEARER ' + self.token;
 				}
 
-				var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=riot&max_fetchers=' + self.maxFetchers;
+				var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 				if (opts.dev == '1') {
 					var url = 'sample_data/current.json?_=' + Date.now();
 				}
