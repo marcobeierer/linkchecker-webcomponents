@@ -33,8 +33,11 @@
 	</datatable>
 
 	<h3>Links blocked by robots.txt</h3>
-	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol. You find all links the Link Checker was not allowed to access in the table below. If the blocked links were found on your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p>
-	<p>External links that are blocked by a robots.txt file cannot be checked by the Link Checker and need to be verified manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
+	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p>
+	<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
+	<p>If the blocked links were found your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p>
+	
+	<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
 	<datatable
 		ref="linksBlockedByRobots"
 		table-class="table-striped responsive-table"
