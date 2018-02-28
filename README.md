@@ -1,5 +1,8 @@
 # Link Checker
 
+## ToTest
+- retries on no response error
+
 ## Next steps
 - Test images
 - IE testen

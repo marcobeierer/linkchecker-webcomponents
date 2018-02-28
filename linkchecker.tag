@@ -337,6 +337,8 @@
 		self.urlsWithLinksBlockedByRobots = {};
 		self.urlsWithDeadImages = {};
 
+		self.retries = 0;
+
 		submit(e) {
 			e.preventDefault();
 			self.start();
@@ -378,6 +380,8 @@
 						'Authorization': tokenHeader,
 					}
 				}).done(function(data) {
+					self.retries = 0;
+
 					self.urlsCrawledCount = data.URLsCrawledCount;
 					self.checkedLinksCount = data.CheckedLinksCount;
 
@@ -451,22 +455,31 @@
 
 					if (statusCode == 401) { // unauthorized
 						self.setMessage("The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.", 'danger');
-					} else if (statusCode == 500) {
+					} 
+					else if (statusCode == 500) {
 						if (xhr.responseText == '') {
 							self.setMessage("The check of your website failed. Please try it again.", 'danger');
 						} else {
 							self.setMessage("The check of your website failed with the error:<br/><strong>" + JSON.parse(xhr.responseText) + "</strong>.", 'danger');
 						}
-					} else if (statusCode == 503) {
+					} 
+					else if (statusCode == 503) {
 						self.setMessage("The backend server is temporarily unavailable. Please try it again later.", 'danger');
-					} else if (statusCode == 504 && xhr.getResponseHeader('X-CURL-Error') == 1) {
+					} 
+					else if (statusCode == 504 && xhr.getResponseHeader('X-CURL-Error') == 1) {
 						var message = JSON.parse(xhr.responseText);
 						if (message == '') {
 							self.setMessage("A cURL error occurred. Please contact the developer of the extensions.", 'danger');
 						} else {
 							self.setMessage("A cURL error occurred with the error message:<br/><strong>" + message + "</strong>.", 'danger');
 						}
-					} else {
+					} 
+					else if (statusCode == 0 && self.retries < 3) { // statusCode 0 means that the request was not sent or no response was received
+						self.retries++;
+						setTimeout(self.doRequest, 1000);
+						return;
+					} 
+					else {
 						self.setMessage("The check of your website failed. Please try it again or contact the developer of the extensions.", 'danger');
 					}
 
