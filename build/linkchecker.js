@@ -1,4 +1,4 @@
-riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="margin-bottom: 20px;"> <button class="btn btn-default" type="submit" disabled="{disabled}">Check your website</button> </form> <div class="alert alert-{messageType}"> <raw content="{message}"></raw> </div> <div class="panel panel-default" style="width: 550px; max-width: 100%;"> <div class="panel-heading">Stats</div> <table class="table table-bordered"> <tr> <td>Number of crawled HTML pages on your site</td> <td class="text-right" style="width: 150px;">{urlsCrawledCount}</td> </tr> <tr> <td>Number of checked internal and external resources</td> <td class="text-right">{checkedLinksCount}</td> </tr> </table> </div> <h3>Broken Links</h3> <p>The table below shows all broken links. Please note that the fixed markers are just temporary and are reset with the next link check.</p> <datatable ref="brokenLinks" table-class="table-striped responsive-table" columns="{urlsWithBrokenLinksColumns}" data="{urlsWithBrokenLinks}" actions="{brokenLinksActions}" message="{resultsMessage}"> </datatable> <h3>Links blocked by robots.txt</h3> <p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol. You find all links the Link Checker was not allowed to access in the table below. If the blocked links were found on your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p> <p>External links that are blocked by a robots.txt file cannot be checked by the Link Checker and need to be verified manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p> <datatable ref="linksBlockedByRobots" table-class="table-striped responsive-table" columns="{urlsWithLinksBlockedByRobotsColumns}" data="{urlsWithLinksBlockedByRobots}" actions="{blockedLinksActions}" message="{resultsMessage}"> </datatable> <h3>Broken Images</h3> <p if="{!token}">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p> <p if="{token}">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p> <datatable if="{token}" table-class="table-striped responsive-table" columns="{urlsWithDeadImagesColumns}" data="{urlsWithDeadImages}" actions="{brokenImagesActions}" message="{resultsMessage}"> </datatable> <h3>Custom Status Codes</h3> <p>The Link Checker uses the following custom status codes:</p> <ul> <li>598 - Blocked by robots: The Link Checker was not able to access the page because the access was blocked by the robots exclusion protocol.</li> <li>599 - HTML parse error: The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</li> </ul> <p><em>Please note that it is also possible that a website returns these status codes and if this is the case, they probably have another meaning.</em></p> <h3>Common Status Codes</h3> <ul> <li>502 - Bad Gateway: The server returned an invalid response when the Link Checker tried to access the URL.</li> <li>504 - Gateway Timeout: The Link Checker was not able to access the URL because it timed out.</li> </ul>', '', '', function(opts) {
+riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="margin-bottom: 20px;"> <button class="btn btn-default" type="submit" disabled="{disabled}">Check your website</button> </form> <div class="alert alert-{messageType}"> <raw content="{message}"></raw> </div> <div class="panel panel-default" style="width: 550px; max-width: 100%;"> <div class="panel-heading">Stats</div> <table class="table table-bordered"> <tr> <td>Number of crawled HTML pages on your site</td> <td class="text-right" style="width: 150px;">{urlsCrawledCount}</td> </tr> <tr> <td>Number of checked internal and external resources</td> <td class="text-right">{checkedLinksCount}</td> </tr> </table> </div> <h3>Broken Links</h3> <p>The table below shows all broken links. Please note that the fixed markers are just temporary and are reset with the next link check.</p> <datatable ref="brokenLinks" table-class="table-striped responsive-table" columns="{urlsWithBrokenLinksColumns}" data="{urlsWithBrokenLinks}" actions="{brokenLinksActions}" message="{resultsMessage}"> </datatable> <h3>Broken Images</h3> <p if="{!token}">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p> <p if="{token}">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p> <datatable if="{token}" table-class="table-striped table-responsive" columns="{urlsWithDeadImagesColumns}" data="{urlsWithDeadImages}" actions="{brokenImagesActions}" message="{resultsMessage}"> </datatable> <h3>Common Status Codes</h3> <div class="panel panel-default table-responsive"> <table class="table table-striped table-responsive"> <thead> <tr> <th style="width: 10em;">Status Code</th> <th style="width: 20em;">Status Text</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td>502</td> <td>Bad Gateway</td> <td>The server returned an invalid response when the Link Checker tried to access the URL.</td> </tr> <tr> <td>504</td> <td>Gateway Timeout</td> <td>The Link Checker was not able to access the URL because it timed out.</td> </tr> </tbody> </table> </div> <h3>Unhandled Resources (mainly blocked by robots.txt)</h3> <p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p> <p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p> <p>If the blocked links were found your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p> <h4>Unhandled Links</h4> <datatable ref="linksBlockedByRobots" table-class="table-striped table-responsive" columns="{urlsWithLinksBlockedByRobotsColumns}" data="{urlsWithLinksBlockedByRobots}" actions="{blockedLinksActions}" message="{resultsMessage}"> </datatable> <virtual if="{token}"> <h4>Unhandled Images</h4> <datatable ref="unhandledEmbeddedResources" table-class="table-striped table-responsive" columns="{urlsWithLinksBlockedByRobotsColumns}" data="{urlsWithUnhandledEmbeddedResources}" actions="{blockedLinksActions}" message="{resultsMessage}"> </datatable> </virtual> <h4>Custom Status Codes</h4> <div class="panel panel-default table-responsive"> <table class="table table-striped table-responsive"> <thead> <tr> <th style="width: 10em;">Status Code</th> <th style="width: 20em;">Status Text</th> <th>Description</th> </tr> </thead> </tbody> <tr> <td>601</td> <td>Blocked by robots</td> <td>The Link Checker was not able to access the URL because the access was blocked by the robots exclusion protocol.</td> </tr> <tr> <td>602</td> <td>HTML parse error</td> <td>The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</td> </tr> </tbody> </table> </div> <p><em>Please note that it is possible in rare situations that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>', '', '', function(opts) {
 		var self = this;
 
 		self.message = '';
@@ -41,7 +41,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 
 		self.urlsWithLinksBlockedByRobotsColumns = [
 			{
-				label: 'URL where the links were found',
+				label: 'URL where the resources were found',
 				width: '35%',
 				callback: function(info, url) {
 					return url;
@@ -51,7 +51,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 				},
 			},
 			{
-				label: 'Blocked Links',
+				label: 'Blocked Resources',
 				type: 'subtable',
 				colspan: '4',
 				callback: subtableBlockedLinksCallback,
@@ -63,7 +63,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 			},
 			{
 				label: 'Marked As Working On',
-				width: '14em',
+				width: '15em',
 				showBody: false,
 			},
 			{
@@ -117,7 +117,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 				},
 				{
 					label: 'Marked As Working On',
-					width: '14em',
+					width: '15em',
 					callback: function(elem) {
 						var markedOn = lscache.get(elem.URL);
 						if (markedOn == undefined) {
@@ -259,6 +259,9 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 		self.urlsWithBrokenLinks = {};
 		self.urlsWithLinksBlockedByRobots = {};
 		self.urlsWithDeadImages = {};
+		self.urlsWithUnhandledEmbeddedResources = {};
+
+		self.retries = 0;
 
 		this.submit = function(e) {
 			e.preventDefault();
@@ -274,6 +277,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 			resetObject(self.urlsWithBrokenLinks);
 			resetObject(self.urlsWithLinksBlockedByRobots);
 			resetObject(self.urlsWithDeadImages);
+			resetObject(self.urlsWithUnhandledEmbeddedResources);
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
@@ -291,7 +295,9 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 
 				var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 				if (opts.dev == '1') {
-					var url = 'sample_data/current.json?_=' + Date.now();
+					url = 'sample_data/current.json?_=' + Date.now();
+				} else if (opts.dev == '2') {
+					url = 'http://localhost:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 				}
 
 				jQuery.ajax({
@@ -301,6 +307,8 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 						'Authorization': tokenHeader,
 					}
 				}).done(function(data) {
+					self.retries = 0;
+
 					self.urlsCrawledCount = data.URLsCrawledCount;
 					self.checkedLinksCount = data.CheckedLinksCount;
 
@@ -325,21 +333,26 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 
 							for (var url in data.DeadLinks) {
 								self.urlsWithBrokenLinks[url] = {};
-								self.urlsWithLinksBlockedByRobots[url] = {};
 
 								data.DeadLinks[url].forEach(function(obj) {
 									obj.FoundOnURL = url;
-
-									if (obj.StatusCode === 598) {
-										self.urlsWithLinksBlockedByRobots[url][obj.URL] = obj;
-									} else {
-										self.urlsWithBrokenLinks[url][obj.URL] = obj;
-									}
+									self.urlsWithBrokenLinks[url][obj.URL] = obj;
 								});
 
 								if (Object.keys(self.urlsWithBrokenLinks[url]).length == 0) {
 									delete self.urlsWithBrokenLinks[url];
 								}
+							}
+						}
+
+						if (!jQuery.isEmptyObject(data.UnhandledLinkedResources)) {
+							for (var url in data.UnhandledLinkedResources) {
+								self.urlsWithLinksBlockedByRobots[url] = {};
+
+								data.UnhandledLinkedResources[url].forEach(function(obj) {
+									obj.FoundOnURL = url;
+									self.urlsWithLinksBlockedByRobots[url][obj.URL] = obj;
+								});
 
 								if (Object.keys(self.urlsWithLinksBlockedByRobots[url]).length == 0) {
 									delete self.urlsWithLinksBlockedByRobots[url];
@@ -362,6 +375,21 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 								}
 							}
 						}
+
+						if (!jQuery.isEmptyObject(data.UnhandledEmbeddedResources)) {
+							for (var url in data.UnhandledEmbeddedResources) {
+								self.urlsWithUnhandledEmbeddedResources[url] = {};
+
+								data.UnhandledEmbeddedResources[url].forEach(function(obj) {
+									obj.FoundOnURL = url;
+									self.urlsWithUnhandledEmbeddedResources[url][obj.URL] = obj;
+								});
+
+								if (Object.keys(self.urlsWithUnhandledEmbeddedResources[url]).length == 0) {
+									delete self.urlsWithUnhandledEmbeddedResources[url];
+								}
+							}
+						}
 					} else {
 						setTimeout(self.doRequest, 1000);
 					}
@@ -372,22 +400,31 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 
 					if (statusCode == 401) {
 						self.setMessage("The validation of your token failed. The token is invalid or has expired. Please try it again or contact me if the token should be valid.", 'danger');
-					} else if (statusCode == 500) {
+					}
+					else if (statusCode == 500) {
 						if (xhr.responseText == '') {
 							self.setMessage("The check of your website failed. Please try it again.", 'danger');
 						} else {
 							self.setMessage("The check of your website failed with the error:<br/><strong>" + JSON.parse(xhr.responseText) + "</strong>.", 'danger');
 						}
-					} else if (statusCode == 503) {
+					}
+					else if (statusCode == 503) {
 						self.setMessage("The backend server is temporarily unavailable. Please try it again later.", 'danger');
-					} else if (statusCode == 504 && xhr.getResponseHeader('X-CURL-Error') == 1) {
+					}
+					else if (statusCode == 504 && xhr.getResponseHeader('X-CURL-Error') == 1) {
 						var message = JSON.parse(xhr.responseText);
 						if (message == '') {
 							self.setMessage("A cURL error occurred. Please contact the developer of the extensions.", 'danger');
 						} else {
 							self.setMessage("A cURL error occurred with the error message:<br/><strong>" + message + "</strong>.", 'danger');
 						}
-					} else {
+					}
+					else if (statusCode == 0 && self.retries < 3) {
+						self.retries++;
+						setTimeout(self.doRequest, 1000);
+						return;
+					}
+					else {
 						self.setMessage("The check of your website failed. Please try it again or contact the developer of the extensions.", 'danger');
 					}
 

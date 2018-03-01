@@ -35,6 +35,13 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 ## Changelog
 
+### 1.4.0
+- Implemented three retries if request could not be sent or no response was received.
+- Explain changed status codes (598 is now 601 and 599 is 602).
+- Added unhandled resources and images.
+- Crawler
+	- Implemented better blocked by robots detection and handling (for external links).
+
 ### 1.3.3
 - 1.3.2 release did not contain new build.
 
