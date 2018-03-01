@@ -32,6 +32,17 @@
 		message="{ resultsMessage }">
 	</datatable>
 
+	<h3>Broken Images</h3>
+	<p if="{ !token }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
+	<p if="{ token }">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
+	<datatable if="{ token }"
+		table-class="table-striped table-responsive"
+		columns="{ urlsWithDeadImagesColumns}"
+		data="{ urlsWithDeadImages }"
+		actions="{ brokenImagesActions }"
+		message="{ resultsMessage }">
+	</datatable>
+
 	<h3>Links blocked by robots.txt</h3>
 	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p>
 	<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
@@ -40,37 +51,64 @@
 	<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
 	<datatable
 		ref="linksBlockedByRobots"
-		table-class="table-striped responsive-table"
+		table-class="table-striped table-responsive"
 		columns="{ urlsWithLinksBlockedByRobotsColumns }"
 		data="{ urlsWithLinksBlockedByRobots }"
 		actions="{ blockedLinksActions }"
 		message="{ resultsMessage }">
 	</datatable>
 
-	<h3>Broken Images</h3>
-	<p if="{ !token }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
-	<p if="{ token }">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
-	<datatable if="{ token }"
-		table-class="table-striped responsive-table"
-		columns="{ urlsWithDeadImagesColumns}"
-		data="{ urlsWithDeadImages }"
-		actions="{ brokenImagesActions }"
-		message="{ resultsMessage }">
-	</datatable>
-
 	<h3>Custom Status Codes</h3>
 	<p>The Link Checker uses the following custom status codes:</p>
-	<ul>
-		<li>598 - Blocked by robots: The Link Checker was not able to access the page because the access was blocked by the robots exclusion protocol.</li>
-		<li>599 - HTML parse error: The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</li>
-	</ul>
-	<p><em>Please note that it is also possible that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>
+	<div class="panel panel-default table-responsive">
+		<table class="table table-striped table-responsive">
+			<thead>
+				<tr>
+					<th style="width: 10em;">Status Code</th>
+					<th style="width: 20em;">Status Text</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			</tbody>
+				<tr>
+					<td>601</td>
+					<td>Blocked by robots</td>
+					<td>The Link Checker was not able to access the page because the access was blocked by the robots exclusion protocol.</td>
+				</tr>
+				<tr>
+					<td>602</td>
+					<td>HTML parse error</td>
+					<td>The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<p><em>Please note that it is also possible in rare situations that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>
 
 	<h3>Common Status Codes</h3>
-	<ul>
-		<li>502 - Bad Gateway: The server returned an invalid response when the Link Checker tried to access the URL.</li>
-		<li>504 - Gateway Timeout: The Link Checker was not able to access the URL because it timed out.</li>
-	</ul>
+	<div class="panel panel-default table-responsive">
+		<table class="table table-striped table-responsive">
+			<thead>
+				<tr>
+					<th style="width: 10em;">Status Code</th>
+					<th style="width: 20em;">Status Text</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>502</td>
+					<td>Bad Gateway</td>
+					<td>The server returned an invalid response when the Link Checker tried to access the URL.</td>
+				</tr>
+				<tr>
+					<td>504</td>
+					<td>Gateway Timeout</td>
+					<td>The Link Checker was not able to access the URL because it timed out.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<script>
 		var self = this;
@@ -373,7 +411,9 @@
 
 				var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 				if (opts.dev == '1') {
-					var url = 'sample_data/current.json?_=' + Date.now();
+					url = 'sample_data/current.json?_=' + Date.now();
+				} else if (opts.dev == '2') {
+					url = 'http://localhost:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 				}
 
 				jQuery.ajax({
