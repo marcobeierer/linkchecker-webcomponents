@@ -43,48 +43,6 @@
 		message="{ resultsMessage }">
 	</datatable>
 
-	<h3>Links blocked by robots.txt</h3>
-	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p>
-	<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
-	<p>If the blocked links were found your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p>
-	
-	<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
-	<datatable
-		ref="linksBlockedByRobots"
-		table-class="table-striped table-responsive"
-		columns="{ urlsWithLinksBlockedByRobotsColumns }"
-		data="{ urlsWithLinksBlockedByRobots }"
-		actions="{ blockedLinksActions }"
-		message="{ resultsMessage }">
-	</datatable>
-
-	<h3>Custom Status Codes</h3>
-	<p>The Link Checker uses the following custom status codes:</p>
-	<div class="panel panel-default table-responsive">
-		<table class="table table-striped table-responsive">
-			<thead>
-				<tr>
-					<th style="width: 10em;">Status Code</th>
-					<th style="width: 20em;">Status Text</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			</tbody>
-				<tr>
-					<td>601</td>
-					<td>Blocked by robots</td>
-					<td>The Link Checker was not able to access the page because the access was blocked by the robots exclusion protocol.</td>
-				</tr>
-				<tr>
-					<td>602</td>
-					<td>HTML parse error</td>
-					<td>The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<p><em>Please note that it is also possible in rare situations that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>
-
 	<h3>Common Status Codes</h3>
 	<div class="panel panel-default table-responsive">
 		<table class="table table-striped table-responsive">
@@ -109,6 +67,61 @@
 			</tbody>
 		</table>
 	</div>
+
+	<h3>Unhandled Resources (mainly blocked by robots.txt)</h3>
+	<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p>
+	<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
+	<p>If the blocked links were found your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p>
+	
+	<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
+
+	<h4>Unhandled Links</h4>
+	<datatable
+		ref="linksBlockedByRobots"
+		table-class="table-striped table-responsive"
+		columns="{ urlsWithLinksBlockedByRobotsColumns }"
+		data="{ urlsWithLinksBlockedByRobots }"
+		actions="{ blockedLinksActions }"
+		message="{ resultsMessage }">
+	</datatable>
+
+	<virtual if="{ token }">
+		<h4>Unhandled Images</h4>
+		<datatable
+			ref="unhandledEmbeddedResources"
+			table-class="table-striped table-responsive"
+			columns="{ urlsWithLinksBlockedByRobotsColumns }"
+			data="{ urlsWithUnhandledEmbeddedResources }"
+			actions="{ blockedLinksActions }"
+			message="{ resultsMessage }">
+		</datatable>
+	</virtual>
+
+	<h4>Custom Status Codes</h4>
+	<div class="panel panel-default table-responsive">
+		<table class="table table-striped table-responsive">
+			<thead>
+				<tr>
+					<th style="width: 10em;">Status Code</th>
+					<th style="width: 20em;">Status Text</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			</tbody>
+				<tr>
+					<td>601</td>
+					<td>Blocked by robots</td>
+					<td>The Link Checker was not able to access the URL because the access was blocked by the robots exclusion protocol.</td>
+				</tr>
+				<tr>
+					<td>602</td>
+					<td>HTML parse error</td>
+					<td>The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<p><em>Please note that it is possible in rare situations that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>
 
 	<script>
 		var self = this;
@@ -153,7 +166,7 @@
 
 		self.urlsWithLinksBlockedByRobotsColumns = [
 			{
-				label: 'URL where the links were found',
+				label: 'URL where the resources were found',
 				width: '35%',
 				callback: function(info, url) {
 					return url;
@@ -163,7 +176,7 @@
 				},
 			},
 			{
-				label: 'Blocked Links',
+				label: 'Blocked Resources',
 				type: 'subtable',
 				colspan: '4',
 				callback: subtableBlockedLinksCallback,
@@ -175,7 +188,7 @@
 			},
 			{
 				label: 'Marked As Working On',
-				width: '14em',
+				width: '15em',
 				showBody: false,
 			},
 			{
@@ -229,7 +242,7 @@
 				},
 				{
 					label: 'Marked As Working On',
-					width: '14em',
+					width: '15em',
 					callback: function(elem) {
 						var markedOn = lscache.get(elem.URL);
 						if (markedOn == undefined) {
@@ -377,6 +390,7 @@
 		self.urlsWithBrokenLinks = {};
 		self.urlsWithLinksBlockedByRobots = {};
 		self.urlsWithDeadImages = {};
+		self.urlsWithUnhandledEmbeddedResources = {};
 
 		self.retries = 0;
 
@@ -394,6 +408,7 @@
 			resetObject(self.urlsWithBrokenLinks);
 			resetObject(self.urlsWithLinksBlockedByRobots);
 			resetObject(self.urlsWithDeadImages);
+			resetObject(self.urlsWithUnhandledEmbeddedResources);
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
@@ -450,21 +465,26 @@
 							
 							for (var url in data.DeadLinks) {
 								self.urlsWithBrokenLinks[url] = {};
-								self.urlsWithLinksBlockedByRobots[url] = {};
 
 								data.DeadLinks[url].forEach(function(obj) {
 									obj.FoundOnURL = url;
-
-									if (obj.StatusCode === 598) {
-										self.urlsWithLinksBlockedByRobots[url][obj.URL] = obj;
-									} else {
-										self.urlsWithBrokenLinks[url][obj.URL] = obj;
-									}
+									self.urlsWithBrokenLinks[url][obj.URL] = obj;
 								});
 
 								if (Object.keys(self.urlsWithBrokenLinks[url]).length == 0) {
 									delete self.urlsWithBrokenLinks[url];
 								}
+							}
+						}
+
+						if (!jQuery.isEmptyObject(data.UnhandledLinkedResources)) {
+							for (var url in data.UnhandledLinkedResources) {
+								self.urlsWithLinksBlockedByRobots[url] = {};
+
+								data.UnhandledLinkedResources[url].forEach(function(obj) {
+									obj.FoundOnURL = url;
+									self.urlsWithLinksBlockedByRobots[url][obj.URL] = obj;
+								});
 
 								if (Object.keys(self.urlsWithLinksBlockedByRobots[url]).length == 0) {
 									delete self.urlsWithLinksBlockedByRobots[url];
@@ -485,6 +505,21 @@
 
 								if (Object.keys(self.urlsWithDeadImages[url]).length == 0) {
 									delete self.urlsWithDeadImages[url];
+								}
+							}
+						}
+
+						if (!jQuery.isEmptyObject(data.UnhandledEmbeddedResources)) {
+							for (var url in data.UnhandledEmbeddedResources) {
+								self.urlsWithUnhandledEmbeddedResources[url] = {};
+
+								data.UnhandledEmbeddedResources[url].forEach(function(obj) {
+									obj.FoundOnURL = url;
+									self.urlsWithUnhandledEmbeddedResources[url][obj.URL] = obj;
+								});
+
+								if (Object.keys(self.urlsWithUnhandledEmbeddedResources[url]).length == 0) {
+									delete self.urlsWithUnhandledEmbeddedResources[url];
 								}
 							}
 						}
