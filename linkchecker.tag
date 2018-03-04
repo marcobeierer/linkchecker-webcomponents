@@ -421,7 +421,7 @@
 
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
-			self.token = token;
+			self.setToken(token);
 			self.maxFetchers = maxFetchers || self.maxFetchers; // self.maxFetchers because it is the value of linkchecker tag and should be used if form has no fetchers provided
 			
 			self.start();
@@ -442,10 +442,17 @@
 			self.update();
 		}
 
+		setToken(token) {
+			self.token = token.replace(/\s/g, ''); // remove all whitespace (space, breakes, tabs)
+		}
+
 		var resultsMessage = 'Link check not started yet.';
 
 		self.websiteURL = opts.websiteUrl || '';
-		self.token = opts.token || '';
+		self.token = '';
+		if (opts.token) {
+			self.setToken(opts.token);
+		}
 		self.maxFetchers = opts.maxFetchers || 10;
 
 		if (self.websiteURL != '') {
