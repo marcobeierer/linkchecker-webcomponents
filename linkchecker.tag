@@ -43,6 +43,17 @@
 		message="{ resultsMessage }">
 	</datatable>
 
+	<h3>Broken Embedded YouTube Videos</h3>
+	<p if="{ !token }">Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
+	<p if="{ token }">The table below shows all broken embedded YouYube videos. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
+	<datatable if="{ token }"
+		table-class="table-striped table-responsive"
+		columns="{ urlsWithDeadYouTubeVideosColumns }"
+		data="{ urlsWithDeadYouTubeVideos }"
+		actions="{ deadYouTubeVideosActions }"
+		message="{ resultsMessage }">
+	</datatable>
+
 	<h3>Common Status Codes</h3>
 	<div class="panel panel-default table-responsive">
 		<table class="table table-striped table-responsive">
@@ -153,7 +164,7 @@
 				message: 'No broken links left.',
 			},
 			{
-				label: 'StatusCode',
+				label: 'Status Code',
 				width: '9em',
 				showBody: false,
 			},
@@ -182,7 +193,7 @@
 				callback: subtableBlockedLinksCallback,
 			},
 			{
-				label: 'StatusCode',
+				label: 'Status Code',
 				width: '9em',
 				showBody: false,
 			},
@@ -217,8 +228,38 @@
 				message: 'No broken images left.',
 			},
 			{
-				label: 'StatusCode',
+				label: 'Status Code',
 				width: '9em',
+				showBody: false,
+			},
+			{
+				label: 'Actions',
+				width: '11em',
+				showBody: false,
+			}
+		];
+
+		self.urlsWithDeadYouTubeVideosColumns = [
+			{
+				label: 'URL where the broken videos were found',
+				width: '35%',
+				callback: function(info, url) {
+					return url;
+				},
+				linkCallback: function(info, url) {
+					return url;
+				},
+			},
+			{
+				label: 'Broken Embedded Videos',
+				type: 'subtable',
+				colspan: '3',
+				callback: subtableWithStatusTextCallback,
+				message: 'No broken videos left.',
+			},
+			{
+				label: 'Status Text',
+				width: '25em',
 				showBody: false,
 			},
 			{
@@ -278,6 +319,25 @@
 			]
 		}
 
+		function subtableWithStatusTextCallback(info, url) {
+			return [
+				{
+					label: 'URL',
+					linkCallback: function(elem) {
+						return elem.URL;
+					},
+				},
+				{
+					label: 'StatusText',
+					width: '25em',
+				},
+				{
+					label: 'Actions',
+					width: '10em', // one em less than table header because of margin-right between inner and outer table
+				}
+			]
+		}
+
 		self.blockedLinksActions = [
 			{
 				labelCallback: function(elem) {
@@ -311,6 +371,17 @@
 				action: 'callback',
 				callback: function(elem) {
 					markLinkInList(elem, self.urlsWithDeadImages);
+				}
+			}
+		];
+
+		self.deadYouTubeVideosActions = [
+			{
+				label: 'Mark as Fixed',
+				btnType: 'primary',
+				action: 'callback',
+				callback: function(elem) {
+					markLinkInList(elem, self.urlsWithDeadYouTubeVideos);
 				}
 			}
 		];
@@ -390,6 +461,7 @@
 		self.urlsWithBrokenLinks = {};
 		self.urlsWithLinksBlockedByRobots = {};
 		self.urlsWithDeadImages = {};
+		self.urlsWithDeadYouTubeVideos = {};
 		self.urlsWithUnhandledEmbeddedResources = {};
 
 		self.retries = 0;
@@ -408,6 +480,7 @@
 			resetObject(self.urlsWithBrokenLinks);
 			resetObject(self.urlsWithLinksBlockedByRobots);
 			resetObject(self.urlsWithDeadImages);
+			resetObject(self.urlsWithDeadYouTubeVideos);
 			resetObject(self.urlsWithUnhandledEmbeddedResources);
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
@@ -428,7 +501,7 @@
 				if (opts.dev == '1') {
 					url = 'sample_data/current.json?_=' + Date.now();
 				} else if (opts.dev == '2') {
-					url = 'http://localhost:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
+					url = 'http://marco-desktop:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 				}
 
 				jQuery.ajax({
@@ -505,6 +578,23 @@
 
 								if (Object.keys(self.urlsWithDeadImages[url]).length == 0) {
 									delete self.urlsWithDeadImages[url];
+								}
+							}
+						}
+
+						if (!jQuery.isEmptyObject(data.DeadEmbeddedYouTubeVideos)) { // necessary for placeholder
+							// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
+							
+							for (var url in data.DeadEmbeddedYouTubeVideos) {
+								self.urlsWithDeadYouTubeVideos[url] = {};
+
+								data.DeadEmbeddedYouTubeVideos[url].forEach(function(obj) {
+									obj.FoundOnURL = url;
+									self.urlsWithDeadYouTubeVideos[url][obj.URL] = obj;
+								});
+
+								if (Object.keys(self.urlsWithDeadYouTubeVideos[url]).length == 0) {
+									delete self.urlsWithDeadYouTubeVideos[url];
 								}
 							}
 						}
