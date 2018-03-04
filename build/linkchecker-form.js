@@ -7,6 +7,10 @@ riot.tag2('linkchecker-form', '<form onsubmit="{submit}" style="margin-bottom: 2
 			if (opts.websiteUrl != undefined) {
 				this.refs.websiteURL.value = opts.websiteUrl;
 			}
+
+			if (opts.token != undefined) {
+				this.refs.token.value = opts.token;
+			}
 		});
 
 		this.submit = function(e) {

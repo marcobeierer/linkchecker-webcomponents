@@ -35,6 +35,12 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 ## Changelog
 
+### 1.5.0
+- Added support for broken embedded YouTube videos.
+- Remove all whitespace (line breaks, spaces, tabs) from token. This prevents Copy and Paste issues.
+- Improvement notification message for daily checks.
+- Crawler performance improvements.
+
 ### 1.4.0
 - Implemented three retries if request could not be sent or no response was received.
 - Explain changed status codes (598 is now 601 and 599 is 602).

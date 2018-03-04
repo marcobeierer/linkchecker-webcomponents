@@ -1,4 +1,4 @@
-riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="margin-bottom: 20px;"> <button class="btn btn-default" type="submit" disabled="{disabled}">Check your website</button> </form> <div class="alert alert-{messageType}"> <raw content="{message}"></raw> </div> <div class="panel panel-default" style="width: 550px; max-width: 100%;"> <div class="panel-heading">Stats</div> <table class="table table-bordered"> <tr> <td>Number of crawled HTML pages on your site</td> <td class="text-right" style="width: 150px;">{urlsCrawledCount}</td> </tr> <tr> <td>Number of checked internal and external resources</td> <td class="text-right">{checkedLinksCount}</td> </tr> </table> </div> <h3>Broken Links</h3> <p>The table below shows all broken links. Please note that the fixed markers are just temporary and are reset with the next link check.</p> <datatable ref="brokenLinks" table-class="table-striped responsive-table" columns="{urlsWithBrokenLinksColumns}" data="{urlsWithBrokenLinks}" actions="{brokenLinksActions}" message="{resultsMessage}"> </datatable> <h3>Broken Images</h3> <p if="{!token}">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p> <p if="{token}">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p> <datatable if="{token}" table-class="table-striped table-responsive" columns="{urlsWithDeadImagesColumns}" data="{urlsWithDeadImages}" actions="{brokenImagesActions}" message="{resultsMessage}"> </datatable> <h3>Common Status Codes</h3> <div class="panel panel-default table-responsive"> <table class="table table-striped table-responsive"> <thead> <tr> <th style="width: 10em;">Status Code</th> <th style="width: 20em;">Status Text</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td>502</td> <td>Bad Gateway</td> <td>The server returned an invalid response when the Link Checker tried to access the URL.</td> </tr> <tr> <td>504</td> <td>Gateway Timeout</td> <td>The Link Checker was not able to access the URL because it timed out.</td> </tr> </tbody> </table> </div> <h3>Unhandled Resources (mainly blocked by robots.txt)</h3> <p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p> <p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p> <p>If the blocked links were found your on website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p> <h4>Unhandled Links</h4> <datatable ref="linksBlockedByRobots" table-class="table-striped table-responsive" columns="{urlsWithLinksBlockedByRobotsColumns}" data="{urlsWithLinksBlockedByRobots}" actions="{blockedLinksActions}" message="{resultsMessage}"> </datatable> <virtual if="{token}"> <h4>Unhandled Images</h4> <datatable ref="unhandledEmbeddedResources" table-class="table-striped table-responsive" columns="{urlsWithLinksBlockedByRobotsColumns}" data="{urlsWithUnhandledEmbeddedResources}" actions="{blockedLinksActions}" message="{resultsMessage}"> </datatable> </virtual> <h4>Custom Status Codes</h4> <div class="panel panel-default table-responsive"> <table class="table table-striped table-responsive"> <thead> <tr> <th style="width: 10em;">Status Code</th> <th style="width: 20em;">Status Text</th> <th>Description</th> </tr> </thead> </tbody> <tr> <td>601</td> <td>Blocked by robots</td> <td>The Link Checker was not able to access the URL because the access was blocked by the robots exclusion protocol.</td> </tr> <tr> <td>602</td> <td>HTML parse error</td> <td>The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</td> </tr> </tbody> </table> </div> <p><em>Please note that it is possible in rare situations that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>', '', '', function(opts) {
+riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="margin-bottom: 20px;"> <button class="btn btn-default" type="submit" disabled="{disabled}">Check your website</button> </form> <div class="alert alert-{messageType}"> <raw content="{message}"></raw> </div> <div class="panel panel-default" style="width: 550px; max-width: 100%;"> <div class="panel-heading">Stats</div> <table class="table table-bordered"> <tr> <td>Number of crawled HTML pages on your site</td> <td class="text-right" style="width: 150px;">{urlsCrawledCount}</td> </tr> <tr> <td>Number of checked internal and external resources</td> <td class="text-right">{checkedLinksCount}</td> </tr> </table> </div> <h3>Broken Links</h3> <p>The table below shows all broken links. Please note that the fixed markers are just temporary and are reset with the next link check.</p> <datatable ref="brokenLinks" table-class="table-striped responsive-table" columns="{urlsWithBrokenLinksColumns}" data="{urlsWithBrokenLinks}" actions="{brokenLinksActions}" message="{resultsMessage}"> </datatable> <h3>Broken Images</h3> <p if="{!token}">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p> <p if="{token}">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p> <datatable if="{token}" table-class="table-striped table-responsive" columns="{urlsWithDeadImagesColumns}" data="{urlsWithDeadImages}" actions="{brokenImagesActions}" message="{resultsMessage}"> </datatable> <h3>Broken Embedded YouTube Videos</h3> <p if="{!token}">Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p> <p if="{token}">The table below shows all broken embedded YouYube videos. Please note that the fixed markers are just temporary and are reset for the next link check.</p> <datatable if="{token}" table-class="table-striped table-responsive" columns="{urlsWithDeadYouTubeVideosColumns}" data="{urlsWithDeadYouTubeVideos}" actions="{deadYouTubeVideosActions}" message="{resultsMessage}"> </datatable> <h3>Common Status Codes</h3> <div class="panel panel-default table-responsive"> <table class="table table-striped table-responsive"> <thead> <tr> <th style="width: 10em;">Status Code</th> <th style="width: 20em;">Status Text</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td>502</td> <td>Bad Gateway</td> <td>The server returned an invalid response when the Link Checker tried to access the URL.</td> </tr> <tr> <td>504</td> <td>Gateway Timeout</td> <td>The Link Checker was not able to access the URL because it timed out.</td> </tr> </tbody> </table> </div> <h3>Unhandled Resources (mainly blocked by robots.txt)</h3> <p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p> <p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p> <p>If the blocked links were found on your website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p> <h4>Unhandled Links</h4> <datatable ref="linksBlockedByRobots" table-class="table-striped table-responsive" columns="{urlsWithLinksBlockedByRobotsColumns}" data="{urlsWithLinksBlockedByRobots}" actions="{blockedLinksActions}" message="{resultsMessage}"> </datatable> <virtual if="{token}"> <h4>Unhandled Images</h4> <datatable ref="unhandledEmbeddedResources" table-class="table-striped table-responsive" columns="{urlsWithLinksBlockedByRobotsColumns}" data="{urlsWithUnhandledEmbeddedResources}" actions="{blockedLinksActions}" message="{resultsMessage}"> </datatable> </virtual> <h4>Custom Status Codes</h4> <div class="panel panel-default table-responsive"> <table class="table table-striped table-responsive"> <thead> <tr> <th style="width: 10em;">Status Code</th> <th style="width: 20em;">Status Text</th> <th>Description</th> </tr> </thead> </tbody> <tr> <td>601</td> <td>Blocked by robots</td> <td>The Link Checker was not able to access the URL because the access was blocked by the robots exclusion protocol.</td> </tr> <tr> <td>602</td> <td>HTML parse error</td> <td>The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</td> </tr> </tbody> </table> </div> <p><em>Please note that it is possible in rare situations that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>', '', '', function(opts) {
 		var self = this;
 
 		self.message = '';
@@ -28,7 +28,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 				message: 'No broken links left.',
 			},
 			{
-				label: 'StatusCode',
+				label: 'Status Code',
 				width: '9em',
 				showBody: false,
 			},
@@ -57,7 +57,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 				callback: subtableBlockedLinksCallback,
 			},
 			{
-				label: 'StatusCode',
+				label: 'Status Code',
 				width: '9em',
 				showBody: false,
 			},
@@ -92,8 +92,38 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 				message: 'No broken images left.',
 			},
 			{
-				label: 'StatusCode',
+				label: 'Status Code',
 				width: '9em',
+				showBody: false,
+			},
+			{
+				label: 'Actions',
+				width: '11em',
+				showBody: false,
+			}
+		];
+
+		self.urlsWithDeadYouTubeVideosColumns = [
+			{
+				label: 'URL where the broken videos were found',
+				width: '35%',
+				callback: function(info, url) {
+					return url;
+				},
+				linkCallback: function(info, url) {
+					return url;
+				},
+			},
+			{
+				label: 'Broken Embedded Videos',
+				type: 'subtable',
+				colspan: '3',
+				callback: subtableWithStatusTextCallback,
+				message: 'No broken videos left.',
+			},
+			{
+				label: 'Status Text',
+				width: '25em',
 				showBody: false,
 			},
 			{
@@ -153,6 +183,25 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 			]
 		}
 
+		function subtableWithStatusTextCallback(info, url) {
+			return [
+				{
+					label: 'URL',
+					linkCallback: function(elem) {
+						return elem.URL;
+					},
+				},
+				{
+					label: 'StatusText',
+					width: '25em',
+				},
+				{
+					label: 'Actions',
+					width: '10em',
+				}
+			]
+		}
+
 		self.blockedLinksActions = [
 			{
 				labelCallback: function(elem) {
@@ -190,6 +239,17 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 			}
 		];
 
+		self.deadYouTubeVideosActions = [
+			{
+				label: 'Mark as Fixed',
+				btnType: 'primary',
+				action: 'callback',
+				callback: function(elem) {
+					markLinkInList(elem, self.urlsWithDeadYouTubeVideos);
+				}
+			}
+		];
+
 		self.brokenLinksActions = [
 			{
 				label: 'Mark as Fixed',
@@ -219,7 +279,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
-			self.token = token;
+			self.setToken(token);
 			self.maxFetchers = maxFetchers || self.maxFetchers;
 
 			self.start();
@@ -240,10 +300,17 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 			self.update();
 		}.bind(this)
 
+		this.setToken = function(token) {
+			self.token = token.replace(/\s/g, '');
+		}.bind(this)
+
 		var resultsMessage = 'Link check not started yet.';
 
 		self.websiteURL = opts.websiteUrl || '';
-		self.token = opts.token || '';
+		self.token = '';
+		if (opts.token) {
+			self.setToken(opts.token);
+		}
 		self.maxFetchers = opts.maxFetchers || 10;
 
 		if (self.websiteURL != '') {
@@ -259,6 +326,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 		self.urlsWithBrokenLinks = {};
 		self.urlsWithLinksBlockedByRobots = {};
 		self.urlsWithDeadImages = {};
+		self.urlsWithDeadYouTubeVideos = {};
 		self.urlsWithUnhandledEmbeddedResources = {};
 
 		self.retries = 0;
@@ -277,6 +345,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 			resetObject(self.urlsWithBrokenLinks);
 			resetObject(self.urlsWithLinksBlockedByRobots);
 			resetObject(self.urlsWithDeadImages);
+			resetObject(self.urlsWithDeadYouTubeVideos);
 			resetObject(self.urlsWithUnhandledEmbeddedResources);
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
@@ -297,7 +366,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 				if (opts.dev == '1') {
 					url = 'sample_data/current.json?_=' + Date.now();
 				} else if (opts.dev == '2') {
-					url = 'http://localhost:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
+					url = 'http://marco-desktop:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 				}
 
 				jQuery.ajax({
@@ -372,6 +441,22 @@ riot.tag2('linkchecker', '<form if="{showButton}" onsubmit="{submit}" style="mar
 
 								if (Object.keys(self.urlsWithDeadImages[url]).length == 0) {
 									delete self.urlsWithDeadImages[url];
+								}
+							}
+						}
+
+						if (!jQuery.isEmptyObject(data.DeadEmbeddedYouTubeVideos)) {
+
+							for (var url in data.DeadEmbeddedYouTubeVideos) {
+								self.urlsWithDeadYouTubeVideos[url] = {};
+
+								data.DeadEmbeddedYouTubeVideos[url].forEach(function(obj) {
+									obj.FoundOnURL = url;
+									self.urlsWithDeadYouTubeVideos[url][obj.URL] = obj;
+								});
+
+								if (Object.keys(self.urlsWithDeadYouTubeVideos[url]).length == 0) {
+									delete self.urlsWithDeadYouTubeVideos[url];
 								}
 							}
 						}
