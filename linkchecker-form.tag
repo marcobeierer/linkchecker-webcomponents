@@ -20,6 +20,10 @@
 			if (opts.websiteUrl != undefined) {
 				this.refs.websiteURL.value = opts.websiteUrl;
 			}
+
+			if (opts.token != undefined) {
+				this.refs.token.value = opts.token;
+			}
 		});
 
 		submit(e) {
