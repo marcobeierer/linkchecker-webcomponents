@@ -1,5 +1,8 @@
 # Link Checker
 
+## TODO
+- Add count of files with noindex and number of checked embedded youtube videos
+
 ## ToTest
 - retries on no response error
 

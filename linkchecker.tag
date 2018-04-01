@@ -129,6 +129,11 @@
 					<td>HTML parse error</td>
 					<td>The HTML code of this page could not be parsed because of an error in the code or because the page was larger than 50 MB.</td>
 				</tr>
+				<tr>
+					<td>603</td>
+					<td>Unknown authority error</td>
+					<td>This status code means that the certificate was signed by an unknown certificate authority. If accessing the page works in your web browser, probably the provided certificate chain is broken. Most, but not all, browsers can handle such situation and download the missing certificates on the fly. If the error was detected on you website, you should fix the origin of the issue and provid the whole chain to all clients.</td>
+				</tr>
 			</tbody>
 		</table>
 	</div>
