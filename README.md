@@ -38,6 +38,10 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 ## Changelog
 
+### Next
+- Added status code 603 (Unknown authority error) with explanation.
+- Added cookie support.
+
 ### 1.5.0
 - Added support for broken embedded YouTube videos.
 - Remove all whitespace (line breaks, spaces, tabs) from token. This prevents Copy and Paste issues.

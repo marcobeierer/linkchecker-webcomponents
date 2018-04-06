@@ -33,9 +33,9 @@
 	</datatable>
 
 	<h3>Broken Images</h3>
-	<p if="{ !token }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
-	<p if="{ token }">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
-	<datatable if="{ token }"
+	<p if="{ !hasToken() }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
+	<p if="{ hasToken() }">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
+	<datatable if="{ hasToken() }"
 		table-class="table-striped table-responsive"
 		columns="{ urlsWithDeadImagesColumns}"
 		data="{ urlsWithDeadImages }"
@@ -44,9 +44,9 @@
 	</datatable>
 
 	<h3>Broken Embedded YouTube Videos</h3>
-	<p if="{ !token }">Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
-	<p if="{ token }">The table below shows all broken embedded YouYube videos. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
-	<datatable if="{ token }"
+	<p if="{ !hasToken() }">Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
+	<p if="{ hasToken() }">The table below shows all broken embedded YouYube videos. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
+	<datatable if="{ hasToken() }"
 		table-class="table-striped table-responsive"
 		columns="{ urlsWithDeadYouTubeVideosColumns }"
 		data="{ urlsWithDeadYouTubeVideos }"
@@ -96,7 +96,7 @@
 		message="{ resultsMessage }">
 	</datatable>
 
-	<virtual if="{ token }">
+	<virtual if="{ hasToken() }">
 		<h4>Unhandled Images</h4>
 		<datatable
 			ref="unhandledEmbeddedResources"
@@ -144,11 +144,23 @@
 
 		self.message = '';
 		self.originSystem = opts.originSystem || 'riot';
+		self.data = {};
 
 		self.on('mount', function() {
 			lscache.setBucket('linkchecker');
 			lscache.flushExpired();
+
+			// NOTE if just 'linkchecker' is used as prefix (bucket), the online tool only stores the result of the last website scanned
+			self.data = lscache.get('data');
+			if (self.data != null) {
+				self.render(self.data);
+				self.update();
+			}
 		});
+
+		self.hasToken = function() {
+			return self.token || self.data.Stats.TokenUsed;
+		}
 
 		self.urlsWithBrokenLinksColumns = [
 			{
@@ -486,6 +498,9 @@
 		start() {
 			opts.linkchecker.trigger('started');
 
+			lscache.remove('data');
+			self.data = {};
+
 			self.urlsCrawledCount = 0;
 			self.checkedLinksCount = 0;
 
@@ -525,105 +540,14 @@
 				}).done(function(data) {
 					self.retries = 0;
 
-					self.urlsCrawledCount = data.URLsCrawledCount;
-					self.checkedLinksCount = data.CheckedLinksCount;
+					self.data = data;
+					self.render(self.data);
 
-					if (data.Finished) { // successfull
+					if (data.Finished) {
 						opts.linkchecker.trigger('stopped');
 
-						if (data.LimitReached) {
-							self.setMessage("The URL limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 50'000 URLs.", 'danger');
-						} else {
-							var message = "Your website has been checked successfully. Please see the result below.";
-
-							if (self.token == '') {
-								message += " If you additionally like to check your site for <strong>broken images</strong> or like to use the scheduler for an <strong>automatically triggered daily check</strong>, then have a look at the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
-							}
-
-							self.setMessage(message, 'success');
-						}
-
-						self.resultsMessage = 'Nothing is broken, everything seems to be fine.';
-
-						if (!jQuery.isEmptyObject(data.DeadLinks)) { // necessary for placeholder
-							// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
-							
-							for (var url in data.DeadLinks) {
-								self.urlsWithBrokenLinks[url] = {};
-
-								data.DeadLinks[url].forEach(function(obj) {
-									obj.FoundOnURL = url;
-									self.urlsWithBrokenLinks[url][obj.URL] = obj;
-								});
-
-								if (Object.keys(self.urlsWithBrokenLinks[url]).length == 0) {
-									delete self.urlsWithBrokenLinks[url];
-								}
-							}
-						}
-
-						if (!jQuery.isEmptyObject(data.UnhandledLinkedResources)) {
-							for (var url in data.UnhandledLinkedResources) {
-								self.urlsWithLinksBlockedByRobots[url] = {};
-
-								data.UnhandledLinkedResources[url].forEach(function(obj) {
-									obj.FoundOnURL = url;
-									self.urlsWithLinksBlockedByRobots[url][obj.URL] = obj;
-								});
-
-								if (Object.keys(self.urlsWithLinksBlockedByRobots[url]).length == 0) {
-									delete self.urlsWithLinksBlockedByRobots[url];
-								}
-							}
-						}
-
-						if (!jQuery.isEmptyObject(data.DeadEmbeddedImages)) { // necessary for placeholder
-							// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
-							
-							for (var url in data.DeadEmbeddedImages) {
-								self.urlsWithDeadImages[url] = {};
-
-								data.DeadEmbeddedImages[url].forEach(function(obj) {
-									obj.FoundOnURL = url;
-									self.urlsWithDeadImages[url][obj.URL] = obj;
-								});
-
-								if (Object.keys(self.urlsWithDeadImages[url]).length == 0) {
-									delete self.urlsWithDeadImages[url];
-								}
-							}
-						}
-
-						if (!jQuery.isEmptyObject(data.DeadEmbeddedYouTubeVideos)) { // necessary for placeholder
-							// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
-							
-							for (var url in data.DeadEmbeddedYouTubeVideos) {
-								self.urlsWithDeadYouTubeVideos[url] = {};
-
-								data.DeadEmbeddedYouTubeVideos[url].forEach(function(obj) {
-									obj.FoundOnURL = url;
-									self.urlsWithDeadYouTubeVideos[url][obj.URL] = obj;
-								});
-
-								if (Object.keys(self.urlsWithDeadYouTubeVideos[url]).length == 0) {
-									delete self.urlsWithDeadYouTubeVideos[url];
-								}
-							}
-						}
-
-						if (!jQuery.isEmptyObject(data.UnhandledEmbeddedResources)) {
-							for (var url in data.UnhandledEmbeddedResources) {
-								self.urlsWithUnhandledEmbeddedResources[url] = {};
-
-								data.UnhandledEmbeddedResources[url].forEach(function(obj) {
-									obj.FoundOnURL = url;
-									self.urlsWithUnhandledEmbeddedResources[url][obj.URL] = obj;
-								});
-
-								if (Object.keys(self.urlsWithUnhandledEmbeddedResources[url]).length == 0) {
-									delete self.urlsWithUnhandledEmbeddedResources[url];
-								}
-							}
+						if (lscache.supported()) {
+							lscache.set('data', data);
 						}
 					} else {
 						setTimeout(self.doRequest, 1000);
@@ -669,6 +593,108 @@
 				});
 			};
 			self.doRequest();
+		}
+
+		self.render = function(data) {
+			self.urlsCrawledCount = data.URLsCrawledCount;
+			self.checkedLinksCount = data.CheckedLinksCount;
+
+			if (data.Finished) { // successfull
+				if (data.LimitReached) {
+					self.setMessage("The URL limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 50'000 URLs.", 'danger');
+				} else {
+					var message = "Your website has been checked successfully. Please see the result below.";
+
+					if (!data.Stats.TokenUsed) {
+						message += " If you additionally like to check your site for <strong>broken images</strong> or like to use the scheduler for an <strong>automatically triggered daily check</strong>, then have a look at the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
+					}
+
+					self.setMessage(message, 'success');
+				}
+
+				self.resultsMessage = 'Nothing is broken, everything seems to be fine.';
+
+				if (!jQuery.isEmptyObject(data.DeadLinks)) { // necessary for placeholder
+					// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
+					
+					for (var url in data.DeadLinks) {
+						self.urlsWithBrokenLinks[url] = {};
+
+						data.DeadLinks[url].forEach(function(obj) {
+							obj.FoundOnURL = url;
+							self.urlsWithBrokenLinks[url][obj.URL] = obj;
+						});
+
+						if (Object.keys(self.urlsWithBrokenLinks[url]).length == 0) {
+							delete self.urlsWithBrokenLinks[url];
+						}
+					}
+				}
+
+				if (!jQuery.isEmptyObject(data.UnhandledLinkedResources)) {
+					for (var url in data.UnhandledLinkedResources) {
+						self.urlsWithLinksBlockedByRobots[url] = {};
+
+						data.UnhandledLinkedResources[url].forEach(function(obj) {
+							obj.FoundOnURL = url;
+							self.urlsWithLinksBlockedByRobots[url][obj.URL] = obj;
+						});
+
+						if (Object.keys(self.urlsWithLinksBlockedByRobots[url]).length == 0) {
+							delete self.urlsWithLinksBlockedByRobots[url];
+						}
+					}
+				}
+
+				if (!jQuery.isEmptyObject(data.DeadEmbeddedImages)) { // necessary for placeholder
+					// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
+					
+					for (var url in data.DeadEmbeddedImages) {
+						self.urlsWithDeadImages[url] = {};
+
+						data.DeadEmbeddedImages[url].forEach(function(obj) {
+							obj.FoundOnURL = url;
+							self.urlsWithDeadImages[url][obj.URL] = obj;
+						});
+
+						if (Object.keys(self.urlsWithDeadImages[url]).length == 0) {
+							delete self.urlsWithDeadImages[url];
+						}
+					}
+				}
+
+				if (!jQuery.isEmptyObject(data.DeadEmbeddedYouTubeVideos)) { // necessary for placeholder
+					// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
+					
+					for (var url in data.DeadEmbeddedYouTubeVideos) {
+						self.urlsWithDeadYouTubeVideos[url] = {};
+
+						data.DeadEmbeddedYouTubeVideos[url].forEach(function(obj) {
+							obj.FoundOnURL = url;
+							self.urlsWithDeadYouTubeVideos[url][obj.URL] = obj;
+						});
+
+						if (Object.keys(self.urlsWithDeadYouTubeVideos[url]).length == 0) {
+							delete self.urlsWithDeadYouTubeVideos[url];
+						}
+					}
+				}
+
+				if (!jQuery.isEmptyObject(data.UnhandledEmbeddedResources)) {
+					for (var url in data.UnhandledEmbeddedResources) {
+						self.urlsWithUnhandledEmbeddedResources[url] = {};
+
+						data.UnhandledEmbeddedResources[url].forEach(function(obj) {
+							obj.FoundOnURL = url;
+							self.urlsWithUnhandledEmbeddedResources[url][obj.URL] = obj;
+						});
+
+						if (Object.keys(self.urlsWithUnhandledEmbeddedResources[url]).length == 0) {
+							delete self.urlsWithUnhandledEmbeddedResources[url];
+						}
+					}
+				}
+			}
 		}
 	</script>
 </linkchecker>

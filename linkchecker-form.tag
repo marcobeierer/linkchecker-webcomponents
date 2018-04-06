@@ -23,6 +23,7 @@
 
 			if (opts.token != undefined) {
 				this.refs.token.value = opts.token;
+				opts.linkchecker.trigger('token-loaded', this.refs.token.value);
 			}
 		});
 
