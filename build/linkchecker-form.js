@@ -10,6 +10,7 @@ riot.tag2('linkchecker-form', '<form onsubmit="{submit}" style="margin-bottom: 2
 
 			if (opts.token != undefined) {
 				this.refs.token.value = opts.token;
+				opts.linkchecker.trigger('token-loaded', this.refs.token.value);
 			}
 		});
 
