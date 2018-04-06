@@ -7,18 +7,68 @@
 		<raw content="{ message }" />
 	</div>
 
-	<div class="panel panel-default" style="width: 550px; max-width: 100%;">
-		<div class="panel-heading">Stats</div>
-		<table class="table table-bordered">
-			<tr>
-				<td >Number of crawled HTML pages on your site</td>
-				<td class="text-right" style="width: 150px;">{ urlsCrawledCount }</td>
-			</tr>
-			<tr>
-				<td>Number of checked internal and external resources</td>
-				<td class="text-right">{ checkedLinksCount }</td>
-			</tr>
-		</table>
+	<div class="row" >
+		<div class="col-lg-4">
+			<div class="panel panel-default" style="max-width: 100%;">
+				<div class="panel-heading">Stats</div>
+				<table class="table table-bordered">
+					<tr>
+						<td >Number of crawled HTML pages on your site</td>
+						<td class="text-right" style="width: 180px;">{ urlsCrawledCount }</td>
+					</tr>
+					<tr>
+						<td>Number of checked internal and external resources</td>
+						<td class="text-right">{ checkedLinksCount }</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div if="{ data.Stats }" class="col-lg-4">
+			<div class="panel panel-default" style="max-width: 100%;">
+				<div class="panel-heading">Further Stats</div>
+				<table class="table table-bordered">
+					<tr>
+						<td>Started at</td>
+						<td class="text-right" style="width: 180px;">{ datetime(data.Stats.StartedAt) }</td>
+					</tr>
+					<tr>
+						<td>Finished at</td>
+						<td class="text-right">{ datetime(data.Stats.FinishedAt) }</td>
+					</tr>
+					<tr>
+						<td>Number of valid links</td>
+						<td class="text-right">{ data.Stats.ValidLinksCount }</td>
+					</tr>
+					<tr>
+						<td>Number of dead links</td>
+						<td class="text-right">{ data.Stats.DeadLinksCount }</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div if="{ data.Stats }" class="col-lg-4">
+			<div class="panel panel-default" style="max-width: 100%;">
+				<div class="panel-heading">Setting Stats</div>
+				<table class="table table-bordered">
+					<tr>
+						<td>Crawl delay</td>
+						<td class="text-right" style="width: 180px;">{ data.Stats.CrawlDelayInSeconds } seconds</td>
+					</tr>
+					<tr>
+						<td>Concurrent fetchers</td>
+						<td class="text-right">{ data.Stats.MaxFetchers }</td>
+					</tr>
+					<tr>
+						<td>URL limit</td>
+						<td class="text-right">{ data.Stats.URLLimit } URLs</td>
+					</tr>
+					<tr>
+						<td>Limit reached</td>
+						<td class="text-right">{ bool2text(data.Stats.LimitReached) }</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
 
 	<h3>Broken Links</h3>
@@ -158,8 +208,19 @@
 			}
 		});
 
+		self.bool2text = function(val) {
+			if (val) {
+				return 'Yes';
+			}
+			return 'No';
+		}
+
+		self.datetime = function(val) {
+			return new Date(val).toLocaleString();
+		}
+
 		self.hasToken = function() {
-			return self.token || self.data.Stats.TokenUsed;
+			return self.token || (self.data.Stats != undefined && self.data.Stats.TokenUsed);
 		}
 
 		self.urlsWithBrokenLinksColumns = [
