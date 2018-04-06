@@ -8,51 +8,59 @@
 	</div>
 
 	<div class="row" >
-		<div class="col-lg-4">
-			<div class="panel panel-default" style="max-width: 100%;">
+		<div class="col-lg-6">
+			<div class="panel panel-default">
 				<div class="panel-heading">Stats</div>
 				<table class="table table-bordered">
 					<tr>
 						<td >Number of crawled HTML pages on your site</td>
-						<td class="text-right" style="width: 180px;">{ urlsCrawledCount }</td>
+						<td class="text-right" style="width: 200px;">{ urlsCrawledCount }</td>
 					</tr>
 					<tr>
 						<td>Number of checked internal and external resources</td>
 						<td class="text-right">{ checkedLinksCount }</td>
 					</tr>
-				</table>
-			</div>
-		</div>
-		<div if="{ data.Stats }" class="col-lg-4">
-			<div class="panel panel-default" style="max-width: 100%;">
-				<div class="panel-heading">Further Stats</div>
-				<table class="table table-bordered">
-					<tr>
+					<tr if="{ data.Stats }">
 						<td>Started at</td>
-						<td class="text-right" style="width: 180px;">{ datetime(data.Stats.StartedAt) }</td>
+						<td class="text-right" >{ datetime(data.Stats.StartedAt) }</td>
 					</tr>
-					<tr>
+					<tr if="{ data.Stats }">
 						<td>Finished at</td>
 						<td class="text-right">{ datetime(data.Stats.FinishedAt) }</td>
 					</tr>
+				</table>
+			</div>
+		</div>
+		<div if="{ data.Stats }" class="col-lg-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">Detailed Stats</div>
+				<table class="table table-bordered">
 					<tr>
 						<td>Number of valid links</td>
-						<td class="text-right">{ data.Stats.ValidLinksCount }</td>
+						<td class="text-right" style="width: 200px;">{ data.Stats.ValidLinksCount }</td>
 					</tr>
 					<tr>
 						<td>Number of dead links</td>
 						<td class="text-right">{ data.Stats.DeadLinksCount }</td>
 					</tr>
+					<tr>
+						<td>Number of valid embedded YouTube videos</td>
+						<td class="text-right">{ data.Stats.ValidEmbeddedYouTubeVideosCount }</td>
+					</tr>
+					<tr>
+						<td>Number of dead embedded YouTube videos</td>
+						<td class="text-right">{ data.Stats.DeadEmbeddedYouTubeVideosCount }</td>
+					</tr>
 				</table>
 			</div>
 		</div>
-		<div if="{ data.Stats }" class="col-lg-4">
-			<div class="panel panel-default" style="max-width: 100%;">
+		<div if="{ data.Stats }" class="col-lg-6">
+			<div class="panel panel-default">
 				<div class="panel-heading">Setting Stats</div>
 				<table class="table table-bordered">
 					<tr>
 						<td>Crawl delay</td>
-						<td class="text-right" style="width: 180px;">{ data.Stats.CrawlDelayInSeconds } seconds</td>
+						<td class="text-right" style="width: 200px;">{ data.Stats.CrawlDelayInSeconds } seconds</td>
 					</tr>
 					<tr>
 						<td>Concurrent fetchers</td>
