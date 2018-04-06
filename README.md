@@ -38,9 +38,13 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 ## Changelog
 
-### Next
-- Added status code 603 (Unknown authority error) with explanation.
-- Added cookie support.
+### 1.6.0
+- Results are saved now and don't get discarded when leaving the Link Checker anymore.
+- Improved navigation with tabs.
+- More detailed stats.
+- Crawler
+	- Added status code 603 (Unknown authority error) with explanation.
+	- Added cookie support.
 
 ### 1.5.0
 - Added support for broken embedded YouTube videos.
