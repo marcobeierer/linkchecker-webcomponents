@@ -7,17 +7,15 @@
 		<raw content="{ message }" />
 	</div>
 
-	<div>
-		<ul class="nav nav-tabs" role="tablist">
-			<li role="presentation" class="active"><a href="#progressAndStats" aria-controls="progressAndStats" role="tab" data-toggle="tab">Progress and Stats</a></li>
-			<li role="presentation"><a href="#links" aria-controls="links" role="tab" data-toggle="tab">Links</a></li>
-			<li role="presentation"><a href="#images" aria-controls="images" role="tab" data-toggle="tab">Images</a></li>
-			<li role="presentation"><a href="#youTubeVideos" aria-controls="youTubeVideos" role="tab" data-toggle="tab">YouTube Videos</a></li>
-			<li role="presentation"><a href="#statusCodes" aria-controls="statusCodes" role="tab" data-toggle="tab">Common Status Codes</a></li>
-			<li role="presentation"><a href="#unhandledResources" aria-controls="unhandledResources" role="tab" data-toggle="tab">Unhandled Resources</a></li>
-			<li if="{ enableScheduler }" role="presentation"><a href="#scheduler" aria-controls="scheduler" role="tab" data-toggle="tab">Scheduler</a></li>
-		</ul>
-	</div>
+	<ul class="nav nav-tabs" role="tablist">
+		<li role="presentation" class="active"><a href="#progressAndStats" aria-controls="progressAndStats" role="tab" data-toggle="tab">Progress and Stats</a></li>
+		<li role="presentation"><a href="#links" aria-controls="links" role="tab" data-toggle="tab">Links</a></li>
+		<li role="presentation"><a href="#images" aria-controls="images" role="tab" data-toggle="tab">Images</a></li>
+		<li role="presentation"><a href="#youTubeVideos" aria-controls="youTubeVideos" role="tab" data-toggle="tab">YouTube Videos</a></li>
+		<li role="presentation"><a href="#statusCodes" aria-controls="statusCodes" role="tab" data-toggle="tab">Common Status Codes</a></li>
+		<li role="presentation"><a href="#unhandledResources" aria-controls="unhandledResources" role="tab" data-toggle="tab">Unhandled Resources</a></li>
+		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler" aria-controls="scheduler" role="tab" data-toggle="tab">Scheduler</a></li>
+	</ul>
 
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="progressAndStats">
