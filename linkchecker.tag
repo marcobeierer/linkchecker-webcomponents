@@ -8,17 +8,17 @@
 	</div>
 
 	<ul class="nav nav-tabs" role="tablist">
-		<li role="presentation" class="active"><a href="#progressAndStats" aria-controls="progressAndStats" role="tab" data-toggle="tab">Progress and Stats</a></li>
-		<li role="presentation"><a href="#links" aria-controls="links" role="tab" data-toggle="tab">Links</a></li>
-		<li role="presentation"><a href="#images" aria-controls="images" role="tab" data-toggle="tab">Images</a></li>
-		<li role="presentation"><a href="#youTubeVideos" aria-controls="youTubeVideos" role="tab" data-toggle="tab">YouTube Videos</a></li>
-		<li role="presentation"><a href="#statusCodes" aria-controls="statusCodes" role="tab" data-toggle="tab">Common Status Codes</a></li>
-		<li role="presentation"><a href="#unhandledResources" aria-controls="unhandledResources" role="tab" data-toggle="tab">Unhandled Resources</a></li>
-		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler" aria-controls="scheduler" role="tab" data-toggle="tab">Scheduler</a></li>
+		<li role="presentation" class="active"><a href="#progressAndStats{ id }" aria-controls="progressAndStats{ id }" role="tab" data-toggle="tab">Progress and Stats</a></li>
+		<li role="presentation"><a href="#links{ id }" aria-controls="links{ id }" role="tab" data-toggle="tab">Links</a></li>
+		<li role="presentation"><a href="#images{ id }" aria-controls="images{ id }" role="tab" data-toggle="tab">Images</a></li>
+		<li role="presentation"><a href="#youTubeVideos{ id }" aria-controls="youTubeVideos{ id }" role="tab" data-toggle="tab">YouTube Videos</a></li>
+		<li role="presentation"><a href="#statusCodes{ id }" aria-controls="statusCodes{ id }" role="tab" data-toggle="tab">Common Status Codes</a></li>
+		<li role="presentation"><a href="#unhandledResources{ id }" aria-controls="unhandledResources{ id }" role="tab" data-toggle="tab">Unhandled Resources</a></li>
+		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
 	</ul>
 
 	<div class="tab-content">
-		<div role="tabpanel" class="tab-pane active" id="progressAndStats">
+		<div role="tabpanel" class="tab-pane active" id="progressAndStats{ id }">
 			<h3>Progress and Stats</h3>
 			<div class="row" >
 				<div class="col-lg-6">
@@ -93,7 +93,7 @@
 			</div>
 		</div>
 
-		<div role="tabpanel" class="tab-pane" id="links">
+		<div role="tabpanel" class="tab-pane" id="links{ id }">
 			<h3>Broken Links</h3>
 			<p>The table below shows all broken links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
 			<datatable
@@ -106,7 +106,7 @@
 			</datatable>
 		</div>
 
-		<div role="tabpanel" class="tab-pane" id="images">
+		<div role="tabpanel" class="tab-pane" id="images{ id }">
 			<h3>Broken Images</h3>
 			<p if="{ !hasToken() }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
 			<p if="{ hasToken() }">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
@@ -119,7 +119,7 @@
 			</datatable>
 		</div>
 
-		<div role="tabpanel" class="tab-pane" id="youTubeVideos">
+		<div role="tabpanel" class="tab-pane" id="youTubeVideos{ id }">
 			<h3>Broken Embedded YouTube Videos</h3>
 			<p if="{ !hasToken() }">Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
 			<p if="{ hasToken() }">The table below shows all broken embedded YouYube videos. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
@@ -132,7 +132,7 @@
 			</datatable>
 		</div>
 
-		<div role="tabpanel" class="tab-pane" id="statusCodes">
+		<div role="tabpanel" class="tab-pane" id="statusCodes{ id }">
 			<h3>Common Status Codes</h3>
 			<div class="panel panel-default table-responsive">
 				<table class="table table-striped table-responsive">
@@ -159,7 +159,7 @@
 			</div>
 		</div>
 
-		<div role="tabpanel" class="tab-pane" id="unhandledResources">
+		<div role="tabpanel" class="tab-pane" id="unhandledResources{ id }">
 			<h3>Unhandled Resources (mainly blocked by robots.txt)</h3>
 			<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p>
 			<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
@@ -221,7 +221,7 @@
 			<p><em>Please note that it is possible in rare situations that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>
 		</div>
 			
-		<div if="{ enableScheduler }" role="tabpanel" class="tab-pane" id="scheduler">
+		<div if="{ enableScheduler }" role="tabpanel" class="tab-pane" id="scheduler{ id }">
 			<h3>Scheduler</h3>
 			<linkchecker-scheduler website-url="{ websiteURL }" token="{ token }" dev="{ dev }"></linkchecker-scheduler>
 		</div>
@@ -235,6 +235,7 @@
 		self.data = {};
 		self.dev = opts.dev;
 		self.enableScheduler = opts.enableScheduler || false;
+		self.id = opts.id || 0;
 
 		self.on('mount', function() {
 			lscache.setBucket('linkchecker');
