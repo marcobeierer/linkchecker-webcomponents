@@ -2,6 +2,7 @@ riot.tag2('linkchecker-scheduler', '<div if="{token}" class="alert alert-{messag
 		var self = this;
 
 		self.registered = false;
+
 		self.websiteURL = opts.websiteUrl || '';
 		self.token = opts.token || '';
 		self.email = opts.email || '';
