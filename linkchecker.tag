@@ -7,15 +7,17 @@
 		<raw content="{ message }" />
 	</div>
 
-	<ul class="nav nav-tabs" role="tablist">
-		<li role="presentation" class="active"><a href="#progressAndStats" aria-controls="progressAndStats" role="tab" data-toggle="tab">Progress and Stats</a></li>
-		<li role="presentation"><a href="#links" aria-controls="links" role="tab" data-toggle="tab">Links</a></li>
-		<li role="presentation"><a href="#images" aria-controls="images" role="tab" data-toggle="tab">Images</a></li>
-		<li role="presentation"><a href="#youTubeVideos" aria-controls="youTubeVideos" role="tab" data-toggle="tab">YouTube Videos</a></li>
-		<li role="presentation"><a href="#statusCodes" aria-controls="statusCodes" role="tab" data-toggle="tab">Common Status Codes</a></li>
-		<li role="presentation"><a href="#unhandledResources" aria-controls="unhandledResources" role="tab" data-toggle="tab">Unhandled Resources</a></li>
-		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler" aria-controls="scheduler" role="tab" data-toggle="tab">Scheduler</a></li>
-	</ul>
+	<div>
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active"><a href="#progressAndStats" aria-controls="progressAndStats" role="tab" data-toggle="tab">Progress and Stats</a></li>
+			<li role="presentation"><a href="#links" aria-controls="links" role="tab" data-toggle="tab">Links</a></li>
+			<li role="presentation"><a href="#images" aria-controls="images" role="tab" data-toggle="tab">Images</a></li>
+			<li role="presentation"><a href="#youTubeVideos" aria-controls="youTubeVideos" role="tab" data-toggle="tab">YouTube Videos</a></li>
+			<li role="presentation"><a href="#statusCodes" aria-controls="statusCodes" role="tab" data-toggle="tab">Common Status Codes</a></li>
+			<li role="presentation"><a href="#unhandledResources" aria-controls="unhandledResources" role="tab" data-toggle="tab">Unhandled Resources</a></li>
+			<li if="{ enableScheduler }" role="presentation"><a href="#scheduler" aria-controls="scheduler" role="tab" data-toggle="tab">Scheduler</a></li>
+		</ul>
+	</div>
 
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="progressAndStats">
@@ -706,7 +708,7 @@
 				} else {
 					var message = "Your website has been checked successfully. Please see the result below.";
 
-					if (!data.Stats.TokenUsed) {
+					if (data.Stats != undefined && !data.Stats.TokenUsed) {
 						message += " If you additionally like to check your site for <strong>broken images</strong> or like to use the scheduler for an <strong>automatically triggered daily check</strong>, then have a look at the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
 					}
 
