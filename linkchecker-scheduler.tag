@@ -55,6 +55,8 @@
 		var self = this;
 
 		self.registered = false;
+
+		// IMPORTANT make sure that new options are also added to linkchecker tag and passed to linkchecker-scheduler
 		self.websiteURL = opts.websiteUrl || '';
 		self.token = opts.token || '';
 		self.email = opts.email || '';

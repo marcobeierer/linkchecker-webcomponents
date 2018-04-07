@@ -223,7 +223,7 @@
 			
 		<div if="{ enableScheduler }" role="tabpanel" class="tab-pane" id="scheduler{ id }">
 			<h3>Scheduler</h3>
-			<linkchecker-scheduler website-url="{ websiteURL }" token="{ token }" dev="{ dev }"></linkchecker-scheduler>
+			<linkchecker-scheduler website-url="{ websiteURL }" token="{ token }" email="{ email }" dev="{ dev }"></linkchecker-scheduler>
 		</div>
 	</div>
 
@@ -235,7 +235,9 @@
 		self.data = {};
 		self.dev = opts.dev;
 		self.enableScheduler = opts.enableScheduler || false;
-		self.id = opts.id || 0;
+
+		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
+		self.email = opts.email || ''; // necessary for scheduler;
 
 		self.on('mount', function() {
 			lscache.setBucket('linkchecker');
