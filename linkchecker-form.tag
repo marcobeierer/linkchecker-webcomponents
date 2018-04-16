@@ -10,7 +10,7 @@
 		</div>
 		<div class="checkbox">
 			<label>
-				<input ref="hideWorkingRedirects" type="checkbox"> Hide working redirects
+				<input ref="showWorkingRedirects" type="checkbox"> Show working redirects
 			</label>
 		</div>
 		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
@@ -34,7 +34,7 @@
 
 		submit(e) {
 			e.preventDefault();
-			opts.linkchecker.trigger('start', this.refs.websiteURL.value, this.refs.token.value, this.refs.hideWorkingRedirects.checked);
+			opts.linkchecker.trigger('start', this.refs.websiteURL.value, this.refs.token.value, this.refs.showWorkingRedirects.checked);
 		}
 
 		opts.linkchecker.on('started', function() {
