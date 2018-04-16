@@ -41,6 +41,7 @@
 							<span if="{ column.callback == undefined && elem[column.label] != undefined }">
 								{ elem[column.label] }
 							</span>
+							<span if={ column.isRedirectedCallback != undefined && column.isRedirectedCallback(elem) } class="badge">Redirected</span>
 						</a>
 
 						<virtual each="{ action in actions }" if="{ column.label == 'Actions' }">

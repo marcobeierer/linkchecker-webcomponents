@@ -8,6 +8,11 @@
 			<label>Token</label>
 			<textarea ref="token" class="form-control" style="min-height: 100px" placeholder="A token is only necessary to check a website with more than 500 internal or external links or if you like to use the paid extra features." disabled="{ disabled }"></textarea>
 		</div>
+		<div class="checkbox">
+			<label>
+				<input ref="hideWorkingRedirects" type="checkbox"> Hide working redirects
+			</label>
+		</div>
 		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
 	</form>
 
@@ -29,7 +34,7 @@
 
 		submit(e) {
 			e.preventDefault();
-			opts.linkchecker.trigger('start', this.refs.websiteURL.value, this.refs.token.value);
+			opts.linkchecker.trigger('start', this.refs.websiteURL.value, this.refs.token.value, this.refs.hideWorkingRedirects.checked);
 		}
 
 		opts.linkchecker.on('started', function() {

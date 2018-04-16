@@ -94,8 +94,9 @@
 		</div>
 
 		<div role="tabpanel" class="tab-pane" id="links{ id }">
-			<h3>Broken Links</h3>
-			<p>The table below shows all broken links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
+			<h3>Broken<span if="{ !hideWorkingRedirects }"> and Redirected</span> Links</h3>
+			<p>The table below shows all broken<span if="{ !hideWorkingRedirects }"> and redirected</span> links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
+			<p if="{ !hideWorkingRedirects }">The result also contains working redirects because non-temporary redirects have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
 			<datatable
 				ref="brokenLinks"
 				table-class="table-striped responsive-table"
@@ -107,9 +108,10 @@
 		</div>
 
 		<div role="tabpanel" class="tab-pane" id="images{ id }">
-			<h3>Broken Images</h3>
+			<h3>Broken<span if="{ !hideWorkingRedirects }"> and Redirected</span> Images</h3>
 			<p if="{ !hasToken() }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
-			<p if="{ hasToken() }">The table below shows all broken images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
+			<p if="{ hasToken() }">The table below shows all broken<span if="{ !hideWorkingRedirects }"> and redirected</span> images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
+			<p if="{ hasToken() && !hideWorkingRedirects }">The result also contains working redirects because non-temporary redirects have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
 			<datatable if="{ hasToken() }"
 				table-class="table-striped table-responsive"
 				columns="{ urlsWithDeadImagesColumns}"
@@ -235,6 +237,7 @@
 		self.data = {};
 		self.dev = opts.dev;
 		self.enableScheduler = opts.enableScheduler || false;
+		self.hideWorkingRedirects = opts.hideWorkingRedirects || false;
 
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;
@@ -397,6 +400,9 @@
 					linkCallback: function(elem) {
 						return elem.URL;
 					},
+					isRedirectedCallback: function(elem) {
+						return elem.IsRedirected;
+					}
 				},
 				{
 					label: 'StatusCode',
@@ -428,6 +434,9 @@
 					linkCallback: function(elem) {
 						return elem.URL;
 					},
+					isRedirectedCallback: function(elem) {
+						return elem.IsRedirected;
+					}
 				},
 				{
 					label: 'StatusCode',
@@ -447,6 +456,9 @@
 					linkCallback: function(elem) {
 						return elem.URL;
 					},
+					isRedirectedCallback: function(elem) {
+						return elem.IsRedirected;
+					}
 				},
 				{
 					label: 'StatusText',
@@ -540,9 +552,11 @@
 			} 
 		}
 
-		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
+		// maxFetchers is not used as of 16 April 2018
+		opts.linkchecker.on('start', function(websiteURL, token, hideWorkingRedirects, maxFetchers) {
 			self.websiteURL = websiteURL;
 			self.setToken(token);
+			self.hideWorkingRedirects = hideWorkingRedirects;
 			self.maxFetchers = maxFetchers || self.maxFetchers; // self.maxFetchers because it is the value of linkchecker tag and should be used if form has no fetchers provided
 			
 			self.start();
@@ -717,6 +731,10 @@
 						self.urlsWithBrokenLinks[url] = {};
 
 						data.DeadLinks[url].forEach(function(obj) {
+							if (self.hideWorkingRedirects && obj.StatusCode < 300) {
+								return;
+							}
+
 							obj.FoundOnURL = url;
 							self.urlsWithBrokenLinks[url][obj.URL] = obj;
 						});
@@ -749,6 +767,10 @@
 						self.urlsWithDeadImages[url] = {};
 
 						data.DeadEmbeddedImages[url].forEach(function(obj) {
+							if (self.hideWorkingRedirects && obj.StatusCode < 300) {
+								return;
+							}
+
 							obj.FoundOnURL = url;
 							self.urlsWithDeadImages[url][obj.URL] = obj;
 						});
@@ -766,6 +788,10 @@
 						self.urlsWithDeadYouTubeVideos[url] = {};
 
 						data.DeadEmbeddedYouTubeVideos[url].forEach(function(obj) {
+							if (self.hideWorkingRedirects && obj.StatusCode < 300) {
+								return;
+							}
+
 							obj.FoundOnURL = url;
 							self.urlsWithDeadYouTubeVideos[url][obj.URL] = obj;
 						});
