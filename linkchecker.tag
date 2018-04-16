@@ -674,14 +674,6 @@
 					else if (statusCode == 503) {
 						self.setMessage("The backend server is temporarily unavailable. Please try it again later.", 'danger');
 					} 
-					else if (statusCode == 504 && xhr.getResponseHeader('X-CURL-Error') == 1) {
-						var message = JSON.parse(xhr.responseText);
-						if (message == '') {
-							self.setMessage("A cURL error occurred. Please contact the developer of the extensions.", 'danger');
-						} else {
-							self.setMessage("A cURL error occurred with the error message:<br/><strong>" + message + "</strong>.", 'danger');
-						}
-					} 
 					else if (statusCode == 0 && self.retries < 3) { // statusCode 0 means that the request was not sent or no response was received
 						self.retries++;
 						setTimeout(self.doRequest, 1000);
