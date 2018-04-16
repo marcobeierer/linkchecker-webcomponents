@@ -38,6 +38,10 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 ## Changelog
 
+### 1.7.0
+- Added option to show working redirects.
+	- Has to be enabled in the settings.
+
 ### 1.6.0
 - Results are saved now and don't get discarded when leaving the Link Checker anymore.
 - Improved navigation with tabs.
