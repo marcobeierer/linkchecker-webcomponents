@@ -39,6 +39,7 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 ## Changelog
 
 ### 1.7.0
+- Highlighting of redirects.
 - Added option to show working redirects.
 	- Has to be enabled in the settings.
 
