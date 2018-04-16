@@ -53,7 +53,7 @@
 								<td class="text-right" style="width: 200px;">{ data.Stats.ValidLinksCount }</td>
 							</tr>
 							<tr>
-								<td>Number of dead links</td>
+								<td>Number of dead or redirected links</td>
 								<td class="text-right">{ data.Stats.DeadLinksCount }</td>
 							</tr>
 							<tr>
@@ -86,6 +86,10 @@
 							<tr>
 								<td>Limit reached</td>
 								<td class="text-right">{ bool2text(data.Stats.LimitReached) }</td>
+							</tr>
+							<tr>
+								<td>Hide working redirects</td>
+								<td class="text-right">{ bool2text(hideWorkingRedirects) }</td>
 							</tr>
 						</table>
 					</div>
