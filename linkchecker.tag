@@ -1,6 +1,7 @@
 <linkchecker>
-	<form if="{ showButton }" onsubmit="{ submit }" style="margin-bottom: 20px;">
-		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
+	<form if="{ showButton }" style="margin-bottom: 20px;">
+		<button class="btn btn-default" onclick="{ submit }" if="{ !disabled }">Check your website</button>
+		<button class="btn btn-danger" onclick="{ stopCheck }"  if="{ disabled }">Stop website check</button>
 	</form>
 
 	<div class="alert alert-{ messageType }">
@@ -104,8 +105,8 @@
 		<div role="tabpanel" class="tab-pane" id="links{ id }">
 			<h3>Broken<span if="{ showWorkingRedirects }"> and Redirected</span> Links</h3>
 			<p>The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
-			<p if="{ showWorkingRedirects }">The result contains working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
-			<p if="{ !showWorkingRedirects }">The result doesn't contain working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
+			<p if="{ showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
+			<p if="{ !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
 			<datatable
 				ref="brokenLinks"
 				table-class="table-striped responsive-table"
@@ -120,8 +121,8 @@
 			<h3>Broken<span if="{ showWorkingRedirects }"> and Redirected</span> Images</h3>
 			<p if="{ !hasToken() }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
 			<p if="{ hasToken() }">The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
-			<p if="{ hasToken() && showWorkingRedirects }">The result contains working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
-			<p if="{ hasToken() && !showWorkingRedirects }">The result doesn't contain working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
+			<p if="{ hasToken() && showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
+			<p if="{ hasToken() && !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
 			<datatable if="{ hasToken() }"
 				table-class="table-striped table-responsive"
 				columns="{ urlsWithDeadImagesColumns}"
@@ -248,6 +249,7 @@
 		self.dev = opts.dev;
 		self.enableScheduler = opts.enableScheduler || false;
 		self.showWorkingRedirects = opts.showWorkingRedirects || false;
+		self.forceStop = false;
 
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;
@@ -263,6 +265,16 @@
 				self.update();
 			}
 		});
+
+		function getURL(url64) {
+			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
+			if (self.dev == '1') {
+				url = 'sample_data/current.json?_=' + Date.now();
+			} else if (self.dev == '2') {
+				url = 'http://marco-desktop:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
+			}
+			return url;
+		}
 
 		self.bool2text = function(val) {
 			if (val) {
@@ -572,6 +584,10 @@
 			self.start();
 		});
 
+		opts.linkchecker.on('stop', function() {
+			self.forceStop = true;
+		});
+
 		opts.linkchecker.on('started', function() {
 			self.disabled = true;
 		});
@@ -652,12 +668,7 @@
 					tokenHeader = 'BEARER ' + self.token;
 				}
 
-				var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
-				if (self.dev == '1') {
-					url = 'sample_data/current.json?_=' + Date.now();
-				} else if (self.dev == '2') {
-					url = 'http://marco-desktop:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
-				}
+				var url = getURL(url64);
 
 				jQuery.ajax({
 					method: 'GET',
@@ -678,7 +689,11 @@
 							lscache.set('data', data);
 						}
 					} else {
-						setTimeout(self.doRequest, 1000);
+						if (self.forceStop) {
+							self.stop(url, tokenHeader);
+						} else {
+							setTimeout(self.doRequest, 1000);
+						}
 					}
 				}).fail(function(xhr) {
 					opts.linkchecker.trigger('stopped');
@@ -700,7 +715,13 @@
 					} 
 					else if (statusCode == 0 && self.retries < 3) { // statusCode 0 means that the request was not sent or no response was received
 						self.retries++;
-						setTimeout(self.doRequest, 1000);
+
+						if (self.forceStop) {
+							self.stop(url, tokenHeader);
+						} else {
+							setTimeout(self.doRequest, 1000);
+						}
+
 						return;
 					} 
 					else {
@@ -713,6 +734,29 @@
 				});
 			};
 			self.doRequest();
+		}
+
+		self.stopCheck = function(e) {
+			e.preventDefault();
+			self.forceStop = true;
+		}
+
+		self.stop = function(url, tokenHeader) {
+			jQuery.ajax({
+				method: 'DELETE',
+				url: url,
+				headers: {
+					'Authorization': tokenHeader,
+				}
+			}).done(function(data) {
+				self.setMessage("The current check was stopped successfully.", 'info');
+			}).fail(function(xhr) {
+				self.setMessage("Could not stop the check because the connection to the server failed.", 'danger');
+			}).always(function() {
+				self.forceStop = false;
+				opts.linkchecker.trigger('stopped');
+				self.update();
+			});
 		}
 
 		self.render = function(data) {

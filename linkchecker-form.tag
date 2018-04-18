@@ -13,7 +13,8 @@
 				<input ref="showWorkingRedirects" type="checkbox"> Show working redirects
 			</label>
 		</div>
-		<button class="btn btn-default" type="submit" disabled="{ disabled }">Check your website</button>
+		<button class="btn btn-default" type="submit" if="{ !disabled }">Check your website</button>
+		<button class="btn btn-danger" onclick="{ stopCheck }" if="{ disabled }">Stop website check</button>
 	</form>
 
 	<script>
@@ -35,6 +36,11 @@
 		submit(e) {
 			e.preventDefault();
 			opts.linkchecker.trigger('start', this.refs.websiteURL.value, this.refs.token.value, this.refs.showWorkingRedirects.checked);
+		}
+
+		stopCheck(e) {
+			e.preventDefault();
+			opts.linkchecker.trigger('stop');
 		}
 
 		opts.linkchecker.on('started', function() {
