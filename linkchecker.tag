@@ -8,6 +8,10 @@
 		<raw content="{ message }" />
 	</div>
 
+	<div if="{ crawlDelayInSeconds >= 1 }" class="alert alert-danger">
+		The crawl-delay set in your robots.txt file is equal or higher than one second, namely { crawlDelayInSeconds } seconds. The crawl-delay defines the time waited between two requests of the Link Checker. This means that it might take very long for the check to finish. It is recommended that you lower the crawl-delay for the Link Checker in your robots.txt. You can use the user agent MB-LinkChecker if you like to define a custom crawl-delay for the Link Checker.
+	</div>
+
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active"><a href="#progressAndStats{ id }" aria-controls="progressAndStats{ id }" role="tab" data-toggle="tab">Progress and Stats</a></li>
 		<li role="presentation"><a href="#links{ id }" aria-controls="links{ id }" role="tab" data-toggle="tab">Links</a></li>
@@ -250,6 +254,7 @@
 		self.enableScheduler = opts.enableScheduler || false;
 		self.showWorkingRedirects = opts.showWorkingRedirects || false;
 		self.forceStop = false;
+		self.crawlDelayInSeconds = 0;
 
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;
@@ -795,6 +800,7 @@
 		self.render = function(data) {
 			self.urlsCrawledCount = data.URLsCrawledCount;
 			self.checkedLinksCount = data.CheckedLinksCount;
+			self.crawlDelayInSeconds = data.CrawlDelayInSeconds;
 
 			if (data.Finished) { // successfull
 				if (data.LimitReached) {
