@@ -264,6 +264,30 @@
 				self.render(self.data);
 				self.update();
 			}
+
+			// check if currently running and it should be resumed
+			if (self.websiteURL != undefined) {
+				var tokenHeader = '';
+				if (self.token != '') {
+					tokenHeader = 'BEARER ' + self.token;
+				}
+
+				var url64 = self.websiteURL64();
+				var url = getURL(url64 + '/running');
+
+				jQuery.ajax({
+					method: 'GET',
+					url: url,
+					headers: {
+						'Authorization': tokenHeader,
+					}
+				}).done(function(data, textStatus, xhr) {
+					if (data.Running) {
+						self.start(); // resume
+					}
+				});
+				// fail is not handled because it doesn't matter
+			}
 		});
 
 		function getURL(url64) {
@@ -639,6 +663,15 @@
 			self.start();
 		}
 
+		self.websiteURL64 = function() {
+			var url64 = window.btoa(encodeURIComponent(self.websiteURL).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+				return String.fromCharCode('0x' + p1);
+			}));
+			url64.replace(/\+/g, '-').replace(/\//g, '_'); // convert to base64 url encoding
+
+			return url64;
+		}
+
 		start() {
 			opts.linkchecker.trigger('started');
 
@@ -657,10 +690,7 @@
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
 
-			var url64 = window.btoa(encodeURIComponent(self.websiteURL).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-				return String.fromCharCode('0x' + p1);
-			}));
-			url64.replace(/\+/g, '-').replace(/\//g, '_'); // convert to base64 url encoding
+			var url64 = self.websiteURL64();
 
 			self.doRequest = function() {
 				var tokenHeader = '';
@@ -742,6 +772,9 @@
 		}
 
 		self.stop = function(url, tokenHeader) {
+			self.setMessage("Going to stop the current check.", 'warning');
+			self.update();
+
 			jQuery.ajax({
 				method: 'DELETE',
 				url: url,
