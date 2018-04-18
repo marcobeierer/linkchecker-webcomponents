@@ -38,6 +38,12 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 
 ## Changelog
 
+### 1.8.0
+- Implemented auto-resume if the Link Checker is opened and a check is active.
+- Implemented a warning for high crawl-delays.
+- Added a stop button the stop the current check.
+- Implemented protection for check hijacking if token was used.
+
 ### 1.7.1
 - Fixed redirect stats.
 
