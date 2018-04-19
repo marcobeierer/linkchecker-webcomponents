@@ -263,12 +263,15 @@
 			lscache.setBucket('linkchecker');
 			lscache.flushExpired();
 
+			localforage.config({
+				driver      : localforage.INDEXEDDB,
+				name        : 'LinkChecker',
+				version     : 1.0,
+				storeName   : 'result'
+			});
+
 			// NOTE if just 'linkchecker' is used as prefix (bucket), the online tool only stores the result of the last website scanned
-			self.data = lscache.get('data');
-			if (self.data != null) {
-				self.render(self.data);
-				self.update();
-			}
+			//self.data = lscache.get('data');
 
 			// check if currently running and it should be resumed
 			if (self.websiteURL != undefined) {
@@ -290,8 +293,30 @@
 					if (data.Running) {
 						self.start(); // resume
 					}
+					else {
+						self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
+						
+						localforage.getItem('data', function(err, data) {
+							if (err != null) {
+								console.error(err);
+								self.setMessage('Loading the result of the last check failed.', 'danger');
+								return;
+							}
+
+							if (data == null) {
+								self.setMessage('No result available in the cache, the Link Checker was not started yet.', 'info');
+								return;
+							}
+
+							self.data = data;
+							self.render(self.data);
+							self.update();
+						});
+					}
 				});
 				// fail is not handled because it doesn't matter
+			}
+			else {
 			}
 		});
 
@@ -680,7 +705,11 @@
 		start() {
 			opts.linkchecker.trigger('started');
 
-			lscache.remove('data');
+			//lscache.remove('data');
+			localforage.removeItem('data', function(err) {
+				console.error(err);
+				self.setMessage('Could not remove old result from cache.', 'danger');
+			});
 			self.data = {};
 
 			self.urlsCrawledCount = 0;
@@ -720,9 +749,14 @@
 					if (data.Finished) {
 						opts.linkchecker.trigger('stopped');
 
-						if (lscache.supported()) {
-							lscache.set('data', data);
-						}
+						// if (lscache.supported()) {
+							//lscache.set('data', data);
+						// }
+
+						localforage.setItem('data', data, function(err) {
+							console.error(err);
+							self.setMessage('Could not save the result in cache.', 'danger');
+						});
 					} else {
 						if (self.forceStop) {
 							self.stop(url, tokenHeader);

@@ -30,19 +30,15 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 - update links
 	- create own link checker pro site for standalone
 	- currently only purchase
-- show date when check was finished 
-	- indicates if the user has fetched an old result
 - remove style attributes and create custom CSS file
-- impl auto resume
-- impl cancel option
 
 ## Changelog
 
 ### 1.8.0
-- Implemented auto-resume if the Link Checker gets opened and a check is active.
+- Auto-resume support if the Link Checker gets opened and a check is already running on the server.
 - Implemented a warning for high crawl-delays.
 - Added a stop button to stop the current check.
-- Implemented protection for check hijacking if token was used.
+- Implemented protection for check hijacking if token is used.
 
 ### 1.7.1
 - Fixed redirect stats.
