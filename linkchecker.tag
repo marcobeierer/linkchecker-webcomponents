@@ -4,9 +4,7 @@
 		<button class="btn btn-danger" onclick="{ stopCheck }"  if="{ disabled }">Stop website check</button>
 	</form>
 
-	<div class="alert alert-{ messageType }">
-		<raw content="{ message }" />
-	</div>
+	<message plugin="{ messagePlugin }" text="Link Checker is initializing." type="info" />
 
 	<div if="{ crawlDelayInSeconds >= 1 }" class="alert alert-danger">
 		The crawl-delay set in your robots.txt file is equal or higher than one second, namely { crawlDelayInSeconds } seconds. The crawl-delay defines the time waited between two requests of the Link Checker. This means that it might take very long for the check to finish. It is recommended that you lower the crawl-delay for the Link Checker in your robots.txt. You can use the user agent MB-LinkChecker if you like to define a custom crawl-delay for the Link Checker.
@@ -246,6 +244,8 @@
 
 	<script>
 		var self = this;
+
+		self.messagePlugin = riot.observable();
 
 		self.message = '';
 		self.originSystem = opts.originSystem || 'riot';
@@ -651,10 +651,8 @@
 			self.update();
 		});
 
-		setMessage(text, type) {
-			self.message = text;
-			self.messageType = type;
-			self.update();
+		self.setMessage = function(text, type) {
+			self.messagePlugin.trigger('set', text, type);
 		}
 
 		setToken(token) {
