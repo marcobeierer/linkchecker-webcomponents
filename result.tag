@@ -1,6 +1,13 @@
 'use strict'
 
 <result>
+	<nav aria-label="...">
+		<ul class="pager">
+			<li class="previous { disabled: !hasPreviousPage() }"><a href="#" onclick="{ previousPage }"><span aria-hidden="true">&larr;</span> Previous</a></li>
+			<li class="next { disabled: !hasNextPage() }"><a href="#" onclick="{ nextPage }">Next <span aria-hidden="true">&rarr;</span></a></li>
+		</ul>
+	</nav>
+
 	<div class="panel panel-default table-responsive">
 		<table class="table table-striped table-responsive">
 			<thead>
@@ -16,10 +23,9 @@
 				<tr 
 					data-is="result-row"
 					plugin="{ plugin }"
-					each="{ item, i in result }" 
+					each="{ item in paginate() }" 
 					url="{ item.FoundOnURL }" 
 					resources="{ item.Resources }"
-					if="{ hasSomethingToShow(item.Resources) && start() <= i && i < end() }"
 				>
 				</tr>
 			</tbody>
@@ -35,6 +41,13 @@
 		</table>
 	</div>
 
+	<nav aria-label="...">
+		<ul class="pager">
+			<li class="previous { disabled: !hasPreviousPage() }"><a href="#" onclick="{ previousPage }"><span aria-hidden="true">&larr;</span> Previous</a></li>
+			<li class="next { disabled: !hasNextPage() }"><a href="#" onclick="{ nextPage }">Next <span aria-hidden="true">&rarr;</span></a></li>
+		</ul>
+	</nav>
+
 	<script>
 		var self = this;
 
@@ -43,13 +56,6 @@
 
 		self.page = 0;
 		self.pageSize = 10;
-
-		self.db = localforage.createInstance({
-			driver      : localforage.INDEXEDDB,
-			name        : 'LinkCheckerResult',
-			version     : 1.0,
-			storeName   : 'linkchecker_result'
-		});
 
 		// TODO store them in localStorage
 		self.showLinks = true;
@@ -60,6 +66,59 @@
 
 		self.showMarkedAsFixed = false;
 		self.showMarkedAsWorking = true;
+
+		self.paginate = function(arr) {
+			return self.rowsToShow().slice(self.start(), self.end());
+		}
+
+		self.rowsToShow = function() {
+			var rowsToShow = [];
+
+			self.result.forEach(function(row) {
+				if (self.hasSomethingToShow(row.Resources)) {
+					rowsToShow.push(row);
+				}
+			});
+
+			return rowsToShow;
+		};
+
+		self.countPages = function() {
+			var countRows = 0;
+
+			self.result.forEach(function(row) {
+				if (self.hasSomethingToShow(row.Resources)) {
+					countRows++;
+				}
+			});
+
+			return Math.ceil(countRows / self.pageSize);  // The Math.ceil() function returns the smallest integer greater than or equal to a given number.
+		};
+
+		self.nextPage = function(e) {
+			e.preventDefault();
+			if (self.hasNextPage()) {
+				self.page++;
+				self.update();
+			}
+		}
+
+		self.previousPage = function(e) {
+			e.preventDefault();
+			if (self.hasPreviousPage()) {
+				self.page--;
+				self.update();
+			}
+		}
+
+		self.hasNextPage = function() {
+			return self.page < (self.countPages() - 1);
+
+		}
+
+		self.hasPreviousPage = function() {
+			return self.page > 0;
+		}
 
 		self.hasSomethingToShow = function(resources) {
 			return resources.some(function(resource) {
@@ -106,20 +165,6 @@
 			self.onload(data);
 			self.update();
 		});
-
-		/*
-		self.plugin.on('no-resources-left', function(url) {
-			// TODO only from if absolute no left
-
-			self.result.some(function(elem, index, arr) {
-				if (elem.FoundOnURL == url) {
-					arr.splice(index, 1); // remove elem from result
-					return true; // some aborts on true
-				}
-			});
-			self.update(); // reload pagination
-		});
-		*/
 
 		self.onload = function(data) {
 			if (data.LimitReached) {
