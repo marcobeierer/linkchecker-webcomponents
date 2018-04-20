@@ -226,7 +226,7 @@
 		self.email = opts.email || ''; // necessary for scheduler;
 
 		self.on('mount', function() {
-			lscache.setBucket('linkchecker');
+			lscache.setBucket('linkchecker-checked-');
 			lscache.flushExpired();
 
 			localforage.config({
@@ -235,9 +235,6 @@
 				version     : 1.0,
 				storeName   : 'result'
 			});
-
-			// NOTE if just 'linkchecker' is used as prefix (bucket), the online tool only stores the result of the last website scanned
-			//self.data = lscache.get('data');
 
 			// check if currently running and it should be resumed
 			if (self.websiteURL != undefined) {
@@ -262,6 +259,7 @@
 					else {
 						self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
 						
+						// NOTE if no prefix is used, the online tool only stores the result of the last website scanned
 						localforage.getItem('data', function(err, data) {
 							if (err != null) {
 								console.error(err);
@@ -408,7 +406,6 @@
 		start() {
 			opts.linkchecker.trigger('started');
 
-			//lscache.remove('data');
 			localforage.removeItem('data', function(err) {
 				if (err != null) {
 					console.error(err);
@@ -425,6 +422,9 @@
 			resetObject(self.urlsWithDeadImages);
 			resetObject(self.urlsWithDeadYouTubeVideos);
 			resetObject(self.urlsWithUnhandledEmbeddedResources);
+
+			lscache.setBucket('linkchecker-fixed-');
+			lscache.flush();
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
@@ -453,10 +453,6 @@
 
 					if (data.Finished) {
 						opts.linkchecker.trigger('stopped');
-
-						// if (lscache.supported()) {
-							//lscache.set('data', data);
-						// }
 
 						localforage.setItem('data', data, function(err) {
 							if (err != null) {
