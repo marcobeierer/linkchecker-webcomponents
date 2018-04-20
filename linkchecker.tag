@@ -12,9 +12,7 @@
 
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active"><a href="#progressAndStats{ id }" aria-controls="progressAndStats{ id }" role="tab" data-toggle="tab">Progress and Stats</a></li>
-		<li role="presentation"><a href="#links{ id }" aria-controls="links{ id }" role="tab" data-toggle="tab">Links</a></li>
-		<li role="presentation"><a href="#images{ id }" aria-controls="images{ id }" role="tab" data-toggle="tab">Images</a></li>
-		<li role="presentation"><a href="#youTubeVideos{ id }" aria-controls="youTubeVideos{ id }" role="tab" data-toggle="tab">YouTube Videos</a></li>
+		<li role="presentation"><a href="#result{ id }" aria-controls="result{ id }" role="tab" data-toggle="tab">Result</a></li>
 		<li role="presentation"><a href="#statusCodes{ id }" aria-controls="statusCodes{ id }" role="tab" data-toggle="tab">Common Status Codes</a></li>
 		<li role="presentation"><a href="#unhandledResources{ id }" aria-controls="unhandledResources{ id }" role="tab" data-toggle="tab">Unhandled Resources</a></li>
 		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
@@ -104,6 +102,46 @@
 			</div>
 		</div>
 
+		<div role="tabpanel" class="tab-pane" id="result{ id }">
+			<h3>Result</h3>
+			<p>The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
+			<p if="{ showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
+			<p if="{ !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
+
+			<div class="panel panel-default table-responsive">
+				<table class="table table-striped table-responsive">
+					<thead>
+						<tr>
+							<th style="width: 35%;">URL where the broken resources were found</th>
+							<th style="width: ">Broken Resources</th>
+							<th style="width: 9em;">Type</th>
+							<th style="width: 9em;">Status Code</th>
+							<th style="width: 11em;">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr 
+							data-is="page-result"
+							each="{ data, foundOnURL in paginate(result) }" 
+							url="{ foundOnURL }" 
+							data="{ data }"
+						>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th style="width: 35%;">URL where the broken resources were found</th>
+							<th style="width: ">Broken Resources</th>
+							<th style="width: 9em;">Type</th>
+							<th style="width: 9em;">Status Code</th>
+							<th style="width: 11em;">Actions</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+
+		<!--
 		<div role="tabpanel" class="tab-pane" id="links{ id }">
 			<h3>Broken<span if="{ showWorkingRedirects }"> and Redirected</span> Links</h3>
 			<p>The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
@@ -146,6 +184,7 @@
 				message="{ resultsMessage }">
 			</datatable>
 		</div>
+		-->
 
 		<div role="tabpanel" class="tab-pane" id="statusCodes{ id }">
 			<h3>Common Status Codes</h3>
@@ -182,6 +221,7 @@
 			
 			<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
 
+<!--
 			<h4>Unhandled Links</h4>
 			<datatable
 				ref="linksBlockedByRobots"
@@ -203,6 +243,7 @@
 					message="{ resultsMessage }">
 				</datatable>
 			</virtual>
+-->
 
 			<h4>Custom Status Codes</h4>
 			<div class="panel panel-default table-responsive">
@@ -255,6 +296,7 @@
 		self.showWorkingRedirects = opts.showWorkingRedirects || false;
 		self.forceStop = false;
 		self.crawlDelayInSeconds = 0;
+
 
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;
@@ -320,6 +362,28 @@
 			}
 		});
 
+		self.page = 0;
+		self.pageSize = 10;
+
+		self.paginate = function(obj) {
+			if (obj == undefined) {
+				return {};
+			}
+
+			var sliced = {};
+			var keys = Object.keys(obj);
+			
+			var start = self.page * self.pageSize;
+			var end = (self.page + 1) * self.pageSize;
+
+			for (var i = start; i < end; i++) {
+				var key = keys[i];
+				sliced[key] = obj[key];
+			}
+
+			return sliced;
+		}
+
 		function getURL(url64) {
 			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 			if (self.dev == '1') {
@@ -344,267 +408,6 @@
 		self.hasToken = function() {
 			return self.token || (self.data.Stats != undefined && self.data.Stats.TokenUsed);
 		}
-
-		self.urlsWithBrokenLinksColumns = [
-			{
-				label: 'URL where the broken links were found',
-				width: '35%',
-				callback: function(info, url) {
-					return url;
-				},
-				linkCallback: function(info, url) {
-					return url;
-				},
-			},
-			{
-				label: 'Broken Links',
-				type: 'subtable',
-				colspan: '3',
-				callback: subtableCallback,
-				message: 'No broken links left.',
-			},
-			{
-				label: 'Status Code',
-				width: '9em',
-				showBody: false,
-			},
-			{
-				label: 'Actions',
-				width: '11em',
-				showBody: false,
-			}
-		];
-
-		self.urlsWithLinksBlockedByRobotsColumns = [
-			{
-				label: 'URL where the resources were found',
-				width: '35%',
-				callback: function(info, url) {
-					return url;
-				},
-				linkCallback: function(info, url) {
-					return url;
-				},
-			},
-			{
-				label: 'Blocked Resources',
-				type: 'subtable',
-				colspan: '4',
-				callback: subtableBlockedLinksCallback,
-			},
-			{
-				label: 'Status Code',
-				width: '9em',
-				showBody: false,
-			},
-			{
-				label: 'Marked As Working On',
-				width: '15em',
-				showBody: false,
-			},
-			{
-				label: 'Actions',
-				width: '11em',
-				showBody: false,
-			}
-		];
-
-		self.urlsWithDeadImagesColumns = [
-			{
-				label: 'URL where the broken images were found',
-				width: '35%',
-				callback: function(info, url) {
-					return url;
-				},
-				linkCallback: function(info, url) {
-					return url;
-				},
-			},
-			{
-				label: 'Broken Images',
-				type: 'subtable',
-				colspan: '3',
-				callback: subtableCallback,
-				message: 'No broken images left.',
-			},
-			{
-				label: 'Status Code',
-				width: '9em',
-				showBody: false,
-			},
-			{
-				label: 'Actions',
-				width: '11em',
-				showBody: false,
-			}
-		];
-
-		self.urlsWithDeadYouTubeVideosColumns = [
-			{
-				label: 'URL where the broken videos were found',
-				width: '35%',
-				callback: function(info, url) {
-					return url;
-				},
-				linkCallback: function(info, url) {
-					return url;
-				},
-			},
-			{
-				label: 'Broken Embedded Videos',
-				type: 'subtable',
-				colspan: '3',
-				callback: subtableWithStatusTextCallback,
-				message: 'No broken videos left.',
-			},
-			{
-				label: 'Status Text',
-				width: '25em',
-				showBody: false,
-			},
-			{
-				label: 'Actions',
-				width: '11em',
-				showBody: false,
-			}
-		];
-
-		function subtableBlockedLinksCallback(info, url) {
-			return [
-				{
-					label: 'URL',
-					linkCallback: function(elem) {
-						return elem.URL;
-					},
-					isRedirectedCallback: function(elem) {
-						return elem.IsRedirected;
-					}
-				},
-				{
-					label: 'StatusCode',
-					width: '9em',
-				},
-				{
-					label: 'Marked As Working On',
-					width: '15em',
-					callback: function(elem) {
-						var markedOn = lscache.get(elem.URL);
-						if (markedOn == undefined) {
-							return 'never';
-						}
-
-						return new Date(markedOn).toLocaleDateString();
-					},
-				},
-				{
-					label: 'Actions',
-					width: '10em', // one em less than table header because of margin-right between inner and outer table
-				}
-			]
-		}
-
-		function subtableCallback(info, url) {
-			return [
-				{
-					label: 'URL',
-					linkCallback: function(elem) {
-						return elem.URL;
-					},
-					isRedirectedCallback: function(elem) {
-						return elem.IsRedirected;
-					}
-				},
-				{
-					label: 'StatusCode',
-					width: '9em',
-				},
-				{
-					label: 'Actions',
-					width: '10em', // one em less than table header because of margin-right between inner and outer table
-				}
-			]
-		}
-
-		function subtableWithStatusTextCallback(info, url) {
-			return [
-				{
-					label: 'URL',
-					linkCallback: function(elem) {
-						return elem.URL;
-					},
-					isRedirectedCallback: function(elem) {
-						return elem.IsRedirected;
-					}
-				},
-				{
-					label: 'StatusText',
-					width: '25em',
-				},
-				{
-					label: 'Actions',
-					width: '10em', // one em less than table header because of margin-right between inner and outer table
-				}
-			]
-		}
-
-		self.blockedLinksActions = [
-			{
-				labelCallback: function(elem) {
-					if (wasAlreadyMarkedToday(elem)) {
-						return 'Already marked';
-					}
-					return 'Mark as Working';
-				},
-				btnType: 'primary',
-				action: 'callback',
-				callback: function(elem) {
-					lscache.set(elem.URL, Date.now(), 60 * 24 * 30); // in minutes; 60 * 24 * 30 is one month
-					self.refs.linksBlockedByRobots.update(); // update all in this table because each link should just be checked once, even if it is used on multiple pages
-				},
-				isDisabledCallback: wasAlreadyMarkedToday 
-			}
-		];
-
-		function wasAlreadyMarkedToday(elem) {
-			var markedOn = lscache.get(elem.URL);
-			if (markedOn == undefined) {
-				return false;
-			}
-			return new Date(Date.now()).toLocaleDateString() == new Date(markedOn).toLocaleDateString();
-		}
-
-		self.brokenImagesActions = [
-			{
-				label: 'Mark as Fixed',
-				btnType: 'primary',
-				action: 'callback',
-				callback: function(elem) {
-					markLinkInList(elem, self.urlsWithDeadImages);
-				}
-			}
-		];
-
-		self.deadYouTubeVideosActions = [
-			{
-				label: 'Mark as Fixed',
-				btnType: 'primary',
-				action: 'callback',
-				callback: function(elem) {
-					markLinkInList(elem, self.urlsWithDeadYouTubeVideos);
-				}
-			}
-		];
-
-		self.brokenLinksActions = [
-			{
-				label: 'Mark as Fixed',
-				btnType: 'primary',
-				action: 'callback',
-				callback: function(elem) {
-					markLinkInList(elem, self.urlsWithBrokenLinks);
-				}
-			}
-		];
 
 		// resetObject is used because just assigning {} creates a new object with another reference, but the child tags still have a reference to the old object
 		function resetObject(obj) {
@@ -705,8 +508,10 @@
 
 			//lscache.remove('data');
 			localforage.removeItem('data', function(err) {
-				console.error(err);
-				self.setMessage('Could not remove old result from cache.', 'danger');
+				if (err != null) {
+					console.error(err);
+					self.setMessage('Could not remove old result from cache.', 'danger');
+				}
 			});
 			self.data = {};
 
@@ -752,8 +557,10 @@
 						// }
 
 						localforage.setItem('data', data, function(err) {
-							console.error(err);
-							self.setMessage('Could not save the result in cache.', 'danger');
+							if (err != null) {
+								console.error(err);
+								self.setMessage('Could not save the result in cache.', 'danger');
+							}
 						});
 					} else {
 						if (self.forceStop) {
@@ -849,97 +656,42 @@
 
 				self.resultsMessage = 'Nothing is broken, everything seems to be fine.';
 
-				if (!jQuery.isEmptyObject(data.DeadLinks)) { // necessary for placeholder
-					// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
-					
-					for (var url in data.DeadLinks) {
-						self.urlsWithBrokenLinks[url] = {};
+				var start = new Date();
 
-						data.DeadLinks[url].forEach(function(obj) {
-							if (!self.showWorkingRedirects && obj.StatusCode < 300) {
-								return;
-							}
+				var result = {};
 
-							obj.FoundOnURL = url;
-							self.urlsWithBrokenLinks[url][obj.URL] = obj;
-						});
+				self.addToResult(result, data.DeadLinks, 'Link');
+				self.addToResult(result, data.UnhandledLinkedResources, 'Link');
+				self.addToResult(result, data.DeadEmbeddedImages, 'Image');
+				self.addToResult(result, data.DeadEmbeddedYouTubeVideos, 'Video');
+				self.addToResult(result, data.UnhandledEmbeddedResources, 'Resource');
 
-						if (Object.keys(self.urlsWithBrokenLinks[url]).length == 0) {
-							delete self.urlsWithBrokenLinks[url];
-						}
+				self.result = result;
+
+				console.log(new Date() - start);
+			}
+		}
+
+		self.addToResult = function(result, data, type) {
+			if (!jQuery.isEmptyObject(data)) {
+				for (var foundOnURL in data) {
+					var resultResources = result[foundOnURL];
+					var resourcesToAdd = data[foundOnURL];
+
+					if (resultResources === undefined) {
+						resultResources = [];
 					}
-				}
 
-				if (!jQuery.isEmptyObject(data.UnhandledLinkedResources)) {
-					for (var url in data.UnhandledLinkedResources) {
-						self.urlsWithLinksBlockedByRobots[url] = {};
-
-						data.UnhandledLinkedResources[url].forEach(function(obj) {
-							obj.FoundOnURL = url;
-							self.urlsWithLinksBlockedByRobots[url][obj.URL] = obj;
-						});
-
-						if (Object.keys(self.urlsWithLinksBlockedByRobots[url]).length == 0) {
-							delete self.urlsWithLinksBlockedByRobots[url];
-						}
+					// should never be undefined
+					if (resourcesToAdd === undefined) {
+						resourcesToAdd = [];
 					}
-				}
 
-				if (!jQuery.isEmptyObject(data.DeadEmbeddedImages)) { // necessary for placeholder
-					// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
-					
-					for (var url in data.DeadEmbeddedImages) {
-						self.urlsWithDeadImages[url] = {};
+					resourcesToAdd.forEach(function(resource) {
+						resource.Type = type;
+					});
 
-						data.DeadEmbeddedImages[url].forEach(function(obj) {
-							if (!self.showWorkingRedirects && obj.StatusCode < 300) {
-								return;
-							}
-
-							obj.FoundOnURL = url;
-							self.urlsWithDeadImages[url][obj.URL] = obj;
-						});
-
-						if (Object.keys(self.urlsWithDeadImages[url]).length == 0) {
-							delete self.urlsWithDeadImages[url];
-						}
-					}
-				}
-
-				if (!jQuery.isEmptyObject(data.DeadEmbeddedYouTubeVideos)) { // necessary for placeholder
-					// transformation to object is neccesary so that everything could be passed down by reference, arrays are passed by value and updates are really slow if everything is passed by value
-					
-					for (var url in data.DeadEmbeddedYouTubeVideos) {
-						self.urlsWithDeadYouTubeVideos[url] = {};
-
-						data.DeadEmbeddedYouTubeVideos[url].forEach(function(obj) {
-							if (!self.showWorkingRedirects && obj.StatusCode < 300) {
-								return;
-							}
-
-							obj.FoundOnURL = url;
-							self.urlsWithDeadYouTubeVideos[url][obj.URL] = obj;
-						});
-
-						if (Object.keys(self.urlsWithDeadYouTubeVideos[url]).length == 0) {
-							delete self.urlsWithDeadYouTubeVideos[url];
-						}
-					}
-				}
-
-				if (!jQuery.isEmptyObject(data.UnhandledEmbeddedResources)) {
-					for (var url in data.UnhandledEmbeddedResources) {
-						self.urlsWithUnhandledEmbeddedResources[url] = {};
-
-						data.UnhandledEmbeddedResources[url].forEach(function(obj) {
-							obj.FoundOnURL = url;
-							self.urlsWithUnhandledEmbeddedResources[url][obj.URL] = obj;
-						});
-
-						if (Object.keys(self.urlsWithUnhandledEmbeddedResources[url]).length == 0) {
-							delete self.urlsWithUnhandledEmbeddedResources[url];
-						}
-					}
+					result[foundOnURL] = resultResources.concat(resourcesToAdd);
 				}
 			}
 		}
