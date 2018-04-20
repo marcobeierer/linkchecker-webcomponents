@@ -13,7 +13,7 @@
 		self.type = opts.type || '';
 		self.text = opts.text || '';
 
-		self.plugin.on('set', function(text, type) {
+		self.plugin.on('set-message', function(text, type) {
 			self.text = text;
 			self.type = type;
 			self.update();

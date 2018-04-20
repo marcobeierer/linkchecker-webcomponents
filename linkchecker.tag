@@ -4,7 +4,7 @@
 		<button class="btn btn-danger" onclick="{ stopCheck }"  if="{ disabled }">Stop website check</button>
 	</form>
 
-	<message plugin="{ messagePlugin }" text="Link Checker is initializing." type="info" />
+	<message plugin="{ plugin }" text="Link Checker is initializing." type="info" />
 
 	<div if="{ crawlDelayInSeconds >= 1 }" class="alert alert-danger">
 		The crawl-delay set in your robots.txt file is equal or higher than one second, namely { crawlDelayInSeconds } seconds. The crawl-delay defines the time waited between two requests of the Link Checker. This means that it might take very long for the check to finish. It is recommended that you lower the crawl-delay for the Link Checker in your robots.txt. You can use the user agent MB-LinkChecker if you like to define a custom crawl-delay for the Link Checker.
@@ -108,37 +108,7 @@
 			<p if="{ showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
 			<p if="{ !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
 
-			<div class="panel panel-default table-responsive">
-				<table class="table table-striped table-responsive">
-					<thead>
-						<tr>
-							<th style="width: 35%;">URL where the broken resources were found</th>
-							<th style="width: ">Broken Resources</th>
-							<th style="width: 9em;">Type</th>
-							<th style="width: 9em;">Status Code</th>
-							<th style="width: 11em;">Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr 
-							data-is="page-result"
-							each="{ data, foundOnURL in paginate(result) }" 
-							url="{ foundOnURL }" 
-							data="{ data }"
-						>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th style="width: 35%;">URL where the broken resources were found</th>
-							<th style="width: ">Broken Resources</th>
-							<th style="width: 9em;">Type</th>
-							<th style="width: 9em;">Status Code</th>
-							<th style="width: 11em;">Actions</th>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
+			<result plugin="{ plugin }"></result>
 		</div>
 
 		<!--
@@ -147,14 +117,6 @@
 			<p>The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
 			<p if="{ showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
 			<p if="{ !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
-			<datatable
-				ref="brokenLinks"
-				table-class="table-striped responsive-table"
-				columns="{ urlsWithBrokenLinksColumns }"
-				data="{ urlsWithBrokenLinks }"
-				actions="{ brokenLinksActions }"
-				message="{ resultsMessage }">
-			</datatable>
 		</div>
 
 		<div role="tabpanel" class="tab-pane" id="images{ id }">
@@ -163,26 +125,12 @@
 			<p if="{ hasToken() }">The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
 			<p if="{ hasToken() && showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
 			<p if="{ hasToken() && !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
-			<datatable if="{ hasToken() }"
-				table-class="table-striped table-responsive"
-				columns="{ urlsWithDeadImagesColumns}"
-				data="{ urlsWithDeadImages }"
-				actions="{ brokenImagesActions }"
-				message="{ resultsMessage }">
-			</datatable>
 		</div>
 
 		<div role="tabpanel" class="tab-pane" id="youTubeVideos{ id }">
 			<h3>Broken Embedded YouTube Videos</h3>
 			<p if="{ !hasToken() }">Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
 			<p if="{ hasToken() }">The table below shows all broken embedded YouYube videos. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
-			<datatable if="{ hasToken() }"
-				table-class="table-striped table-responsive"
-				columns="{ urlsWithDeadYouTubeVideosColumns }"
-				data="{ urlsWithDeadYouTubeVideos }"
-				actions="{ deadYouTubeVideosActions }"
-				message="{ resultsMessage }">
-			</datatable>
 		</div>
 		-->
 
@@ -220,30 +168,6 @@
 			<p>If the blocked links were found on your website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p>
 			
 			<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
-
-<!--
-			<h4>Unhandled Links</h4>
-			<datatable
-				ref="linksBlockedByRobots"
-				table-class="table-striped table-responsive"
-				columns="{ urlsWithLinksBlockedByRobotsColumns }"
-				data="{ urlsWithLinksBlockedByRobots }"
-				actions="{ blockedLinksActions }"
-				message="{ resultsMessage }">
-			</datatable>
-
-			<virtual if="{ hasToken() }">
-				<h4>Unhandled Images</h4>
-				<datatable
-					ref="unhandledEmbeddedResources"
-					table-class="table-striped table-responsive"
-					columns="{ urlsWithLinksBlockedByRobotsColumns }"
-					data="{ urlsWithUnhandledEmbeddedResources }"
-					actions="{ blockedLinksActions }"
-					message="{ resultsMessage }">
-				</datatable>
-			</virtual>
--->
 
 			<h4>Custom Status Codes</h4>
 			<div class="panel panel-default table-responsive">
@@ -286,7 +210,7 @@
 	<script>
 		var self = this;
 
-		self.messagePlugin = riot.observable();
+		self.plugin = riot.observable();
 
 		self.message = '';
 		self.originSystem = opts.originSystem || 'riot';
@@ -362,28 +286,6 @@
 			}
 		});
 
-		self.page = 0;
-		self.pageSize = 10;
-
-		self.paginate = function(obj) {
-			if (obj == undefined) {
-				return {};
-			}
-
-			var sliced = {};
-			var keys = Object.keys(obj);
-			
-			var start = self.page * self.pageSize;
-			var end = (self.page + 1) * self.pageSize;
-
-			for (var i = start; i < end; i++) {
-				var key = keys[i];
-				sliced[key] = obj[key];
-			}
-
-			return sliced;
-		}
-
 		function getURL(url64) {
 			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
 			if (self.dev == '1') {
@@ -455,7 +357,7 @@
 		});
 
 		self.setMessage = function(text, type) {
-			self.messagePlugin.trigger('set', text, type);
+			self.plugin.trigger('set-message', text, type);
 		}
 
 		setToken(token) {
@@ -642,58 +544,9 @@
 			self.crawlDelayInSeconds = data.CrawlDelayInSeconds;
 
 			if (data.Finished) { // successfull
-				if (data.LimitReached) {
-					self.setMessage("The URL limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 50'000 URLs.", 'danger');
-				} else {
-					var message = "Your website has been checked successfully. Please see the result below.";
-
-					if (data.Stats != undefined && !data.Stats.TokenUsed) {
-						message += " If you additionally like to check your site for <strong>broken images</strong> or like to use the scheduler for an <strong>automatically triggered daily check</strong>, then have a look at the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
-					}
-
-					self.setMessage(message, 'success');
-				}
-
-				self.resultsMessage = 'Nothing is broken, everything seems to be fine.';
-
-				var start = new Date();
-
-				var result = {};
-
-				self.addToResult(result, data.DeadLinks, 'Link');
-				self.addToResult(result, data.UnhandledLinkedResources, 'Link');
-				self.addToResult(result, data.DeadEmbeddedImages, 'Image');
-				self.addToResult(result, data.DeadEmbeddedYouTubeVideos, 'Video');
-				self.addToResult(result, data.UnhandledEmbeddedResources, 'Resource');
-
-				self.result = result;
-
-				console.log(new Date() - start);
+				self.plugin.trigger('result-data-ready', data);
 			}
 		}
 
-		self.addToResult = function(result, data, type) {
-			if (!jQuery.isEmptyObject(data)) {
-				for (var foundOnURL in data) {
-					var resultResources = result[foundOnURL];
-					var resourcesToAdd = data[foundOnURL];
-
-					if (resultResources === undefined) {
-						resultResources = [];
-					}
-
-					// should never be undefined
-					if (resourcesToAdd === undefined) {
-						resourcesToAdd = [];
-					}
-
-					resourcesToAdd.forEach(function(resource) {
-						resource.Type = type;
-					});
-
-					result[foundOnURL] = resultResources.concat(resourcesToAdd);
-				}
-			}
-		}
 	</script>
 </linkchecker>
