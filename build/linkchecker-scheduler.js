@@ -28,6 +28,9 @@ riot.tag2('linkchecker-scheduler', '<div if="{token}" class="alert alert-{messag
 		}.bind(this)
 
 		this.status = function() {
+			if (self.websiteURL == '') {
+				return;
+			}
 			jQuery.ajax({
 				method: 'GET',
 				url: self.apiURL + '?Service=Link Checker&URL=' + self.websiteURL,
