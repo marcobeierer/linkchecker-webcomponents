@@ -423,6 +423,9 @@
 			resetObject(self.urlsWithDeadYouTubeVideos);
 			resetObject(self.urlsWithUnhandledEmbeddedResources);
 
+			lscache.setBucket('linkchecker-settings-');
+			lscache.remove('currentPage');
+
 			lscache.setBucket('linkchecker-fixed-');
 			lscache.flush();
 

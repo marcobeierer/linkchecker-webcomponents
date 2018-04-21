@@ -1,7 +1,35 @@
 'use strict'
 
 <result>
-	<nav aria-label="...">
+	<div class="btn-toolbar">
+		<div class="btn-group" role="group">
+			<button type="button" class="btn { btn-primary: showLinks } { btn-default: !showLinks }" onclick="{ toggle.bind(this, 'links') }">Links</button>
+			<button type="button" class="btn { btn-primary: showImages } { btn-default: !showImages } { disabled: !parent.hasToken() }" onclick="{ toggle.bind(this, 'images') }">Images</button>
+			<button type="button" class="btn { btn-primary: showVideos } { btn-default: !showVideos } { disabled: !parent.hasToken() }" onclick="{ toggle.bind(this, 'videos') }">Videos</button>
+		</div>
+		<div class="btn-group" role="group">
+			<button type="button" class="btn { btn-primary: showUnhandled } { btn-default: !showUnhandled }" onclick="{ toggle.bind(this, 'unhandled') }">Unhandled</button>
+			<button type="button" class="btn { btn-primary: showWorkingRedirects } { btn-default: !showWorkingRedirects }" onclick="{ toggle.bind(this, 'workingRedirects') }">Working Redirects</button>
+		</div>
+		<div class="btn-group" role="group">
+			<button type="button" class="btn { btn-primary: showMarkedAsFixed } { btn-default: !showMarkedAsFixed }" onclick="{ toggle.bind(this, 'markedAsFixed') }">Marked as Fixed</button>
+			<button type="button" class="btn { btn-primary: showMarkedAsWorking } { btn-default: !showMarkedAsWorking }" onclick="{ toggle.bind(this, 'markedAsWorking') }">Marked as Working</button>
+		</div>
+		<div class="btn-group" role="group">
+			<button type="button" class="btn btn-default">URLs per Page: { pageSize }</button>
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<span class="caret"></span>
+				<span class="sr-only">Toggle Dropdown</span>
+			</button>
+			<ul class="dropdown-menu">
+				<li class="text-right" if="{ pageSize != 1 }"><a onclick="{ setPageSize.bind(this, 1) }" href="#">1</a></li>
+				<li class="text-right" if="{ pageSize != 10 }"><a onclick="{ setPageSize.bind(this, 10) }" href="#">10</a></li>
+				<li class="text-right" if="{ pageSize != 100 }"><a onclick="{ setPageSize.bind(this, 100) }" href="#">100</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<nav>
 		<ul class="pager">
 			<li class="previous { disabled: !hasPreviousPage() }"><a href="#" onclick="{ previousPage }"><span aria-hidden="true">&larr;</span> Previous</a></li>
 			<li class="next { disabled: !hasNextPage() }"><a href="#" onclick="{ nextPage }">Next <span aria-hidden="true">&rarr;</span></a></li>
@@ -41,7 +69,7 @@
 		</table>
 	</div>
 
-	<nav aria-label="...">
+	<nav>
 		<ul class="pager">
 			<li class="previous { disabled: !hasPreviousPage() }"><a href="#" onclick="{ previousPage }"><span aria-hidden="true">&larr;</span> Previous</a></li>
 			<li class="next { disabled: !hasNextPage() }"><a href="#" onclick="{ nextPage }">Next <span aria-hidden="true">&rarr;</span></a></li>
@@ -54,18 +82,63 @@
 		self.plugin = opts.plugin || console.error('no plugin set');
 		self.result = [];
 
-		self.page = 0;
-		self.pageSize = 10;
+		lscache.setBucket('linkchecker-settings-');
 
-		// TODO store them in localStorage
-		self.showLinks = true;
-		self.showImages = true;
-		self.showVideos = true;
-		self.showUnhandled = true;
-		self.showWorkingRedirects = false;
+		self.page = lscache.get('currentPage') || 0; // NOTE has to be reset on each new check; this is done in linkchecker.tag
+		self.pageSize = lscache.get('pageSize') || 10;
 
-		self.showMarkedAsFixed = false;
-		self.showMarkedAsWorking = true;
+		self.showLinks = lscache.get('showLinks') || true;
+		self.showImages = (lscache.get('showImages') || true) && self.parent.hasToken();
+		self.showVideos = (lscache.get('showVideos') || true) && self.parent.hasToken();
+		self.showUnhandled = lscache.get('showUnhandled') || true;
+		self.showWorkingRedirects = lscache.get('showWorkingRedirects') || false;
+
+		self.showMarkedAsFixed = lscache.get('showMarkedAsFixed') || false;
+		self.showMarkedAsWorking = lscache.get('showMarkedAsWorking') || false;
+
+		self.toggle = function(type, e) {
+			lscache.setBucket('linkchecker-settings-');
+			if (type == 'links') {
+				self.showLinks = !self.showLinks;
+				lscache.set('showLinks', self.showLinks);
+			} 
+			else if (type == 'images') {
+				self.showImages = !self.showImages;
+				lscache.set('showImages', self.showImages);
+			} 
+			else if (type == 'videos') {
+				self.showVideos = !self.showVideos;
+				lscache.set('showVideos', self.showVideos);
+			} 
+			else if (type == 'unhandled') {
+				self.showUnhandled = !self.showUnhandled;
+				lscache.set('showUnhandled', self.showUnhandled);
+			} 
+			else if (type == 'workingRedirects') {
+				self.showWorkingRedirects = !self.showWorkingRedirects;
+				lscache.set('showWorkingRedirects', self.showWorkingRedirects);
+			} 
+			else if (type == 'markedAsFixed') {
+				self.showMarkedAsFixed = !self.showMarkedAsFixed;
+				lscache.set('showMarkedAsFixed', self.showMarkedAsFixed);
+			} 
+			else if (type == 'markedAsWorking') {
+				self.showMarkedAsWorking = !self.showMarkedAsWorking;
+				lscache.set('showMarkedAsWorking', self.showMarkedAsWorking);
+			} 
+			else {
+				console.error('no rule for type ' + type);
+			}
+		}
+
+		self.setPageSize = function(size, e) {
+			e.preventDefault();
+
+			self.pageSize = size;
+
+			lscache.setBucket('linkchecker-settings-');
+			lscache.set('pageSize', self.pageSize);
+		}
 
 		self.paginate = function(arr) {
 			return self.rowsToShow().slice(self.start(), self.end());
@@ -99,6 +172,10 @@
 			e.preventDefault();
 			if (self.hasNextPage()) {
 				self.page++;
+
+				lscache.setBucket('linkchecker-settings-');
+				lscache.set('currentPage', self.page);
+
 				self.update();
 			}
 		}
@@ -107,6 +184,10 @@
 			e.preventDefault();
 			if (self.hasPreviousPage()) {
 				self.page--;
+
+				lscache.setBucket('linkchecker-settings-');
+				lscache.set('currentPage', self.page);
+
 				self.update();
 			}
 		}

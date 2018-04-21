@@ -13,7 +13,9 @@
 						<td style="width: 9em;">{ resource.Type }</td>
 						<td style="width: 9em;" title="{ resource.StatusText }">{ status(resource) }</td>
 						<td style="width: 10em;">
-							<button if="{ !resource.IsUnhandled }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }">Mark as Fixed</button>
+							<button if="{ !resource.IsUnhandled && !resource.IsMarkedAsFixed }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }">Mark as Fixed</button>
+							<button if="{ !resource.IsUnhandled && resource.IsMarkedAsFixed }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }" disabled="{ true }">Marked as Fixed</button>
+
 							<button if="{ resource.IsUnhandled && !resource.IsMarkedAsWorking }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Mark as Working</button>
 							<button title="The resource was manually checked on { new Date(resource.IsMarkedAsWorking).toLocaleDateString() }. Click the button to update date of last check." disabled="{ checkedToday(resource) }" if="{ resource.IsUnhandled && resource.IsMarkedAsWorking }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Checked: { checkedDateString(resource) }</button>
 						</td>
