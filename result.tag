@@ -1,7 +1,7 @@
 'use strict'
 
 <result>
-	<div class="btn-toolbar">
+	<div class="btn-toolbar toolbar">
 		<div class="btn-group" role="group">
 			<button type="button" class="btn { btn-primary: showLinks } { btn-default: !showLinks }" onclick="{ toggle.bind(this, 'links') }">Links</button>
 			<button type="button" class="btn { btn-primary: showImages } { btn-default: !showImages } { disabled: !parent.hasToken() }" onclick="{ toggle.bind(this, 'images') }">Images</button>
@@ -372,4 +372,9 @@
 			lscache.set(resourceURL, datex, 60 * 24 * 30); // in minutes; 60 * 24 * 30 is one month
 		}
 	</script>
+	<style>
+		.toolbar .btn-primary:focus {
+			background-color: #1ABC9C;
+		}
+	</style>
 </result>

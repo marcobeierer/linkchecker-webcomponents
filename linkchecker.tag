@@ -10,6 +10,8 @@
 		The crawl-delay set in your robots.txt file is equal or higher than one second, namely { crawlDelayInSeconds } seconds. The crawl-delay defines the time waited between two requests of the Link Checker. This means that it might take very long for the check to finish. It is recommended that you lower the crawl-delay for the Link Checker in your robots.txt. You can use the user agent MB-LinkChecker if you like to define a custom crawl-delay for the Link Checker.
 	</div>
 
+	<message plugin="{ plugin }" name="db" text="" type="warning" dismissible="true" />
+
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active"><a href="#progressAndStats{ id }" aria-controls="progressAndStats{ id }" role="tab" data-toggle="tab">Progress and Stats</a></li>
 		<li role="presentation"><a href="#result{ id }" aria-controls="result{ id }" role="tab" data-toggle="tab">Result</a></li>
@@ -218,16 +220,17 @@
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;
 
+		self.db = localforage.createInstance({
+			driver      : localforage.INDEXEDDB,
+			name        : 'LinkChecker',
+			size 		: 4980736,
+			version     : 1.0,
+			storeName   : 'resultdata'
+		});
+
 		self.on('mount', function() {
 			lscache.setBucket('linkchecker-checked-');
 			lscache.flushExpired();
-
-			localforage.config({
-				driver      : localforage.INDEXEDDB,
-				name        : 'LinkChecker',
-				version     : 1.0,
-				storeName   : 'result'
-			});
 
 			// check if currently running and it should be resumed
 			if (self.websiteURL != undefined && self.websiteURL != '') {
@@ -253,10 +256,12 @@
 						self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
 						
 						// NOTE if no prefix is used, the online tool only stores the result of the last website scanned
-						localforage.getItem('data', function(err, data) {
+						self.db.getItem('data', function(err, data) {
 							if (err != null) {
 								console.error(err);
-								self.setMessage('Loading the result of the last check failed.', 'danger');
+								console.error(err.message);
+								self.setMessage('The Link Checker was not started yet.', 'info');
+								self.setMessage('Loading the result of the last check failed:<br />' + err.name, 'warning', 'db');
 								return;
 							}
 
@@ -337,8 +342,8 @@
 			self.update();
 		});
 
-		self.setMessage = function(text, type) {
-			self.plugin.trigger('set-message', text, type);
+		self.setMessage = function(text, type, name) {
+			self.plugin.trigger('set-message', text, type, name);
 		}
 
 		setToken(token) {
@@ -390,10 +395,11 @@
 			opts.linkchecker.trigger('started');
 			self.plugin.trigger('started')
 
-			localforage.removeItem('data', function(err) {
+			self.db.removeItem('data', function(err) {
 				if (err != null) {
 					console.error(err);
-					self.setMessage('Could not remove old result from cache.', 'danger');
+					console.error(err.message);
+					self.setMessage('Could not remove old result from cache:<br />' + err.name, 'warning', 'db');
 				}
 			});
 			self.data = {};
@@ -438,10 +444,15 @@
 					if (data.Finished) {
 						opts.linkchecker.trigger('stopped');
 
-						localforage.setItem('data', data, function(err) {
+						self.db.setItem('data', data, function(err) {
 							if (err != null) {
-								console.error(err);
-								self.setMessage('Could not save the result in cache.', 'danger');
+								if (err.name == 'QuotaExceededError') {
+									self.setMessage('Could not save the result in cache because the quota has been exceeded. The reason for this is probably low disk space. You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
+								} else {
+									console.error(err);
+									console.error(err.message);
+									self.setMessage('Could not save the result in cache (error was ' + err.name + '). You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
+								}
 							}
 						});
 					} else {
