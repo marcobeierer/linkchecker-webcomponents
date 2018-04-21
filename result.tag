@@ -84,7 +84,7 @@
 
 		lscache.setBucket('linkchecker-settings-');
 
-		self.page = lscache.get('currentPage') || 0; // NOTE has to be reset on each new check; this is done in linkchecker.tag
+		self.currentPage = lscache.get('currentPage') || 0; // NOTE has to be reset on each new check; this is done on started event
 		self.pageSize = lscache.get('pageSize') || 10;
 
 		self.showLinks = lscache.get('showLinks') || true;
@@ -171,10 +171,10 @@
 		self.nextPage = function(e) {
 			e.preventDefault();
 			if (self.hasNextPage()) {
-				self.page++;
+				self.currentPage++;
 
 				lscache.setBucket('linkchecker-settings-');
-				lscache.set('currentPage', self.page);
+				lscache.set('currentPage', self.currentPage);
 
 				self.update();
 			}
@@ -183,22 +183,22 @@
 		self.previousPage = function(e) {
 			e.preventDefault();
 			if (self.hasPreviousPage()) {
-				self.page--;
+				self.currentPage--;
 
 				lscache.setBucket('linkchecker-settings-');
-				lscache.set('currentPage', self.page);
+				lscache.set('currentPage', self.currentPage);
 
 				self.update();
 			}
 		}
 
 		self.hasNextPage = function() {
-			return self.page < (self.countPages() - 1);
+			return self.currentPage < (self.countPages() - 1);
 
 		}
 
 		self.hasPreviousPage = function() {
-			return self.page > 0;
+			return self.currentPage > 0;
 		}
 
 		self.hasSomethingToShow = function(resources) {
@@ -235,16 +235,23 @@
 		};
 
 		self.start = function() {
-			return self.page * self.pageSize;
+			return self.currentPage * self.pageSize;
 		};
 
 		self.end = function() {
-			return (self.page + 1) * self.pageSize;
+			return (self.currentPage + 1) * self.pageSize;
 		};
 
 		self.plugin.on('result-data-ready', function(data) {
 			self.onload(data);
 			self.update();
+		});
+
+		self.plugin.on('started', function() {
+			self.currentPage = 0;
+
+			lscache.setBucket('linkchecker-settings-');
+			lscache.set('currentPage', self.currentPage);
 		});
 
 		self.onload = function(data) {
@@ -253,7 +260,6 @@
 			} else {
 				var message = "Your website has been checked successfully. Please see the result below.";
 
-				// TODO does not work
 				if (data.Stats != undefined && !data.Stats.TokenUsed) {
 					message += " If you additionally like to check your site for <strong>broken images</strong> or like to use the scheduler for an <strong>automatically triggered daily check</strong>, then have a look at the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
 				}
@@ -290,7 +296,7 @@
 			//console.log(self.result);
 			self.result = resultx;
 
-			console.log(new Date() - start);
+			//console.log(new Date() - start);
 		}
 
 		self.addToResult = function(result, data, type, unhandled) {

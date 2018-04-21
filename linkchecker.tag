@@ -92,10 +92,6 @@
 								<td>Limit reached</td>
 								<td class="text-right">{ bool2text(data.Stats.LimitReached) }</td>
 							</tr>
-							<tr>
-								<td>Show working redirects</td>
-								<td class="text-right">{ bool2text(showWorkingRedirects) }</td>
-							</tr>
 						</table>
 					</div>
 				</div>
@@ -217,10 +213,8 @@
 		self.data = {};
 		self.dev = opts.dev;
 		self.enableScheduler = opts.enableScheduler || false;
-		self.showWorkingRedirects = opts.showWorkingRedirects || false;
 		self.forceStop = false;
 		self.crawlDelayInSeconds = 0;
-
 
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;
@@ -332,10 +326,9 @@
 		}
 
 		// maxFetchers is not used as of 16 April 2018
-		opts.linkchecker.on('start', function(websiteURL, token, showWorkingRedirects, maxFetchers) {
+		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
 			self.setToken(token);
-			self.showWorkingRedirects = showWorkingRedirects;
 			self.maxFetchers = maxFetchers || self.maxFetchers; // self.maxFetchers because it is the value of linkchecker tag and should be used if form has no fetchers provided
 			
 			self.start();
@@ -405,6 +398,7 @@
 
 		start() {
 			opts.linkchecker.trigger('started');
+			self.plugin.trigger('started')
 
 			localforage.removeItem('data', function(err) {
 				if (err != null) {
@@ -422,9 +416,6 @@
 			resetObject(self.urlsWithDeadImages);
 			resetObject(self.urlsWithDeadYouTubeVideos);
 			resetObject(self.urlsWithUnhandledEmbeddedResources);
-
-			lscache.setBucket('linkchecker-settings-');
-			lscache.remove('currentPage');
 
 			lscache.setBucket('linkchecker-fixed-');
 			lscache.flush();
