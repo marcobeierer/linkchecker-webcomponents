@@ -13,9 +13,9 @@
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active"><a href="#progressAndStats{ id }" aria-controls="progressAndStats{ id }" role="tab" data-toggle="tab">Progress and Stats</a></li>
 		<li role="presentation"><a href="#result{ id }" aria-controls="result{ id }" role="tab" data-toggle="tab">Result</a></li>
-		<li role="presentation"><a href="#statusCodes{ id }" aria-controls="statusCodes{ id }" role="tab" data-toggle="tab">Common Status Codes</a></li>
-		<li role="presentation"><a href="#unhandledResources{ id }" aria-controls="unhandledResources{ id }" role="tab" data-toggle="tab">Unhandled Resources</a></li>
+		<li role="presentation"><a href="#statusCodes{ id }" aria-controls="statusCodes{ id }" role="tab" data-toggle="tab">Status Codes</a></li>
 		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
+		<li role="presentation"><a href="#glossary{ id }" aria-controls="glossary{ id }" role="tab" data-toggle="tab">Glossary</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -100,38 +100,12 @@
 
 		<div role="tabpanel" class="tab-pane" id="result{ id }">
 			<h3>Result</h3>
-			<p>The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
-			<p if="{ showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
-			<p if="{ !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
-
 			<result plugin="{ plugin }"></result>
 		</div>
 
-		<!--
-		<div role="tabpanel" class="tab-pane" id="links{ id }">
-			<h3>Broken<span if="{ showWorkingRedirects }"> and Redirected</span> Links</h3>
-			<p>The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> links. Please note that the fixed markers are just temporary and are reset with the next link check.</p>
-			<p if="{ showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
-			<p if="{ !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
-		</div>
-
-		<div role="tabpanel" class="tab-pane" id="images{ id }">
-			<h3>Broken<span if="{ showWorkingRedirects }"> and Redirected</span> Images</h3>
-			<p if="{ !hasToken() }">Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
-			<p if="{ hasToken() }">The table below shows all broken<span if="{ showWorkingRedirects }"> and redirected</span> images. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
-			<p if="{ hasToken() && showWorkingRedirects }">The result lists working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. However showing working redirects can be disabled in the settings.</p>
-			<p if="{ hasToken() && !showWorkingRedirects }">The result doesn't list working redirects. Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled in the settings.</p>
-		</div>
-
-		<div role="tabpanel" class="tab-pane" id="youTubeVideos{ id }">
-			<h3>Broken Embedded YouTube Videos</h3>
-			<p if="{ !hasToken() }">Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
-			<p if="{ hasToken() }">The table below shows all broken embedded YouYube videos. Please note that the fixed markers are just temporary and are reset for the next link check.</p>
-		</div>
-		-->
-
 		<div role="tabpanel" class="tab-pane" id="statusCodes{ id }">
-			<h3>Common Status Codes</h3>
+			<h3>Status Codes</h3>
+			<h4>Common Status Codes</h4>
 			<div class="panel panel-default table-responsive">
 				<table class="table table-striped table-responsive">
 					<thead>
@@ -155,15 +129,6 @@
 					</tbody>
 				</table>
 			</div>
-		</div>
-
-		<div role="tabpanel" class="tab-pane" id="unhandledResources{ id }">
-			<h3>Unhandled Resources (mainly blocked by robots.txt)</h3>
-			<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p>
-			<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you could mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
-			<p>If the blocked links were found on your website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p>
-			
-			<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
 
 			<h4>Custom Status Codes</h4>
 			<div class="panel panel-default table-responsive">
@@ -195,6 +160,28 @@
 				</table>
 			</div>
 			<p><em>Please note that it is possible in rare situations that a website returns these status codes and if this is the case, they probably have another meaning.</em></p>
+		</div>
+
+		<div role="tabpanel" class="tab-pane" id="glossary{ id }">
+			<h3>Glossary</h3>
+			<h4>Unhandled Resources (mainly blocked by robots.txt)</h4>
+			<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p>
+			<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you can mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
+			<p>If the blocked links were found on your website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p>
+			
+			<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
+
+			<h4>Working Redirects</h4>
+			<p>Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled/disabled in the settings of the result tab.</p>
+
+			<h4>Mark URLs as Fixed</h4>
+			<p>To keep an better overview, you can mark URLs as fixed in the result view. The marked URLs are can be hidden in the result. Please note that the fixed markers are just temporary and are reset on the next link check.</p>
+
+			<h4>Broken Images</h4>
+			<p>Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
+
+			<h4>Broken Videos</h4>
+			<p>Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
 		</div>
 			
 		<div if="{ enableScheduler }" role="tabpanel" class="tab-pane" id="scheduler{ id }">
