@@ -4,7 +4,7 @@
 		<button class="btn btn-danger" onclick="{ stopCheck }"  if="{ disabled }">Stop website check</button>
 	</form>
 
-	<message plugin="{ plugin }" text="Link Checker is initializing." type="info" />
+	<message plugin="{ plugin }" text="Link Checker is initializing, please wait a moment." type="info" />
 
 	<div if="{ crawlDelayInSeconds >= 1 }" class="alert alert-danger">
 		The crawl-delay set in your robots.txt file is equal or higher than one second, namely { crawlDelayInSeconds } seconds. The crawl-delay defines the time waited between two requests of the Link Checker. This means that it might take very long for the check to finish. It is recommended that you lower the crawl-delay for the Link Checker in your robots.txt. You can use the user agent MB-LinkChecker if you like to define a custom crawl-delay for the Link Checker.
@@ -177,10 +177,10 @@
 			<h4>Mark URLs as Fixed</h4>
 			<p>To keep an better overview, you can mark URLs as fixed in the result view. The marked URLs are can be hidden in the result. Please note that the fixed markers are just temporary and are reset on the next link check.</p>
 
-			<h4>Broken Images</h4>
+			<h4>Images</h4>
 			<p>Broken images are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
 
-			<h4>Broken Videos</h4>
+			<h4>Videos</h4>
 			<p>Broken embedded YouTube videos are just checked in the <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">professional version of the Link Checker</a>.</p>
 		</div>
 			
@@ -218,7 +218,7 @@
 			});
 
 			// check if currently running and it should be resumed
-			if (self.websiteURL != undefined) {
+			if (self.websiteURL != undefined && self.websiteURL != '') {
 				var tokenHeader = '';
 				if (self.token != '') {
 					tokenHeader = 'BEARER ' + self.token;
@@ -260,8 +260,12 @@
 					}
 				});
 				// fail is not handled because it doesn't matter
-			}
-			else {
+			} else {
+				// TODO not sure why timeout is necessary to show the message; some conc issue?
+				// TODO if not done, initializing is shown until the check is started
+				setTimeout(function() {
+					self.setMessage('The Link Checker was not started yet.', 'info');
+				}, 500);
 			}
 		});
 
@@ -299,19 +303,6 @@
 			);
 		}
 
-		function markLinkInList(elem, list) {
-			delete list[elem.FoundOnURL][elem.URL];
-
-			if (Object.keys(list[elem.FoundOnURL]).length == 0) {
-				// TODO fix the underlying issue where the table gets messed up when we delete the item. 
-				// The origin might be that this function is called from a callback function from within a for loop that created child of 'list' 
-				// see also http://riotjs.com/guide/ (for example: Event handlers with looped items)
-				
-				// delete list[elem.FoundOnURL];
-				// self.update(); // TODO add argument with reference to tag and use it (like self.refs.brokenLinks.update());
-			} 
-		}
-
 		// maxFetchers is not used as of 16 April 2018
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
 			self.websiteURL = websiteURL;
@@ -342,8 +333,6 @@
 			self.token = token.replace(/\s/g, ''); // remove all whitespace (space, breakes, tabs)
 		}
 
-		var resultsMessage = 'Link check not started yet.';
-
 		self.websiteURL = opts.websiteUrl || '';
 		self.token = '';
 		if (opts.token) {
@@ -358,8 +347,10 @@
 		self.urlsCrawledCount = 0;
 		self.checkedLinksCount = 0;
 
-		self.setMessage('The Link Checker was not started yet.', 'info');
-		self.resultsMessage = resultsMessage;
+		// self.setMessage('The Link Checker was not started yet.', 'info');
+
+		var resultsMessage = 'Link check not started yet.';
+		self.resultsMessage = resultsMessage; // used by result.tag // TODO fix this
 
 		self.urlsWithBrokenLinks = {};
 		self.urlsWithLinksBlockedByRobots = {};
@@ -521,9 +512,9 @@
 			self.crawlDelayInSeconds = data.CrawlDelayInSeconds;
 
 			if (data.Finished) { // successfull
+				self.resultsMessage = 'No broken resources found or no data available for the enabled filters.';
 				self.plugin.trigger('result-data-ready', data);
 			}
 		}
-
 	</script>
 </linkchecker>

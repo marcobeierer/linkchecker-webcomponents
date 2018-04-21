@@ -83,6 +83,9 @@
 		}
 
 		status() {
+			if (self.websiteURL == '') {
+				return;
+			}
 			jQuery.ajax({
 				method: 'GET',
 				url: self.apiURL + '?Service=Link Checker&URL=' + self.websiteURL,

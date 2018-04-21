@@ -48,6 +48,9 @@
 				</tr>
 			</thead>
 			<tbody>
+				<tr if="{ paginate().length == 0 }">
+					<td colspan="5">{ parent.resultsMessage }</td>
+				</tr>
 				<tr 
 					data-is="result-row"
 					plugin="{ plugin }"
@@ -88,8 +91,8 @@
 		self.pageSize = lscache.get('pageSize') || 10;
 
 		self.showLinks = lscache.get('showLinks') || true;
-		self.showImages = (lscache.get('showImages') || true) && self.parent.hasToken();
-		self.showVideos = (lscache.get('showVideos') || true) && self.parent.hasToken();
+		self.showImages = (lscache.get('showImages') || true); // && self.parent.hasToken(); // TODO token check does not work because not ready
+		self.showVideos = (lscache.get('showVideos') || true); // && self.parent.hasToken(); // TODO token check does not work because not ready
 		self.showUnhandled = lscache.get('showUnhandled') || true;
 		self.showWorkingRedirects = lscache.get('showWorkingRedirects') || false;
 

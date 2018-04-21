@@ -10,14 +10,14 @@
 
 		self.plugin = opts.plugin || console.error('no plugin set');
 
-		self.type = opts.type || '';
 		self.text = opts.text || '';
+		self.type = opts.type || '';
 
 		self.plugin.on('set-message', function(text, type) {
 			self.text = text;
 			self.type = type;
+
 			self.update();
 		});
-
 	</script>
 </message>
