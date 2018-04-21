@@ -16,6 +16,7 @@
 		<li role="presentation"><a href="#statusCodes{ id }" aria-controls="statusCodes{ id }" role="tab" data-toggle="tab">Status Codes</a></li>
 		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
 		<li role="presentation"><a href="#glossary{ id }" aria-controls="glossary{ id }" role="tab" data-toggle="tab">Glossary</a></li>
+		<li if="{ !hasToken() }" role="presentation"><a href="#professional{ id }" aria-controls="professional{ id }" role="tab" data-toggle="tab">Professional Version</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -187,6 +188,17 @@
 		<div if="{ enableScheduler }" role="tabpanel" class="tab-pane" id="scheduler{ id }">
 			<h3>Scheduler</h3>
 			<linkchecker-scheduler website-url="{ websiteURL }" token="{ token }" email="{ email }" dev="{ dev }"></linkchecker-scheduler>
+		</div>
+
+		<div if="{ !hasToken() }" role="tabpanel" class="tab-pane" id="professional{ id }">
+			<h3>Professional Version</h3>
+			<p>The professional version of the Link Checker allows to check a website with up to 50'000 URLs and comes with some additional features. It's for example possible to:</p>
+			<ul>
+				<li>check embedded images,</li>
+				<li>check YouTube videos or</li>
+				<li>trigger a check once a day automatically and get a summary by mail.</li>
+			</ul>
+			<p>You can <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">read more about the professional version and purchase a token</a> on my website.</p>
 		</div>
 	</div>
 

@@ -91,8 +91,8 @@
 		self.pageSize = lscache.get('pageSize') || 10;
 
 		self.showLinks = lscache.get('showLinks') || true;
-		self.showImages = (lscache.get('showImages') || true); // && self.parent.hasToken(); // TODO token check does not work because not ready
-		self.showVideos = (lscache.get('showVideos') || true); // && self.parent.hasToken(); // TODO token check does not work because not ready
+		self.showImages = (lscache.get('showImages') || true) && self.parent.hasToken(); // TODO token check does not work in website version because not ready
+		self.showVideos = (lscache.get('showVideos') || true) && self.parent.hasToken(); // TODO token check does not work in website version because not ready
 		self.showUnhandled = lscache.get('showUnhandled') || true;
 		self.showWorkingRedirects = lscache.get('showWorkingRedirects') || false;
 
@@ -100,6 +100,8 @@
 		self.showMarkedAsWorking = lscache.get('showMarkedAsWorking') || false;
 
 		self.toggle = function(type, e) {
+			self.resetCurrentPage();
+
 			lscache.setBucket('linkchecker-settings-');
 			if (type == 'links') {
 				self.showLinks = !self.showLinks;
@@ -136,6 +138,8 @@
 
 		self.setPageSize = function(size, e) {
 			e.preventDefault();
+
+			self.resetCurrentPage();
 
 			self.pageSize = size;
 
@@ -210,6 +214,13 @@
 			});
 		};
 
+		self.resetCurrentPage = function() {
+			self.currentPage = 0;
+
+			lscache.setBucket('linkchecker-settings-');
+			lscache.set('currentPage', self.currentPage);
+		};
+
 		// also used from result-row
 		self.showResource = function(resource) {
 			var type = resource.Type;
@@ -251,10 +262,7 @@
 		});
 
 		self.plugin.on('started', function() {
-			self.currentPage = 0;
-
-			lscache.setBucket('linkchecker-settings-');
-			lscache.set('currentPage', self.currentPage);
+			self.resetCurrentPage();
 		});
 
 		self.onload = function(data) {
