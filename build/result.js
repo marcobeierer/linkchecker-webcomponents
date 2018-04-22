@@ -182,6 +182,7 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 
 		self.plugin.on('started', function() {
 			self.resetCurrentPage();
+			self.result = [];
 		});
 
 		self.onload = function(data) {

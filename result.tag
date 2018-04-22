@@ -263,6 +263,7 @@
 
 		self.plugin.on('started', function() {
 			self.resetCurrentPage();
+			self.result = [];
 		});
 
 		self.onload = function(data) {

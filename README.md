@@ -23,12 +23,15 @@
 
 ## Changelog
 
+### 1.9.1
+- Bugfix: Reset result when new check is started.
+
 ### 1.9.0
 - Redesigned user interface.
 	- Pagination.
 	- All-in-one (links, images, videos, working redirects, unhandled resources) result view.
 - Performance of user interface was improved so that it's now possible to view result tables with more than 100'000 broken links or redirects.
-- Use IndexedDB instead of localStorage to store result so that the result set size is not limited to 5 MB.
+- Use IndexedDB instead of localStorage to store result so that the result set size is not limited to about 5 MB anymore.
 
 ### 1.8.0
 - Auto-resume support if the Link Checker gets opened and a check is already running on the server.
