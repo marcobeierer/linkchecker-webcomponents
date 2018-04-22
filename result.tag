@@ -373,8 +373,10 @@
 		}
 	</script>
 	<style>
+		/* not activated because in wordpress the buttons are blue
 		.toolbar .btn-primary:focus {
 			background-color: #1ABC9C;
 		}
+		*/
 	</style>
 </result>

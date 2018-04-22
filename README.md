@@ -3,12 +3,6 @@
 ## TODO
 - Add count of files with noindex and number of checked embedded youtube videos
 
-## ToTest
-- retries on no response error
-
-## Important Notes
-It is necessary to hold all the data in object trees and prevent the use of arrays because arrays are passed down the datatable tree by value and this makes updates very slow. Objects are passed by reference and the updates are very smooth.
-
 ## Elements
 - linkchecker-form
 - linkchecker-scheduler
@@ -28,6 +22,13 @@ It is necessary to hold all the data in object trees and prevent the use of arra
 - remove style attributes and create custom CSS file
 
 ## Changelog
+
+### 1.9.0
+- Redesigned user interface.
+	- Pagination.
+	- All-in-one (links, images, videos, working redirects, unhandled resources) result view.
+- Performance of user interface was improved so that it's now possible to view result tables with more than 100'000 broken links or redirects.
+- Use IndexedDB instead of localStorage to store result so that the result set size is not limited to 5 MB.
 
 ### 1.8.0
 - Auto-resume support if the Link Checker gets opened and a check is already running on the server.
