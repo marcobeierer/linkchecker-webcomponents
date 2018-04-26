@@ -253,27 +253,8 @@
 						self.start(); // resume
 					}
 					else {
-						self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
-						
-						// NOTE if no prefix is used, the online tool only stores the result of the last website scanned
-						self.db.getItem('data', function(err, data) {
-							if (err != null) {
-								console.error(err);
-								console.error(err.message);
-								self.setMessage('The Link Checker was not started yet.', 'info');
-								self.setMessage('Loading the result of the last check failed:<br />' + err.name, 'warning', 'db');
-								return;
-							}
-
-							if (data == null) {
-								self.setMessage('No result available in the cache, the Link Checker was not started yet.', 'info');
-								return;
-							}
-
-							self.data = data;
-							self.render(self.data);
-							self.update();
-						});
+						// make sure that not running
+						self.loadDataFromDB();
 					}
 				});
 				// fail is not handled because it doesn't matter
@@ -282,9 +263,34 @@
 				// TODO if not done, initializing is shown until the check is started
 				setTimeout(function() {
 					self.setMessage('The Link Checker was not started yet.', 'info');
+					self.loadDataFromDB();
 				}, 500);
 			}
 		});
+
+		self.loadDataFromDB = function() {
+			self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
+			
+			// NOTE if no prefix is used, the online tool only stores the result of the last website scanned
+			self.db.getItem('data', function(err, data) {
+				if (err != null) {
+					console.error(err);
+					console.error(err.message);
+					self.setMessage('The Link Checker was not started yet.', 'info');
+					self.setMessage('Loading the result of the last check failed:<br />' + err.name, 'warning', 'db');
+					return;
+				}
+
+				if (data == null) {
+					self.setMessage('No result available in the cache, the Link Checker was not started yet.', 'info');
+					return;
+				}
+
+				self.data = JSON.parse(pako.inflate(data, { to: 'string' }));
+				self.render(self.data);
+				self.update();
+			});
+		}
 
 		function getURL(url64) {
 			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
@@ -416,6 +422,8 @@
 			lscache.setBucket('linkchecker-fixed-');
 			lscache.flush();
 
+			self.update(); // update view after data was reset
+
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
 
@@ -444,7 +452,7 @@
 					if (data.Finished) {
 						opts.linkchecker.trigger('stopped');
 
-						self.db.setItem('data', data, function(err) {
+						self.db.setItem('data', pako.deflate(JSON.stringify(data), { to: 'string' }), function(err) {
 							if (err != null) {
 								if (err.name == 'QuotaExceededError') {
 									self.setMessage('Could not save the result in cache because the quota has been exceeded. The reason for this is probably low disk space. You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');

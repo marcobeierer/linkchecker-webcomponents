@@ -1,4 +1,6 @@
 publish.sh
 sample_data/nicekicks.json
+sample_data/nicekicks2.json
+sample_data/nicekicks_full.json
 sample_data/current.json
 notes.mkd
