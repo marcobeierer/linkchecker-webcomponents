@@ -12,12 +12,26 @@
 						</td>
 						<td style="width: 9em;">{ resource.Type }</td>
 						<td style="width: 9em;" title="{ resource.StatusText }">{ status(resource) }</td>
-						<td style="width: 10em;">
-							<button if="{ !resource.IsUnhandled && !resource.IsMarkedAsFixed }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }">Mark as Fixed</button>
-							<button if="{ !resource.IsUnhandled && resource.IsMarkedAsFixed }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }" disabled="{ true }">Marked as Fixed</button>
+						<td style="width: 13em;">
+							<virtual if="{ !resource.IsUnhandled }">
+								<div class="btn-group">
+									<button if="{ !resource.IsMarkedAsFixed }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }">Mark as Fixed</button>
+									<button if="{ resource.IsMarkedAsFixed }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }" disabled="{ true }">Marked as Fixed</button>
 
-							<button if="{ resource.IsUnhandled && !resource.IsMarkedAsWorking }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Mark as Working</button>
-							<button title="The resource was manually checked on { new Date(resource.IsMarkedAsWorking).toLocaleDateString() }. Click the button to update date of last check." disabled="{ checkedToday(resource) }" if="{ resource.IsUnhandled && resource.IsMarkedAsWorking }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Checked: { checkedDateString(resource) }</button>
+									<button if="{ !resource.IsMarkedAsFixed }" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="caret"></span>
+										<span class="sr-only">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-right">
+										<li><a href="#" onclick="{ markAsFixedOnAllPages }">Mark as fixed on all pages</a></li>
+									</ul>
+								</div>
+							</virtual>
+
+							<virtual if="{ resource.IsUnhandled }">
+								<button if="{ !resource.IsMarkedAsWorking }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Mark as Working</button>
+								<button if="{ resource.IsMarkedAsWorking }" title="The resource was manually checked on { new Date(resource.IsMarkedAsWorking).toLocaleDateString() }. Click the button to update date of last check." disabled="{ checkedToday(resource) }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Checked: { checkedDateString(resource) }</button>
+							</virtual>
 						</td>
 					</tr>
 				</tbody>
@@ -33,6 +47,14 @@
 		self.plugin = opts.plugin || console.error('no plugin set');
 
 		self.on('mount', function() {
+			// bugfix for bootstrap: fixes problem that button dropdown (mark fixed on all pages) is not shown in table-responsive
+			var table = $(self.root).find('.table-responsive')
+			table.on('show.bs.dropdown', function () {
+				table.css( "overflow", "inherit" );
+			});
+			table.on('hide.bs.dropdown', function () {
+				table.css( "overflow", "auto" );
+			})
 		});
 
 		self.show = function(resource) {
@@ -61,6 +83,12 @@
 			self.parent.update();
 		};
 
+		self.markAsFixedOnAllPages = function(e) {
+			e.preventDefault();
+			self.parent.setMarkedAsFixedOnAllPages(e.item.resource.URL, e.item.resource.Type);
+			self.parent.update();
+		};
+
 		self.markAsWorking = function(e) {
 			var datex = Date.now();
 			self.parent.setMarkedAsWorking(e.item.resource.URL, datex);
@@ -73,5 +101,6 @@
 			}
 			return resource.StatusText;
 		};
+
 	</script>
 </result-row>

@@ -23,6 +23,10 @@
 
 ## Changelog
 
+### 1.10.0
+- Compression of results before they get stored in browser cache.
+- New 'Mark as fixed on all pages' button.
+
 ### 1.9.1
 - Bugfix: Reset result when new check is started.
 

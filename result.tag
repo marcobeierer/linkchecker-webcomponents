@@ -44,7 +44,7 @@
 					<th style="width: ">Broken Resources</th>
 					<th style="width: 9em;">Type</th>
 					<th style="width: 9em;">Status</th>
-					<th style="width: 11em;">Actions</th>
+					<th style="width: 14em;">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -66,7 +66,7 @@
 					<th style="width: ">Broken Resources</th>
 					<th style="width: 9em;">Type</th>
 					<th style="width: 9em;">Status</th>
-					<th style="width: 11em;">Actions</th>
+					<th style="width: 14em;">Actions</th>
 				</tr>
 			</tfoot>
 		</table>
@@ -331,8 +331,9 @@
 						resource.IsUnhandled = unhandled;
 						
 						var key = self.keyForResource(foundOnURL, resource.URL, resource.Type);
+						var keyForAllPages = self.keyForResource('*', resource.URL, resource.Type);
 						lscache.setBucket('linkchecker-fixed-');
-						if (lscache.get(key) === true) {
+						if (lscache.get(key) === true || lscache.get(keyForAllPages) === true) {
 							resource.IsMarkedAsFixed = true;
 						}
 
@@ -358,6 +359,21 @@
 
 		self.setMessage = function(text, type) {
 			self.plugin.trigger('set-message', text, type);
+		}
+
+		self.setMarkedAsFixedOnAllPages = function(resourceURL, resourceType) {
+			self.result.forEach(function(row) {
+				row.Resources.forEach(function(resource) {
+					if (resourceURL == resource.URL) {
+						resource.IsMarkedAsFixed = true;
+					}
+				});
+			});
+
+			var key = self.keyForResource('*', resourceURL, resourceType);
+
+			lscache.setBucket('linkchecker-fixed-');
+			lscache.set(key, true);
 		}
 
 		self.setMarkedAsWorking = function(resourceURL, datex) {
