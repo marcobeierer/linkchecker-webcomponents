@@ -268,11 +268,33 @@
 			}
 		});
 
+		self.saveDataToDB = function(data) {
+			self.db.setItem(self.dbKey(), pako.deflate(JSON.stringify(data), { to: 'string' }), function(err) {
+				if (err != null) {
+					if (err.name == 'QuotaExceededError') {
+						self.setMessage('Could not save the result in cache because the quota has been exceeded. The reason for this is probably low disk space. You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
+					} else {
+						console.error(err);
+						console.error(err.message);
+						self.setMessage('Could not save the result in cache (error was ' + err.name + '). You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
+					}
+				}
+			});
+		};
+
 		self.loadDataFromDB = function() {
 			self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
+
+			// TODO removes legacy results saved with data key, could be removed in a few version (added 8 May 2018)
+			self.db.removeItem('data', function(err) {
+				if (err != null) {
+					console.error(err);
+					console.error(err.message);
+				}
+			});
 			
 			// NOTE if no prefix is used, the online tool only stores the result of the last website scanned
-			self.db.getItem('data', function(err, data) {
+			self.db.getItem(self.dbKey(), function(err, data) {
 				if (err != null) {
 					console.error(err);
 					console.error(err.message);
@@ -291,6 +313,13 @@
 				self.update();
 			});
 		}
+
+		self.dbKey = function() {
+			if (self.websiteURL != '') {
+				return self.websiteURL;
+			}
+			return 'data' + self.id;
+		};
 
 		function getURL(url64) {
 			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
@@ -401,7 +430,7 @@
 			opts.linkchecker.trigger('started');
 			self.plugin.trigger('started')
 
-			self.db.removeItem('data', function(err) {
+			self.db.removeItem(self.dbKey(), function(err) {
 				if (err != null) {
 					console.error(err);
 					console.error(err.message);
@@ -452,17 +481,7 @@
 					if (data.Finished) {
 						opts.linkchecker.trigger('stopped');
 
-						self.db.setItem('data', pako.deflate(JSON.stringify(data), { to: 'string' }), function(err) {
-							if (err != null) {
-								if (err.name == 'QuotaExceededError') {
-									self.setMessage('Could not save the result in cache because the quota has been exceeded. The reason for this is probably low disk space. You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
-								} else {
-									console.error(err);
-									console.error(err.message);
-									self.setMessage('Could not save the result in cache (error was ' + err.name + '). You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
-								}
-							}
-						});
+						self.saveDataToDB(data);
 					} else {
 						if (self.forceStop) {
 							self.stop(url, tokenHeader);
