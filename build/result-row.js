@@ -9,7 +9,7 @@ riot.tag2('result-row', '<td if="{resources.length > 0}" style="width: 35%;"><a 
 
 		self.on('mount', function() {
 
-			var table = $(self.root).find('.table-responsive')
+			var table = jQuery(self.root).find('.table-responsive')
 			table.on('show.bs.dropdown', function () {
 				table.css( "overflow", "inherit" );
 			});
