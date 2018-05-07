@@ -48,7 +48,7 @@
 
 		self.on('mount', function() {
 			// bugfix for bootstrap: fixes problem that button dropdown (mark fixed on all pages) is not shown in table-responsive
-			var table = $(self.root).find('.table-responsive')
+			var table = jQuery(self.root).find('.table-responsive')
 			table.on('show.bs.dropdown', function () {
 				table.css( "overflow", "inherit" );
 			});

@@ -21,6 +21,10 @@
 	- currently only purchase
 - remove style attributes and create custom CSS file
 
+## Guidelines
+- Always use jQuery instead of $
+	- $ is not available in Wordpress
+
 ## Changelog
 
 ### 1.10.0
