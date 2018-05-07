@@ -46,26 +46,8 @@ riot.tag2('linkchecker', '<form if="{showButton}" style="margin-bottom: 20px;"> 
 						self.start();
 					}
 					else {
-						self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
 
-						self.db.getItem('data', function(err, data) {
-							if (err != null) {
-								console.error(err);
-								console.error(err.message);
-								self.setMessage('The Link Checker was not started yet.', 'info');
-								self.setMessage('Loading the result of the last check failed:<br />' + err.name, 'warning', 'db');
-								return;
-							}
-
-							if (data == null) {
-								self.setMessage('No result available in the cache, the Link Checker was not started yet.', 'info');
-								return;
-							}
-
-							self.data = data;
-							self.render(self.data);
-							self.update();
-						});
+						self.loadDataFromDB();
 					}
 				});
 
@@ -73,9 +55,61 @@ riot.tag2('linkchecker', '<form if="{showButton}" style="margin-bottom: 20px;"> 
 
 				setTimeout(function() {
 					self.setMessage('The Link Checker was not started yet.', 'info');
+					self.loadDataFromDB();
 				}, 500);
 			}
 		});
+
+		self.saveDataToDB = function(data) {
+			self.db.setItem(self.dbKey(), pako.deflate(JSON.stringify(data), { to: 'string' }), function(err) {
+				if (err != null) {
+					if (err.name == 'QuotaExceededError') {
+						self.setMessage('Could not save the result in cache because the quota has been exceeded. The reason for this is probably low disk space. You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
+					} else {
+						console.error(err);
+						console.error(err.message);
+						self.setMessage('Could not save the result in cache (error was ' + err.name + '). You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
+					}
+				}
+			});
+		};
+
+		self.loadDataFromDB = function() {
+			self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
+
+			self.db.removeItem('data', function(err) {
+				if (err != null) {
+					console.error(err);
+					console.error(err.message);
+				}
+			});
+
+			self.db.getItem(self.dbKey(), function(err, data) {
+				if (err != null) {
+					console.error(err);
+					console.error(err.message);
+					self.setMessage('The Link Checker was not started yet.', 'info');
+					self.setMessage('Loading the result of the last check failed:<br />' + err.name, 'warning', 'db');
+					return;
+				}
+
+				if (data == null) {
+					self.setMessage('No result available in the cache, the Link Checker was not started yet.', 'info');
+					return;
+				}
+
+				self.data = JSON.parse(pako.inflate(data, { to: 'string' }));
+				self.render(self.data);
+				self.update();
+			});
+		}
+
+		self.dbKey = function() {
+			if (self.websiteURL != '') {
+				return self.websiteURL;
+			}
+			return 'data' + self.id;
+		};
 
 		function getURL(url64) {
 			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
@@ -182,7 +216,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" style="margin-bottom: 20px;"> 
 			opts.linkchecker.trigger('started');
 			self.plugin.trigger('started')
 
-			self.db.removeItem('data', function(err) {
+			self.db.removeItem(self.dbKey(), function(err) {
 				if (err != null) {
 					console.error(err);
 					console.error(err.message);
@@ -202,6 +236,8 @@ riot.tag2('linkchecker', '<form if="{showButton}" style="margin-bottom: 20px;"> 
 
 			lscache.setBucket('linkchecker-fixed-');
 			lscache.flush();
+
+			self.update();
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
@@ -231,17 +267,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" style="margin-bottom: 20px;"> 
 					if (data.Finished) {
 						opts.linkchecker.trigger('stopped');
 
-						self.db.setItem('data', data, function(err) {
-							if (err != null) {
-								if (err.name == 'QuotaExceededError') {
-									self.setMessage('Could not save the result in cache because the quota has been exceeded. The reason for this is probably low disk space. You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
-								} else {
-									console.error(err);
-									console.error(err.message);
-									self.setMessage('Could not save the result in cache (error was ' + err.name + '). You can still use the Link Checker, but the result is not saved and gets discarded once you close the Link Checker.', 'warning', 'db');
-								}
-							}
-						});
+						self.saveDataToDB(data);
 					} else {
 						if (self.forceStop) {
 							self.stop(url, tokenHeader);
