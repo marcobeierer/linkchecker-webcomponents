@@ -17,7 +17,7 @@
 		</div>
 		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-default">URLs per Page: { pageSize }</button>
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdownx" aria-haspopup="true" aria-expanded="false">
 				<span class="caret"></span>
 				<span class="sr-only">Toggle Dropdown</span>
 			</button>

@@ -18,7 +18,7 @@
 									<button if="{ !resource.IsMarkedAsFixed }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }">Mark as Fixed</button>
 									<button if="{ resource.IsMarkedAsFixed }" class="btn btn-sm btn-primary" onclick="{ markAsFixed }" disabled="{ true }">Marked as Fixed</button>
 
-									<button if="{ !resource.IsMarkedAsFixed }" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<button if="{ !resource.IsMarkedAsFixed }" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdownx" aria-haspopup="true" aria-expanded="false">
 										<span class="caret"></span>
 										<span class="sr-only">Toggle Dropdown</span>
 									</button>
