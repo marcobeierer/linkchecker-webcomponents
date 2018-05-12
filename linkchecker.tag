@@ -19,6 +19,7 @@
 		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
 		<li role="presentation"><a href="#glossary{ id }" aria-controls="glossary{ id }" role="tab" data-toggle="tab">Glossary</a></li>
 		<li if="{ !hasToken() }" role="presentation"><a href="#professional{ id }" aria-controls="professional{ id }" role="tab" data-toggle="tab">Professional Version</a></li>
+		<li role="presentation"><a href="#feedback{ id }" aria-controls="feedback{ id }" role="tab" data-toggle="tab">Your Feedback</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -201,6 +202,11 @@
 				<li>trigger a check once a day automatically and get a summary by mail.</li>
 			</ul>
 			<p>You can <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">read more about the professional version and purchase a token</a> on my website.</p>
+		</div>
+
+		<div role="tabpanel" class="tab-pane" id="feedback{ id }">
+			<h3>Your Feedback</h3>
+			<feedback />
 		</div>
 	</div>
 

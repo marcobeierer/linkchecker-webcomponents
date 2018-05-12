@@ -27,6 +27,12 @@
 
 ## Changelog
 
+### 1.11.0
+- Added feedback tab.
+
+### 1.10.1
+- Fixed dropdown bug in Joomla version.
+
 ### 1.10.0
 - Compression of results before they get stored in browser cache.
 - New 'Mark as fixed on all pages' button.
