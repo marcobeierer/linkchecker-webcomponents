@@ -528,7 +528,7 @@
 						self.setMessage("The check of your website failed. Please try it again or contact the developer of the extensions.", 'danger');
 					}
 
-					self.resultsMessage = resultsMessage;
+					self.resultsMessage = resultsMessage; // TODO why is this done?
 				}).always(function() {
 					self.update();
 				});
