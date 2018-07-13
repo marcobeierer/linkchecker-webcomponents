@@ -262,8 +262,10 @@
 						// make sure that not running
 						self.loadDataFromDB();
 					}
+				}).fail(function(xhr) {
+					self.setMessage('The Link Checker was not started yet.', 'info');
+					self.loadDataFromDB();
 				});
-				// fail is not handled because it doesn't matter
 			} else {
 				// TODO not sure why timeout is necessary to show the message; some conc issue?
 				// TODO if not done, initializing is shown until the check is started
