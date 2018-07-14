@@ -4,7 +4,7 @@
 		<button class="btn btn-danger" onclick="{ stopCheck }"  if="{ disabled }">Stop website check</button>
 	</form>
 
-	<message plugin="{ plugin }" text="Link Checker is initializing, please wait a moment." type="info" />
+	<message plugin="{ plugin }" text="Link Checker is initializing, please wait a moment." type="warning" />
 
 	<div if="{ crawlDelayInSeconds >= 1 }" class="alert alert-danger">
 		The crawl-delay set in your robots.txt file is equal or higher than one second, namely { crawlDelayInSeconds } seconds. The crawl-delay defines the time waited between two requests of the Link Checker. This means that it might take very long for the check to finish. It is recommended that you lower the crawl-delay for the Link Checker in your robots.txt. You can use the user agent MB-LinkChecker if you like to define a custom crawl-delay for the Link Checker.
@@ -26,6 +26,7 @@
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="progress{ id }">
 			<h3>Progress Current Check</h3>
+			<p>Below you see the progress of the current check while the check is running. When the check has finished, you can inspect the stats of the last check in the <em>Stats</em> tab.</p>
 			<div class="row" >
 				<div class="col-lg-6">
 					<div class="panel panel-default">
@@ -47,8 +48,10 @@
 
 		<div role="tabpanel" class="tab-pane" id="stats{ id }">
 			<h3>Stats Last Check</h3>
-			<div class="row" >
-				<div if="{ data.Stats }" class="col-lg-6">
+			<p if="{ !data.Stats }">Nothing to see here because no check has finished yet. You can inspect the stats of the last check as soon as the check has finished or was loaded from the cache.</p>
+			<p if="{ data.Stats }">Please see the stats of the last finished check below. If a check is currently running, the stats are for the last check and not the one currently running.</p>
+			<div if="{ data.Stats }" class="row" >
+				<div class="col-lg-6">
 					<div class="panel panel-default">
 						<div class="panel-heading">Stats</div>
 						<table class="table table-bordered">
@@ -71,7 +74,7 @@
 						</table>
 					</div>
 				</div>
-				<div if="{ data.Stats }" class="col-lg-6">
+				<div class="col-lg-6">
 					<div class="panel panel-default">
 						<div class="panel-heading">Detailed Stats</div>
 						<table class="table table-bordered">
@@ -98,7 +101,7 @@
 						</table>
 					</div>
 				</div>
-				<div if="{ data.Stats }" class="col-lg-6">
+				<div class="col-lg-6">
 					<div class="panel panel-default">
 						<div class="panel-heading">Setting Stats</div>
 						<table class="table table-bordered">
@@ -126,6 +129,7 @@
 
 		<div role="tabpanel" class="tab-pane" id="result{ id }">
 			<h3>Result</h3>
+			<p>Please note that the result belongs to the last check that has finished. If a check is currently running, the stats are for the last check and not the one currently running. <span if="{ data.Stats }">The result below belongs to the check that was started on { datetimeAt(data.Stats.StartedAt) } and has finished on { datetimeAt(data.Stats.FinishedAt) }.</span></p>
 			<result plugin="{ plugin }"></result>
 		</div>
 
@@ -217,7 +221,7 @@
 
 		<div if="{ !hasToken() }" role="tabpanel" class="tab-pane" id="professional{ id }">
 			<h3>Professional Version</h3>
-			<p>The professional version of the Link Checker allows to check a website with up to 50'000 URLs and comes with some additional features. It's for example possible to:</p>
+			<p>The professional version of the Link Checker allows to check a website with up to 500'000 URLs and comes with some additional features. It's for example possible to:</p>
 			<ul>
 				<li>check embedded images,</li>
 				<li>check YouTube videos or</li>
@@ -327,13 +331,12 @@
 				if (err != null) {
 					console.error(err);
 					console.error(err.message);
-					self.setMessage('The Link Checker was not started yet.', 'info');
 					self.setMessage('Loading the result of the last check failed:<br />' + err.name, 'warning', 'db');
 					return;
 				}
 
 				if (data == null) {
-					self.setMessage('No result available in the cache, the Link Checker was not started yet.', 'info');
+					self.setMessage('No result available in the cache.', 'info', 'db');
 					return;
 				}
 
@@ -370,6 +373,11 @@
 		self.datetime = function(val) {
 			return new Date(val).toLocaleString();
 		}
+
+		self.datetimeAt = function(val) {
+			var datetime = self.datetime(val);
+			return datetime.replace(',', ' at');
+		};
 
 		self.hasToken = function() {
 			return self.token || (self.data.Stats != undefined && self.data.Stats.TokenUsed);
@@ -573,6 +581,8 @@
 				}
 			}).done(function(data) {
 				self.setMessage("The current check was stopped successfully.", 'info');
+				self.urlsCrawledCount = 0;
+				self.checkedLinksCount = 0;
 			}).fail(function(xhr) {
 				self.setMessage("Could not stop the check because the connection to the server failed.", 'danger');
 			}).always(function() {

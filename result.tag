@@ -268,19 +268,31 @@
 		});
 
 		self.onload = function(data, loadedFromDB) {
-			if (data.LimitReached) {
-				self.setMessage("The URL limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 50'000 URLs.", 'danger');
-			} else if (loadedFromDB) {
+			if (loadedFromDB) {
 				var message = "The result of your last check has been loaded from the cache successfully. Please see it below.";
-				self.setMessage(message, 'success', 'db');
-			} else {
-				var message = "Your website has been checked successfully. Please see the result below.";
+				var type = 'success';
 
-				if (data.Stats != undefined && !data.Stats.TokenUsed) {
-					message += " If you additionally like to check your site for <strong>broken images</strong> or like to use the scheduler for an <strong>automatically triggered daily check</strong>, then have a look at the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
+				if (data.LimitReached) {
+					message += "<br />Please note that the check reached the URL limit and thus the Link Checker has not checked your whole website. You can buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 500'000 URLs.";
+					type = 'danger';
 				}
 
-				self.setMessage(message, 'success');
+				self.setMessage(message, type, 'db');
+
+			} else { // no loaded from db
+				var message = "Your website has been checked successfully. Please see the result below.";
+				var type = 'success';
+
+				if (data.Stats != undefined && !data.Stats.TokenUsed) {
+					message += "<br />If you additionally like to check your site for <strong>broken images</strong> or like to use the scheduler for an <strong>automatically triggered daily check</strong>, then have a look at the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a>.";
+				}
+
+				if (data.LimitReached) {
+					message = "The URL limit was reached. The Link Checker has not checked your whole website. You can buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 500'000 URLs.";
+					type = 'danger';
+				}
+
+				self.setMessage(message, type);
 				self.setMessage('', 'success', 'db'); // hide db alert because it is no longer relevant
 			}
 
