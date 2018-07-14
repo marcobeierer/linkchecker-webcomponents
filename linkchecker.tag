@@ -13,7 +13,8 @@
 	<message plugin="{ plugin }" name="db" text="" type="warning" dismissible="true" />
 
 	<ul class="nav nav-tabs" role="tablist">
-		<li role="presentation" class="active"><a href="#progressAndStats{ id }" aria-controls="progressAndStats{ id }" role="tab" data-toggle="tab">Progress and Stats</a></li>
+		<li role="presentation" class="active"><a href="#progress{ id }" aria-controls="progress{ id }" role="tab" data-toggle="tab">Progress</a></li>
+		<li role="presentation"><a href="#stats{ id }" aria-controls="stats{ id }" role="tab" data-toggle="tab">Stats</a></li>
 		<li role="presentation"><a href="#result{ id }" aria-controls="result{ id }" role="tab" data-toggle="tab">Result</a></li>
 		<li role="presentation"><a href="#statusCodes{ id }" aria-controls="statusCodes{ id }" role="tab" data-toggle="tab">Status Codes</a></li>
 		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
@@ -23,8 +24,8 @@
 	</ul>
 
 	<div class="tab-content">
-		<div role="tabpanel" class="tab-pane active" id="progressAndStats{ id }">
-			<h3>Progress and Stats</h3>
+		<div role="tabpanel" class="tab-pane active" id="progress{ id }">
+			<h3>Progress Current Check</h3>
 			<div class="row" >
 				<div class="col-lg-6">
 					<div class="panel panel-default">
@@ -49,6 +50,12 @@
 						</table>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<div role="tabpanel" class="tab-pane" id="stats{ id }">
+			<h3>Stats Last Check</h3>
+			<div class="row" >
 				<div if="{ data.Stats }" class="col-lg-6">
 					<div class="panel panel-default">
 						<div class="panel-heading">Detailed Stats</div>

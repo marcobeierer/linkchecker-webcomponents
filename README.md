@@ -1,6 +1,14 @@
 # Link Checker
 
 ## TODO
+- Show progress Stats also in Stats tab
+	- especially started at/ finished at
+- show a "currently no check is running message?"
+- hint on stats tab that this are the stats for the current result set
+- always load current result, also if no check is currently running
+	- make clear that result is from last check and not the one currently running
+		- maybe show time?
+
 - Add count of files with noindex and number of checked embedded youtube videos
 
 ## Elements
