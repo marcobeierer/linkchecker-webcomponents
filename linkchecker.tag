@@ -10,7 +10,7 @@
 		The crawl-delay set in your robots.txt file is equal or higher than one second, namely { crawlDelayInSeconds } seconds. The crawl-delay defines the time waited between two requests of the Link Checker. This means that it might take very long for the check to finish. It is recommended that you lower the crawl-delay for the Link Checker in your robots.txt. You can use the user agent MB-LinkChecker if you like to define a custom crawl-delay for the Link Checker.
 	</div>
 
-	<message plugin="{ plugin }" name="db" text="" type="warning" dismissible="true" />
+	<message plugin="{ plugin }" name="db" text="" type="warning" dismissible="true" style="padding-top: 5px; padding-bottom: 5px; margin-top: -10px;" />
 
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active"><a href="#progress{ id }" aria-controls="progress{ id }" role="tab" data-toggle="tab">Progress</a></li>
@@ -39,14 +39,6 @@
 								<td>Number of checked internal and external resources</td>
 								<td class="text-right">{ checkedLinksCount }</td>
 							</tr>
-							<tr if="{ data.Stats }">
-								<td>Started at</td>
-								<td class="text-right" >{ datetime(data.Stats.StartedAt) }</td>
-							</tr>
-							<tr if="{ data.Stats }">
-								<td>Finished at</td>
-								<td class="text-right">{ datetime(data.Stats.FinishedAt) }</td>
-							</tr>
 						</table>
 					</div>
 				</div>
@@ -56,6 +48,29 @@
 		<div role="tabpanel" class="tab-pane" id="stats{ id }">
 			<h3>Stats Last Check</h3>
 			<div class="row" >
+				<div if="{ data.Stats }" class="col-lg-6">
+					<div class="panel panel-default">
+						<div class="panel-heading">Stats</div>
+						<table class="table table-bordered">
+							<tr>
+								<td >Number of crawled HTML pages on your site</td>
+								<td class="text-right" style="width: 200px;">{ data.Stats.HTMLPagesCount }</td>
+							</tr>
+							<tr>
+								<td>Number of checked internal and external resources</td>
+								<td class="text-right">{ data.Stats.CrawledResourcesCount }</td>
+							</tr>
+							<tr>
+								<td>Started at</td>
+								<td class="text-right" >{ datetime(data.Stats.StartedAt) }</td>
+							</tr>
+							<tr>
+								<td>Finished at</td>
+								<td class="text-right">{ datetime(data.Stats.FinishedAt) }</td>
+							</tr>
+						</table>
+					</div>
+				</div>
 				<div if="{ data.Stats }" class="col-lg-6">
 					<div class="panel panel-default">
 						<div class="panel-heading">Detailed Stats</div>
@@ -264,23 +279,22 @@
 				}).done(function(data, textStatus, xhr) {
 					if (data.Running) {
 						self.start(); // resume
-					}
-					else {
-						// make sure that not running
-						self.loadDataFromDB();
+					} else {
+						self.setMessage('The Link Checker was not started yet.', 'info');
 					}
 				}).fail(function(xhr) {
 					self.setMessage('The Link Checker was not started yet.', 'info');
-					self.loadDataFromDB();
 				});
 			} else {
 				// TODO not sure why timeout is necessary to show the message; some conc issue?
 				// TODO if not done, initializing is shown until the check is started
 				setTimeout(function() {
 					self.setMessage('The Link Checker was not started yet.', 'info');
-					self.loadDataFromDB();
 				}, 500);
 			}
+
+			// always load data from db, also if currently running
+			self.loadDataFromDB();
 		});
 
 		self.saveDataToDB = function(data) {
@@ -298,7 +312,7 @@
 		};
 
 		self.loadDataFromDB = function() {
-			self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning');
+			self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning', 'db');
 
 			// TODO removes legacy results saved with data key, could be removed in a few version (added 8 May 2018)
 			self.db.removeItem('data', function(err) {
@@ -324,7 +338,7 @@
 				}
 
 				self.data = JSON.parse(pako.inflate(data, { to: 'string' }));
-				self.render(self.data);
+				self.resultDataReady(self.data, true);
 				self.update();
 			});
 		}
@@ -361,6 +375,7 @@
 			return self.token || (self.data.Stats != undefined && self.data.Stats.TokenUsed);
 		}
 
+		/*
 		// resetObject is used because just assigning {} creates a new object with another reference, but the child tags still have a reference to the old object
 		function resetObject(obj) {
 			Object.keys(obj).forEach(
@@ -369,6 +384,7 @@
 				}
 			);
 		}
+		*/
 
 		// maxFetchers is not used as of 16 April 2018
 		opts.linkchecker.on('start', function(websiteURL, token, maxFetchers) {
@@ -419,12 +435,6 @@
 		var resultsMessage = 'Link check not started yet.';
 		self.resultsMessage = resultsMessage; // used by result.tag // TODO fix this
 
-		self.urlsWithBrokenLinks = {};
-		self.urlsWithLinksBlockedByRobots = {};
-		self.urlsWithDeadImages = {};
-		self.urlsWithDeadYouTubeVideos = {};
-		self.urlsWithUnhandledEmbeddedResources = {};
-
 		self.retries = 0;
 
 		submit(e) {
@@ -441,10 +451,7 @@
 			return url64;
 		}
 
-		start() {
-			opts.linkchecker.trigger('started');
-			self.plugin.trigger('started')
-
+		self.resetData = function() {
 			self.db.removeItem(self.dbKey(), function(err) {
 				if (err != null) {
 					console.error(err);
@@ -454,19 +461,18 @@
 			});
 			self.data = {};
 
-			self.urlsCrawledCount = 0;
-			self.checkedLinksCount = 0;
-
-			resetObject(self.urlsWithBrokenLinks);
-			resetObject(self.urlsWithLinksBlockedByRobots);
-			resetObject(self.urlsWithDeadImages);
-			resetObject(self.urlsWithDeadYouTubeVideos);
-			resetObject(self.urlsWithUnhandledEmbeddedResources);
-
 			lscache.setBucket('linkchecker-fixed-');
 			lscache.flush();
 
 			self.update(); // update view after data was reset
+		}
+
+		start() {
+			opts.linkchecker.trigger('started');
+			self.plugin.trigger('started')
+
+			self.urlsCrawledCount = 0;
+			self.checkedLinksCount = 0;
 
 			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
@@ -490,11 +496,16 @@
 				}).done(function(data) {
 					self.retries = 0;
 
-					self.data = data;
-					self.render(self.data);
+					self.urlsCrawledCount = data.URLsCrawledCount;
+					self.checkedLinksCount = data.CheckedLinksCount;
+					self.crawlDelayInSeconds = data.CrawlDelayInSeconds;
 
 					if (data.Finished) {
+						self.resultDataReady(data, false);
 						opts.linkchecker.trigger('stopped');
+
+						self.resetData();
+						self.data = data;
 
 						self.saveDataToDB(data);
 					} else {
@@ -571,14 +582,10 @@
 			});
 		}
 
-		self.render = function(data) {
-			self.urlsCrawledCount = data.URLsCrawledCount;
-			self.checkedLinksCount = data.CheckedLinksCount;
-			self.crawlDelayInSeconds = data.CrawlDelayInSeconds;
-
-			if (data.Finished) { // successfull
+		self.resultDataReady = function(data, loadedFromDB) {
+			if (data.Finished) { // successfull // NOTE data.Finished check shouldn't be necessary, just for safety
 				self.resultsMessage = 'No broken resources found or no data available for the enabled filters.';
-				self.plugin.trigger('result-data-ready', data);
+				self.plugin.trigger('result-data-ready', data, loadedFromDB);
 			}
 		}
 	</script>

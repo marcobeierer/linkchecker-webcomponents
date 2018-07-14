@@ -14,7 +14,7 @@
 			<p>Thank you in advance,<br />
 			<a href="https://www.marcobeierer.com/about-me" target="_blank">Marco</a></p>
 
-			<p><em>Please note that the message is sent anonymously and I do not collect any data except the message itself. Therefore, I am not able to reply to your message. If you like to get a reply, please write me an email to <a href="mailto:email@marcobeierer.com">email@marcobeierer.com</a> instead.</em></p>
+			<p><em>Please note that the message is sent <strong>anonymously</strong> and I do not collect any data except the message itself. Therefore, <strong>I am not able to reply to your message</strong>. If you like to get a reply, please write me an email to <a href="mailto:email@marcobeierer.com">email@marcobeierer.com</a> instead.</em></p>
 		</div>
 		<div class="col-lg-6">
 			<form onsubmit="{ submit }">

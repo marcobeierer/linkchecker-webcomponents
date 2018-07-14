@@ -256,19 +256,23 @@
 			return (self.currentPage + 1) * self.pageSize;
 		};
 
-		self.plugin.on('result-data-ready', function(data) {
-			self.onload(data);
+		self.plugin.on('result-data-ready', function(data, loadedFromDB) {
+			self.resetCurrentPage();
+			self.result = [];
+
+			self.onload(data, loadedFromDB);
 			self.update();
 		});
 
 		self.plugin.on('started', function() {
-			self.resetCurrentPage();
-			self.result = [];
 		});
 
-		self.onload = function(data) {
+		self.onload = function(data, loadedFromDB) {
 			if (data.LimitReached) {
 				self.setMessage("The URL limit was reached. The Link Checker has not checked your complete website. You could buy a token for the <a href=\"https://www.marcobeierer.com/purchase\">Link Checker Professional</a> to check up to 50'000 URLs.", 'danger');
+			} else if (loadedFromDB) {
+				var message = "The result of your last check has been loaded from the cache successfully. Please see it below.";
+				self.setMessage(message, 'success', 'db');
 			} else {
 				var message = "Your website has been checked successfully. Please see the result below.";
 
@@ -277,6 +281,7 @@
 				}
 
 				self.setMessage(message, 'success');
+				self.setMessage('', 'success', 'db'); // hide db alert because it is no longer relevant
 			}
 
 			self.resultsMessage = 'Nothing is broken, everything seems to be fine.';
@@ -357,8 +362,8 @@
 			return foundOnURL + resourceURL + resourceType;
 		}
 
-		self.setMessage = function(text, type) {
-			self.plugin.trigger('set-message', text, type);
+		self.setMessage = function(text, type, name) {
+			self.plugin.trigger('set-message', text, type, name);
 		}
 
 		self.setMarkedAsFixedOnAllPages = function(resourceURL, resourceType) {

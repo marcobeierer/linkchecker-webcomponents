@@ -1,7 +1,7 @@
 'use strict';
 
 <message>
-	<div if="{ text != '' && !dismissed }" class="alert alert-{ type } { alert-dismissible: dismissible }">
+	<div if="{ text != '' && !dismissed }" class="alert alert-{ type } { alert-dismissible: dismissible }" style="{ style }">
 		<button if="{ dismissible }" type="button" class="close" aria-label="Close"><span aria-hidden="true" onclick="{ dismiss }">&times;</span></button>
 		<raw content="{ text }" />
 	</div>
@@ -15,6 +15,7 @@
 		self.text = opts.text || '';
 		self.type = opts.type || '';
 		self.dismissible = opts.dismissible || false;
+		self.style = opts.style || '';
 
 		self.dismissed = false;
 
