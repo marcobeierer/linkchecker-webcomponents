@@ -483,7 +483,7 @@
 			self.urlsCrawledCount = 0;
 			self.checkedLinksCount = 0;
 
-			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the stats below.', 'warning');
+			self.setMessage('Your website is being checked. Please wait a moment. You can watch the progress in the Progress tab below.', 'warning');
 			self.resultsMessage = 'Please wait until the check has finished.';
 
 			var url64 = self.websiteURL64();
