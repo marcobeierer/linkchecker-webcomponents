@@ -272,7 +272,7 @@
 				}
 
 				var url64 = self.websiteURL64();
-				var url = getURL(url64 + '/running');
+				var url = getURL(url64 + '/running', true);
 
 				jQuery.ajax({
 					method: 'GET',
@@ -302,6 +302,7 @@
 		});
 
 		self.saveDataToDB = function(data) {
+		return;
 			self.db.setItem(self.dbKey(), pako.deflate(JSON.stringify(data), { to: 'string' }), function(err) {
 				if (err != null) {
 					if (err.name == 'QuotaExceededError') {
@@ -316,6 +317,7 @@
 		};
 
 		self.loadDataFromDB = function() {
+		return;
 			self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning', 'db');
 
 			// TODO removes legacy results saved with data key, could be removed in a few version (added 8 May 2018)
@@ -353,9 +355,10 @@
 			return 'data' + self.id;
 		};
 
-		function getURL(url64) {
+		// TODO runningRequest opt is just a temporary workaround for development
+		function getURL(url64, runningRequest) {
 			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
-			if (self.dev == '1') {
+			if (self.dev == '1' && runningRequest !== true) {
 				url = 'sample_data/current.json?_=' + Date.now();
 			} else if (self.dev == '2') {
 				url = 'http://marco-desktop:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
