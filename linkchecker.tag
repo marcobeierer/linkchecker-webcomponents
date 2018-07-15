@@ -302,7 +302,6 @@
 		});
 
 		self.saveDataToDB = function(data) {
-		return;
 			self.db.setItem(self.dbKey(), pako.deflate(JSON.stringify(data), { to: 'string' }), function(err) {
 				if (err != null) {
 					if (err.name == 'QuotaExceededError') {
@@ -317,7 +316,6 @@
 		};
 
 		self.loadDataFromDB = function() {
-		return;
 			self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning', 'db');
 
 			// TODO removes legacy results saved with data key, could be removed in a few version (added 8 May 2018)
