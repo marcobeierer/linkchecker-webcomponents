@@ -27,6 +27,13 @@
 
 ## Changelog
 
+### 1.12.0
+- Result from cache is loaded even if a check is currently running.
+- Old result is not cleared anymore when a new check is started, but just when the new check has finished.
+- Split up the 'Progress and Stats' tab in two separate tabs.
+- Added status code and response text to error message.
+- Bugfix: Handle failed IsRunning request.
+
 ### 1.11.0
 - Added feedback tab.
 
