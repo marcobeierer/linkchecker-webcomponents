@@ -1,6 +1,6 @@
 'use strict';
 
-riot.tag2('message', '<div if="{text != \'\' && !dismissed}" class="alert alert-{type} {alert-dismissible: dismissible}"> <button if="{dismissible}" type="button" class="close" aria-label="Close"><span aria-hidden="true" onclick="{dismiss}">&times;</span></button> <raw content="{text}"></raw> </div>', '', '', function(opts) {
+riot.tag2('message', '<div if="{text != \'\' && !dismissed}" class="alert alert-{type} {alert-dismissible: dismissible}" riot-style="{style}"> <button if="{dismissible}" type="button" class="close" aria-label="Close"><span aria-hidden="true" onclick="{dismiss}">&times;</span></button> <raw content="{text}"></raw> </div>', '', '', function(opts) {
 		var self = this;
 
 		self.plugin = opts.plugin || console.error('no plugin set');
@@ -9,6 +9,7 @@ riot.tag2('message', '<div if="{text != \'\' && !dismissed}" class="alert alert-
 		self.text = opts.text || '';
 		self.type = opts.type || '';
 		self.dismissible = opts.dismissible || false;
+		self.style = opts.style || '';
 
 		self.dismissed = false;
 
