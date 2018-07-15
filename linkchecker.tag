@@ -535,7 +535,7 @@
 						if (xhr.responseText == '') {
 							self.setMessage("The check of your website failed. Please try it again.", 'danger');
 						} else {
-							self.setMessage("The check of your website failed with the error:<br/><strong>" + JSON.parse(xhr.responseText) + "</strong>.", 'danger');
+							self.setMessage("The check of your website failed with the error:<br/><strong>" + JSON.parse(xhr.responseText) + "</strong>.", 'danger'); // TODO why JSON.parse?
 						}
 					} 
 					else if (statusCode == 503) {
@@ -553,7 +553,7 @@
 						return;
 					} 
 					else {
-						self.setMessage("The check of your website failed. Please try it again or contact the developer of the extensions.", 'danger');
+						self.setMessage("The check of your website failed. Please try it again or contact the developer of the extensions.<br />Status Code: " + statusCode + "<br />Response Text: " + xhr.responseText, 'danger');
 					}
 
 					self.resultsMessage = resultsMessage; // TODO why is this done?
