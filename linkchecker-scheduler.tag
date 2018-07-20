@@ -38,6 +38,7 @@
 		<div class="panel-heading">Deregister your website</div>
 		<div class="panel-body">
 			<p>Your site is registered to the scheduler and you should receive status emails regularly. Use the button below if you like to disable the automated checks.</p>
+			<p>If you like to <strong>change your email address</strong>, please deregister from the scheduler, update the email address in the register form and then reregister to the scheduler.</p>
 			<form onsubmit="{ deregister }">
 				<input type="hidden" name="Service" value="Link Checker" />
 
