@@ -1,7 +1,12 @@
 <linkchecker>
 	<form if="{ showButton }" style="margin-bottom: 20px;">
 		<button class="btn btn-default" onclick="{ submit }" if="{ !disabled }">Check your website</button>
-		<button class="btn btn-danger" onclick="{ stopCheck }"  if="{ disabled }">Stop website check</button>
+		<button class="btn btn-danger" onclick="{ stopCheck }" if="{ disabled }">Stop website check</button>
+
+		<!-- usage of data-original-title instead of title is necessary to automatically update the tooltip when the text changes -->
+		<span class="pull-right" style="display: inline-block;" data-original-title="{ exportableTitle() }" data-toggle="tooltip" data-placement="left">
+			<button class="btn btn-default btn-sm { disabled: !exportable() }" onclick="{ downloadCSVFile }">Export as CSV file</button>
+		</span>
 	</form>
 
 	<message plugin="{ plugin }" text="Link Checker is initializing, please wait a moment." type="warning" />
@@ -248,6 +253,7 @@
 		self.enableScheduler = opts.enableScheduler || false;
 		self.forceStop = false;
 		self.crawlDelayInSeconds = 0;
+		self.resultAvailableOnServer = false;
 
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;
@@ -286,8 +292,16 @@
 					} else {
 						self.setMessage('The Link Checker was not started yet.', 'info');
 					}
-				}).fail(function(xhr) {
+
+					// always load data from db, also if currently running
+					self.resultAvailableOnServer = data.ResultAvailable;
+					self.loadDataFromDB(data.ResultAvailable);
+				})
+				.fail(function(xhr) {
 					self.setMessage('The Link Checker was not started yet.', 'info');
+
+					// always load data from db, also if currently running
+					self.loadDataFromDB(false);
 				});
 			} else {
 				// TODO not sure why timeout is necessary to show the message; some conc issue?
@@ -295,11 +309,29 @@
 				setTimeout(function() {
 					self.setMessage('The Link Checker was not started yet.', 'info');
 				}, 500);
+
+				// always load data from db, also if currently running
+				self.loadDataFromDB(false);
 			}
 
-			// always load data from db, also if currently running
-			self.loadDataFromDB();
+			jQuery('[data-toggle="tooltip"]').tooltip()
 		});
+
+		self.exportable = function() {
+			return self.token != '' && self.resultAvailableOnServer;
+		}
+
+		self.exportableTitle = function() {
+			if (self.token == '') {
+				return 'Export as CSV file is only available for customers of the professional version.';
+			}
+
+			if (!self.resultAvailableOnServer) {
+				return 'No result available on the server. Please start a check if not already done and/or wait till the first check has finished.';
+			}
+
+			return 'Export the last result as CSV file for advanced processing.';
+		}
 
 		self.saveDataToDB = function(data) {
 			self.db.setItem(self.dbKey(), pako.deflate(JSON.stringify(data), { to: 'string' }), function(err) {
@@ -315,7 +347,7 @@
 			});
 		};
 
-		self.loadDataFromDB = function() {
+		self.loadDataFromDB = function(resultAvailableOnServer) {
 			self.setMessage('Loading the result of the last check from cache, please wait a moment.', 'warning', 'db');
 
 			// TODO removes legacy results saved with data key, could be removed in a few version (added 8 May 2018)
@@ -337,14 +369,65 @@
 
 				if (data == null) {
 					self.setMessage('No result available in the cache.', 'info', 'db');
+
+					if (resultAvailableOnServer) {
+						self.loadDataFromServer();
+					}
+
 					return;
 				}
 
 				self.data = JSON.parse(pako.inflate(data, { to: 'string' }));
-				self.resultDataReady(self.data, true);
+				self.resultDataReady(self.data, true, false);
 				self.update();
 			});
 		}
+
+		self.downloadCSVFile = function(e) {
+			e.preventDefault();
+
+			if (self.token == '') {
+				return; // no available if on server saved if not pro customer
+			}
+
+			var url64 = self.websiteURL64();
+			var url = getURL(url64 + '/csv', true);
+
+			loadFile(url, self.token, 'result.csv', loadFileDownloadCallback);
+		};
+
+		self.loadDataFromServer = function() {
+			if (self.token == '') {
+				return; // no result backup on server saved if not pro customer
+			}
+			var tokenHeader = 'BEARER ' + self.token;
+
+			var url64 = self.websiteURL64();
+			var url = getURL(url64 + '/json');
+
+			jQuery.ajax({
+				method: 'GET',
+				url: url,
+				headers: {
+					'Authorization': tokenHeader,
+				}
+			})
+			.done(function(data) {
+				// TODO duplicate code with done in start()
+				self.resultDataReady(data, false, true);
+
+				self.resetData();
+				self.data = data;
+
+				self.saveDataToDB(data);
+			})
+			.fail(function(xhr) {
+				console.log('fetching saved result failed');
+			})
+			.always(function() {
+				self.update();
+			});
+		};
 
 		self.dbKey = function() {
 			if (self.websiteURL != '') {
@@ -510,8 +593,12 @@
 					self.crawlDelayInSeconds = data.CrawlDelayInSeconds;
 
 					if (data.Finished) {
-						self.resultDataReady(data, false);
+						self.resultDataReady(data, false, false);
 						opts.linkchecker.trigger('stopped');
+
+						if (self.token != '') {
+							self.resultAvailableOnServer = true; // set this manually because we do not execute another 'running' request to update this var and result is always backed up for pro clients
+						}
 
 						self.resetData();
 						self.data = data;
@@ -593,10 +680,10 @@
 			});
 		}
 
-		self.resultDataReady = function(data, loadedFromDB) {
+		self.resultDataReady = function(data, loadedFromDB, loadedFromServerBackup) {
 			if (data.Finished) { // successfull // NOTE data.Finished check shouldn't be necessary, just for safety
 				self.resultsMessage = 'No broken resources found or no data available for the enabled filters.';
-				self.plugin.trigger('result-data-ready', data, loadedFromDB);
+				self.plugin.trigger('result-data-ready', data, loadedFromDB, loadedFromServerBackup);
 			}
 		}
 	</script>

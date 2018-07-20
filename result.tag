@@ -256,20 +256,25 @@
 			return (self.currentPage + 1) * self.pageSize;
 		};
 
-		self.plugin.on('result-data-ready', function(data, loadedFromDB) {
+		self.plugin.on('result-data-ready', function(data, loadedFromDB, loadedFromServerBackup) {
 			self.resetCurrentPage();
 			self.result = [];
 
-			self.onload(data, loadedFromDB);
+			self.onload(data, loadedFromDB, loadedFromServerBackup);
 			self.update();
 		});
 
 		self.plugin.on('started', function() {
 		});
 
-		self.onload = function(data, loadedFromDB) {
-			if (loadedFromDB) {
-				var message = "The result of your last check has been loaded from the cache successfully. Please see it below.";
+		self.onload = function(data, loadedFromDB, loadedFromServerBackup) {
+			if (loadedFromDB || loadedFromServerBackup) {
+				var typex = 'cache';
+				if (loadedFromServerBackup) {
+					typex = 'server';
+				}
+
+				var message = "The result of your last check has been loaded from the " + typex + " successfully. Please see it below.";
 				var type = 'success';
 
 				if (data.LimitReached) {
