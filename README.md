@@ -27,6 +27,11 @@
 
 ## Changelog
 
+### 1.13.0
+- Export result as CSV file.
+- Result is saved on server for customers of the professional version. So the same result can be downloaded by multiple users or with multiple browsers.
+- Added hint how to change scheduler email address.
+
 ### 1.12.0
 - Result from cache is loaded even if a check is currently running.
 - Old result is not cleared anymore when a new check is started, but just when the new check has finished.
