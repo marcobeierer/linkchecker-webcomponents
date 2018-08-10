@@ -24,9 +24,8 @@
 		<li role="presentation"><a href="#statusCodes{ id }" aria-controls="statusCodes{ id }" role="tab" data-toggle="tab">Status Codes</a></li>
 		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
 		<li role="presentation"><a href="#glossary{ id }" aria-controls="glossary{ id }" role="tab" data-toggle="tab">Glossary</a></li>
-		<li if="{ !hasToken() }" role="presentation"><a href="#professional{ id }" aria-controls="professional{ id }" role="tab" data-toggle="tab">Professional Version</a></li>
+		<li role="presentation"><a href="#professional{ id }" aria-controls="professional{ id }" role="tab" data-toggle="tab">Professional Version</a></li>
 		<li role="presentation"><a href="#feedback{ id }" aria-controls="feedback{ id }" role="tab" data-toggle="tab">Your Feedback</a></li>
-		<li role="presentation"><a href="#pricing{ id }" aria-controls="pricing{ id }" role="tab" data-toggle="tab">Pricing</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -231,25 +230,40 @@
 			<linkchecker-scheduler website-url="{ websiteURL }" token="{ token }" email="{ email }" dev="{ dev }"></linkchecker-scheduler>
 		</div>
 
-		<div if="{ !hasToken() }" role="tabpanel" class="tab-pane" id="professional{ id }">
+		<div role="tabpanel" class="tab-pane" id="professional{ id }">
 			<h3>Professional Version</h3>
+			<div if="{ hasToken() }" class="alert alert-info">
+				Thank you, you are already using the professional version.
+			</div>
 			<p>The professional version of the Link Checker allows to check a website with up to 500'000 URLs and comes with some additional features. It's for example possible to:</p>
 			<ul>
 				<li>check embedded images,</li>
 				<li>check YouTube videos or</li>
 				<li>trigger a check once a day automatically and get a summary by mail.</li>
 			</ul>
+
 			<p>You can <a href="https://www.marcobeierer.com/tools/link-checker-professional" target="_blank">read more about the professional version and purchase a token</a> on my website.</p>
+
+			<h4>Pricing</h4>
+			<pricing />
+
+			<h4>Offers for Web Agencies</h4>
+			<p>Web agencies, and of course all other interested parties, can rent a dedicated Link Checker and Sitemap Generator server. Servers in Germany and Finland are available from 395.00 € per month. Other server locations are available on request against an extra fee.</p>
+			<p>When renting a server, you can offer the services to all your clients and also offer it publicly on your website to potential customers, but public reselling and thus directly competing against the Link Checker or Sitemap Generator is not allowed. If you like to resell tokens, please contact me and we may find a solution that works for both of us.</p>
+
+			<p>Advantages of a dedicated server are:</p>
+			<ul>
+				<li>No need to manage tokens anymore, you can whitelist individual websites and manage scheduling for all websites from a central admin panel.</li>
+				<li>Faster checks if the server is located near your hosting server.</li>
+				<li>Better performance in general because server resources are not shared with other users.</li>
+			</ul>
+
+			<p>If interested, please write me an email to <a href="mailto:email@marcobeierer.com">email@marcobeierer.com</a> for an individual offer.</p>
 		</div>
 
 		<div role="tabpanel" class="tab-pane" id="feedback{ id }">
 			<h3>Your Feedback</h3>
 			<feedback />
-		</div>
-
-		<div role="tabpanel" class="tab-pane" id="pricing{ id }">
-			<h3>Pricing</h3>
-			<pricing />
 		</div>
 	</div>
 
