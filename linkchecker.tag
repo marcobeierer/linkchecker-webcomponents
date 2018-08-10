@@ -17,7 +17,7 @@
 
 	<message plugin="{ plugin }" name="db" text="" type="warning" dismissible="true" style="padding-top: 5px; padding-bottom: 5px; margin-top: -10px;" />
 
-	<ul class="nav nav-tabs" role="tablist">
+	<ul class="nav nav-tabs" id="tabnav" role="tablist">
 		<li role="presentation" class="active"><a href="#progress{ id }" aria-controls="progress{ id }" role="tab" data-toggle="tab">Progress</a></li>
 		<li role="presentation"><a href="#stats{ id }" aria-controls="stats{ id }" role="tab" data-toggle="tab">Stats</a></li>
 		<li role="presentation"><a href="#result{ id }" aria-controls="result{ id }" role="tab" data-toggle="tab">Result</a></li>
@@ -26,6 +26,7 @@
 		<li role="presentation"><a href="#glossary{ id }" aria-controls="glossary{ id }" role="tab" data-toggle="tab">Glossary</a></li>
 		<li if="{ !hasToken() }" role="presentation"><a href="#professional{ id }" aria-controls="professional{ id }" role="tab" data-toggle="tab">Professional Version</a></li>
 		<li role="presentation"><a href="#feedback{ id }" aria-controls="feedback{ id }" role="tab" data-toggle="tab">Your Feedback</a></li>
+		<li role="presentation"><a href="#pricing{ id }" aria-controls="pricing{ id }" role="tab" data-toggle="tab">Pricing</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -140,7 +141,13 @@
 
 		<div role="tabpanel" class="tab-pane" id="statusCodes{ id }">
 			<h3>Status Codes</h3>
-			<h4>Common Status Codes</h4>
+			<p>The Link Checker result includes all URLs that respond with a <strong>status code greater or equal 300</strong>. Redirected URLs respond with a status code between 300 and 399 and if the redirects are working fine, they are only shown if you enable the <em>Working Redirects</em> flag in the result tab. URLs with a status code greater or equal 400 are always shown if the main flag for the URL category (<em>Links</em>, <em>Images</em> or <em>Videos</em>) is enabled. One exception are unhandled links (explained in the <a href="#" onclick="{ switchTab.bind(this, 'glossary') }">Glossary</a>) which are only shown if the <em>Unhandled</em> flag is enabled.</p>
+
+			<p>If you hover over a status code in the result tab, you see a short description for the status code in a tooltip. Please consult <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">Wikipedia</a> for detailed explanations.</p>
+
+			<p>Below you find a short list of status codes which have a special meaning in the Link Checker context or are custom to the Link Checker.</p> 
+
+			<h4>Status Codes with Special Meaning</h4>
 			<div class="panel panel-default table-responsive">
 				<table class="table table-striped table-responsive">
 					<thead>
@@ -239,6 +246,11 @@
 			<h3>Your Feedback</h3>
 			<feedback />
 		</div>
+
+		<div role="tabpanel" class="tab-pane" id="pricing{ id }">
+			<h3>Pricing</h3>
+			<pricing />
+		</div>
 	</div>
 
 	<script>
@@ -265,6 +277,13 @@
 			version     : 1.0,
 			storeName   : 'resultdata'
 		});
+
+		self.switchTab = function(tabName, e) {
+			e.preventDefault();
+
+			var tabID = '#tabnav a[href="#' + tabName + self.id + '"';
+			jQuery(tabID).tab('show');
+		};
 
 		self.on('mount', function() {
 			lscache.setBucket('linkchecker-checked-');
