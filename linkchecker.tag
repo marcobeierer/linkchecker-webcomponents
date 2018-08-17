@@ -604,6 +604,8 @@
 
 			var url64 = self.websiteURL64();
 
+			self.retries = 0; // reset retries on each start
+
 			self.doRequest = function() {
 				var tokenHeader = '';
 				if (self.token != '') {
