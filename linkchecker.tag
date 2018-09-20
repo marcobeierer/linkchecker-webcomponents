@@ -471,7 +471,7 @@
 
 		// TODO runningRequest opt is just a temporary workaround for development
 		function getURL(url64, runningRequest) {
-			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
+			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers + '&disable_cookies=1';
 			if (self.dev == '1' && runningRequest !== true) {
 				url = 'sample_data/current.json?_=' + Date.now();
 			} else if (self.dev == '2') {
