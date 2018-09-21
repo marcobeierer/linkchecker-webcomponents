@@ -27,6 +27,12 @@
 
 ## Changelog
 
+### 1.14.0
+- Support for edit links.
+- Improved status codes page.
+- Improved professional version page.
+- Bugfix: Reset retries count before every check.
+
 ### 1.13.0
 - Export result as CSV file.
 - Result is saved on server for customers of the professional version. So the same result can be downloaded by multiple users or with multiple browsers.
