@@ -3,7 +3,7 @@
 <result-row>
 	<td if="{ resources.length > 0}" style="width: 35%;">
 		<a href="{ url }" target="_blank">{ url }</a>&nbsp;
-		<a if="{ opts.editURL }" href="{ opts.editUrl }" class="btn btn-sm btn-default" target="_blank" role="button">Edit</a>
+		<a if="{ opts.editUrl }" href="{ opts.editUrl }" class="btn btn-sm btn-default btn-edit" target="_blank" role="button">Edit</a>
 	</td>
 	<td if="{ resources.length > 0}" colspan="4">
 		<div class="panel panel-default table-responsive" style="margin-bottom: 0;">
