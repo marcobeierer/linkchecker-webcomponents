@@ -1,10 +1,15 @@
 'use strict'
 
-riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" role="group"> <button type="button" class="btn {btn-primary: showLinks} {btn-default: !showLinks}" onclick="{toggle.bind(this, \'links\')}">Links</button> <button type="button" class="btn {btn-primary: showImages} {btn-default: !showImages} {disabled: !parent.hasToken()}" onclick="{toggle.bind(this, \'images\')}">Images</button> <button type="button" class="btn {btn-primary: showVideos} {btn-default: !showVideos} {disabled: !parent.hasToken()}" onclick="{toggle.bind(this, \'videos\')}">Videos</button> </div> <div class="btn-group" role="group"> <button type="button" class="btn {btn-primary: showUnhandled} {btn-default: !showUnhandled}" onclick="{toggle.bind(this, \'unhandled\')}">Unhandled</button> <button type="button" class="btn {btn-primary: showWorkingRedirects} {btn-default: !showWorkingRedirects}" onclick="{toggle.bind(this, \'workingRedirects\')}">Working Redirects</button> </div> <div class="btn-group" role="group"> <button type="button" class="btn {btn-primary: showMarkedAsFixed} {btn-default: !showMarkedAsFixed}" onclick="{toggle.bind(this, \'markedAsFixed\')}">Marked as Fixed</button> <button type="button" class="btn {btn-primary: showMarkedAsWorking} {btn-default: !showMarkedAsWorking}" onclick="{toggle.bind(this, \'markedAsWorking\')}">Marked as Working</button> </div> <div class="btn-group" role="group"> <button type="button" class="btn btn-default">URLs per Page: {pageSize}</button> <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdownx" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button> <ul class="dropdown-menu"> <li class="text-right" if="{pageSize != 1}"><a onclick="{setPageSize.bind(this, 1)}" href="#">1</a></li> <li class="text-right" if="{pageSize != 10}"><a onclick="{setPageSize.bind(this, 10)}" href="#">10</a></li> <li class="text-right" if="{pageSize != 100}"><a onclick="{setPageSize.bind(this, 100)}" href="#">100</a></li> </ul> </div> </div> <nav> <ul class="pager"> <li class="previous {disabled: !hasPreviousPage()}"><a href="#" onclick="{previousPage}"><span aria-hidden="true">&larr;</span> Previous</a></li> <li class="next {disabled: !hasNextPage()}"><a href="#" onclick="{nextPage}">Next <span aria-hidden="true">&rarr;</span></a></li> </ul> </nav> <div class="panel panel-default table-responsive"> <table class="table table-striped table-responsive"> <thead> <tr> <th style="width: 35%;">URL where the broken resources were found</th> <th style="width: ">Broken Resources</th> <th style="width: 9em;">Type</th> <th style="width: 9em;">Status</th> <th style="width: 14em;">Actions</th> </tr> </thead> <tbody> <tr if="{paginate().length == 0}"> <td colspan="5">{parent.resultsMessage}</td> </tr> <tr data-is="result-row" plugin="{plugin}" each="{item in paginate()}" url="{item.FoundOnURL}" resources="{item.Resources}"> </tr> </tbody> <tfoot> <tr> <th style="width: 35%;">URL where the broken resources were found</th> <th style="width: ">Broken Resources</th> <th style="width: 9em;">Type</th> <th style="width: 9em;">Status</th> <th style="width: 14em;">Actions</th> </tr> </tfoot> </table> </div> <nav> <ul class="pager"> <li class="previous {disabled: !hasPreviousPage()}"><a href="#" onclick="{previousPage}"><span aria-hidden="true">&larr;</span> Previous</a></li> <li class="next {disabled: !hasNextPage()}"><a href="#" onclick="{nextPage}">Next <span aria-hidden="true">&rarr;</span></a></li> </ul> </nav>', '', '', function(opts) {
+riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" role="group"> <button type="button" class="btn {btn-primary: showLinks} {btn-default: !showLinks}" onclick="{toggle.bind(this, \'links\')}">Links</button> <button type="button" class="btn {btn-primary: showImages} {btn-default: !showImages} {disabled: !parent.hasToken()}" onclick="{toggle.bind(this, \'images\')}">Images</button> <button type="button" class="btn {btn-primary: showVideos} {btn-default: !showVideos} {disabled: !parent.hasToken()}" onclick="{toggle.bind(this, \'videos\')}">Videos</button> </div> <div class="btn-group" role="group"> <button type="button" class="btn {btn-primary: showUnhandled} {btn-default: !showUnhandled}" onclick="{toggle.bind(this, \'unhandled\')}">Unhandled</button> <button type="button" class="btn {btn-primary: showWorkingRedirects} {btn-default: !showWorkingRedirects}" onclick="{toggle.bind(this, \'workingRedirects\')}">Working Redirects</button> </div> <div class="btn-group" role="group"> <button type="button" class="btn {btn-primary: showMarkedAsFixed} {btn-default: !showMarkedAsFixed}" onclick="{toggle.bind(this, \'markedAsFixed\')}">Marked as Fixed</button> <button type="button" class="btn {btn-primary: showMarkedAsWorking} {btn-default: !showMarkedAsWorking}" onclick="{toggle.bind(this, \'markedAsWorking\')}">Marked as Working</button> </div> <div class="btn-group" role="group"> <button type="button" class="btn btn-default">URLs per Page: {pageSize}</button> <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdownx" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button> <ul class="dropdown-menu"> <li class="text-right" if="{pageSize != 1}"><a onclick="{setPageSize.bind(this, 1)}" href="#">1</a></li> <li class="text-right" if="{pageSize != 10}"><a onclick="{setPageSize.bind(this, 10)}" href="#">10</a></li> <li class="text-right" if="{pageSize != 100}"><a onclick="{setPageSize.bind(this, 100)}" href="#">100</a></li> </ul> </div> </div> <nav> <ul class="pager"> <li class="previous {disabled: !hasPreviousPage()}"><a href="#" onclick="{previousPage}"><span aria-hidden="true">&larr;</span> Previous</a></li> <li class="next {disabled: !hasNextPage()}"><a href="#" onclick="{nextPage}">Next <span aria-hidden="true">&rarr;</span></a></li> </ul> </nav> <div class="panel panel-default table-responsive"> <table class="table table-striped table-responsive"> <thead> <tr> <th style="width: 35%;">URL where the broken resources were found</th> <th style="width: ">Broken Resources</th> <th style="width: 9em;">Type</th> <th style="width: 9em;">Status</th> <th style="width: 14em;">Actions</th> </tr> </thead> <tbody> <tr if="{!haveItemsToShow}"> <td colspan="5">{parent.resultsMessage}</td> </tr> <tr data-is="result-row" plugin="{plugin}" each="{item in paginate()}" url="{item.FoundOnURL}" resources="{item.Resources}" edit-url="{editURLs[item.FoundOnURL]}"> </tr> </tbody> <tfoot> <tr> <th style="width: 35%;">URL where the broken resources were found</th> <th style="width: ">Broken Resources</th> <th style="width: 9em;">Type</th> <th style="width: 9em;">Status</th> <th style="width: 14em;">Actions</th> </tr> </tfoot> </table> </div> <nav> <ul class="pager"> <li class="previous {disabled: !hasPreviousPage()}"><a href="#" onclick="{previousPage}"><span aria-hidden="true">&larr;</span> Previous</a></li> <li class="next {disabled: !hasNextPage()}"><a href="#" onclick="{nextPage}">Next <span aria-hidden="true">&rarr;</span></a></li> </ul> </nav>', '', '', function(opts) {
+
+
 		var self = this;
 
 		self.plugin = opts.plugin || console.error('no plugin set');
+		self.editURLsEndpoint = opts.editUrlsEndpoint;
+
 		self.result = [];
+		self.editURLs = {};
 
 		lscache.setBucket('linkchecker-settings-');
 
@@ -19,6 +24,9 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 
 		self.showMarkedAsFixed = lscache.get('showMarkedAsFixed') || false;
 		self.showMarkedAsWorking = lscache.get('showMarkedAsWorking') || false;
+
+		self.on('mount', function() {
+		});
 
 		self.toggle = function(type, e) {
 			self.resetCurrentPage();
@@ -68,7 +76,32 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 			lscache.set('pageSize', self.pageSize);
 		}
 
-		self.paginate = function(arr) {
+		self.loadEditURLs = function() {
+			if (self.editURLsEndpoint == undefined) {
+				return items;
+			}
+
+			var urls = [];
+			self.paginate().forEach(function(item) {
+				urls.push(item.FoundOnURL);
+			});
+
+			jQuery.ajax({
+				method: 'POST',
+				url: self.editURLsEndpoint,
+				data: JSON.stringify(urls)
+			})
+			.done(function(data, textStatus, xhr) {
+				self.editURLs = data;
+				self.update();
+			});
+		};
+
+		self.haveItemsToShow = function() {
+			return self.paginate().length > 0;
+		}
+
+		self.paginate = function() {
 			return self.rowsToShow().slice(self.start(), self.end());
 		}
 
@@ -99,24 +132,14 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 		self.nextPage = function(e) {
 			e.preventDefault();
 			if (self.hasNextPage()) {
-				self.currentPage++;
-
-				lscache.setBucket('linkchecker-settings-');
-				lscache.set('currentPage', self.currentPage);
-
-				self.update();
+				self.setCurrentPage(self.currentPage + 1);
 			}
 		}
 
 		self.previousPage = function(e) {
 			e.preventDefault();
 			if (self.hasPreviousPage()) {
-				self.currentPage--;
-
-				lscache.setBucket('linkchecker-settings-');
-				lscache.set('currentPage', self.currentPage);
-
-				self.update();
+				self.setCurrentPage(self.currentPage - 1);
 			}
 		}
 
@@ -136,11 +159,17 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 		};
 
 		self.resetCurrentPage = function() {
-			self.currentPage = 0;
+			self.setCurrentPage(0);
+		};
+
+		self.setCurrentPage = function(value) {
+			self.currentPage = value;
 
 			lscache.setBucket('linkchecker-settings-');
 			lscache.set('currentPage', self.currentPage);
-		};
+
+			self.loadEditURLs();
+		}
 
 		self.showResource = function(resource) {
 			var type = resource.Type;
@@ -181,6 +210,8 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 
 			self.onload(data, loadedFromDB, loadedFromServerBackup);
 			self.update();
+
+			self.loadEditURLs();
 		});
 
 		self.plugin.on('started', function() {
