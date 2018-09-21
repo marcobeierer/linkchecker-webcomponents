@@ -48,7 +48,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr if="{ !haveItemsToShow }">
+				<tr if="{ !haveItemsToShow() }">
 					<td colspan="5">{ parent.resultsMessage }</td>
 				</tr>
 				<tr 
