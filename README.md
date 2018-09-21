@@ -27,6 +27,9 @@
 
 ## Changelog
 
+### 1.14.1
+- Implemented caching for loading of edit links.
+
 ### 1.14.0
 - Support for edit links.
 - Improved status codes page.

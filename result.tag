@@ -159,6 +159,7 @@
 
 		// IMPORTANT it is required to always execute this when self.currentPage is manipulated
 		// TODO is it possible to make this more implicit?
+		// do not persist self.editURLs because postIDs can change
 		self.loadEditURLs = function() {
 			if (self.editURLsEndpoint == undefined) {
 				return;
