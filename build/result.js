@@ -83,8 +83,14 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 
 			var urls = [];
 			self.paginate().forEach(function(item) {
-				urls.push(item.FoundOnURL);
+				if (self.editURLs[item.FoundOnURL] === undefined) {
+					urls.push(item.FoundOnURL);
+				}
 			});
+
+			if (urls.length == 0) {
+				return;
+			}
 
 			var data = {
 				urls: urls
@@ -97,7 +103,9 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 				data: data
 			})
 			.done(function(data, textStatus, xhr) {
-				self.editURLs = data;
+				for (var foundOnURL in data) {
+					self.editURLs[foundOnURL] = data[foundOnURL];
+				}
 				self.update();
 			});
 		};
