@@ -188,6 +188,15 @@
 				for (var foundOnURL in data) { // add to existing editURLs obj
 					self.editURLs[foundOnURL] = data[foundOnURL]; 
 				}
+
+				// set all that have no edit URL to null so that it is not tried to refetch them later
+				// important that after the for() above
+				urls.forEach(function(foundOnURL) {
+					if (self.editURLs[foundOnURL] === undefined) {
+						self.editURLs[foundOnURL] = null;
+					}
+				});
+
 				self.update();
 			});
 		};

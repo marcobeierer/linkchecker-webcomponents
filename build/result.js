@@ -106,6 +106,13 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 				for (var foundOnURL in data) {
 					self.editURLs[foundOnURL] = data[foundOnURL];
 				}
+
+				urls.forEach(function(foundOnURL) {
+					if (self.editURLs[foundOnURL] === undefined) {
+						self.editURLs[foundOnURL] = null;
+					}
+				});
+
 				self.update();
 			});
 		};
