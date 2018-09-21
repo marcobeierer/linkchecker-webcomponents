@@ -1,7 +1,10 @@
 'use strict';
 
 <result-row>
-	<td if="{ resources.length > 0}" style="width: 35%;"><a href="{ url }" target="_blank">{ url }</a></td>
+	<td if="{ resources.length > 0}" style="width: 35%;">
+		<a href="{ url }" target="_blank">{ url }</a>&nbsp;
+		<a if="{ opts.editUrl }" href="{ opts.editUrl }" target="_blank"><span class="glyphicon glyphicon-edit" style="font-size: inherit;" aria-hidden="true"></span></a>
+	</td>
 	<td if="{ resources.length > 0}" colspan="4">
 		<div class="panel panel-default table-responsive" style="margin-bottom: 0;">
 			<table class="table">

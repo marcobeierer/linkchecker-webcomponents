@@ -135,7 +135,7 @@
 		<div role="tabpanel" class="tab-pane" id="result{ id }">
 			<h3>Result</h3>
 			<p>Please note that the result belongs to the last check that has finished. If a check is currently running, the stats are for the last check and not the one currently running. <span if="{ data.Stats }">The result below belongs to the check that was started on { datetimeAt(data.Stats.StartedAt) } and has finished on { datetimeAt(data.Stats.FinishedAt) }.</span></p>
-			<result plugin="{ plugin }"></result>
+			<result plugin="{ plugin }" edit-urls-endpoint="{ editURLsEndpoint }"></result>
 		</div>
 
 		<div role="tabpanel" class="tab-pane" id="statusCodes{ id }">
@@ -280,6 +280,7 @@
 		self.forceStop = false;
 		self.crawlDelayInSeconds = 0;
 		self.resultAvailableOnServer = false;
+		self.editURLsEndpoint = opts.editUrlsEndpoint;
 
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;

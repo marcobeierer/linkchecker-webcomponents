@@ -48,7 +48,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr if="{ paginate().length == 0 }">
+				<tr if="{ !haveItemsToShow }">
 					<td colspan="5">{ parent.resultsMessage }</td>
 				</tr>
 				<tr 
@@ -57,6 +57,7 @@
 					each="{ item in paginate() }" 
 					url="{ item.FoundOnURL }" 
 					resources="{ item.Resources }"
+					edit-url="{ editURLs[item.FoundOnURL] }"
 				>
 				</tr>
 			</tbody>
@@ -80,10 +81,15 @@
 	</nav>
 
 	<script>
+		// TODO self.paginate() is called multiple times on each update; this should be simplified to improve performance...
+
 		var self = this;
 
 		self.plugin = opts.plugin || console.error('no plugin set');
+		self.editURLsEndpoint = opts.editUrlsEndpoint;
+
 		self.result = [];
+		self.editURLs = {};
 
 		lscache.setBucket('linkchecker-settings-');
 
@@ -98,6 +104,9 @@
 
 		self.showMarkedAsFixed = lscache.get('showMarkedAsFixed') || false;
 		self.showMarkedAsWorking = lscache.get('showMarkedAsWorking') || false;
+
+		self.on('mount', function() {
+		});
 
 		self.toggle = function(type, e) {
 			self.resetCurrentPage();
@@ -147,7 +156,34 @@
 			lscache.set('pageSize', self.pageSize);
 		}
 
-		self.paginate = function(arr) {
+		// IMPORTANT it is required to always execute this when self.currentPage is manipulated
+		// TODO is it possible to make this more implicit?
+		self.loadEditURLs = function() {
+			if (self.editURLsEndpoint == undefined) {
+				return items;
+			}
+
+			var urls = [];
+			self.paginate().forEach(function(item) {
+				urls.push(item.FoundOnURL);
+			});
+
+			jQuery.ajax({
+				method: 'POST',
+				url: self.editURLsEndpoint,
+				data: JSON.stringify(urls)
+			})
+			.done(function(data, textStatus, xhr) {
+				self.editURLs = data; 
+				self.update();
+			});
+		};
+
+		self.haveItemsToShow = function() {
+			return self.paginate().length > 0;
+		}
+
+		self.paginate = function() {
 			return self.rowsToShow().slice(self.start(), self.end());
 		}
 
@@ -178,24 +214,14 @@
 		self.nextPage = function(e) {
 			e.preventDefault();
 			if (self.hasNextPage()) {
-				self.currentPage++;
-
-				lscache.setBucket('linkchecker-settings-');
-				lscache.set('currentPage', self.currentPage);
-
-				self.update();
+				self.setCurrentPage(self.currentPage + 1);
 			}
 		}
 
 		self.previousPage = function(e) {
 			e.preventDefault();
 			if (self.hasPreviousPage()) {
-				self.currentPage--;
-
-				lscache.setBucket('linkchecker-settings-');
-				lscache.set('currentPage', self.currentPage);
-
-				self.update();
+				self.setCurrentPage(self.currentPage - 1);
 			}
 		}
 
@@ -215,11 +241,17 @@
 		};
 
 		self.resetCurrentPage = function() {
-			self.currentPage = 0;
+			self.setCurrentPage(0);
+		};
+
+		self.setCurrentPage = function(value) {
+			self.currentPage = value;
 
 			lscache.setBucket('linkchecker-settings-');
 			lscache.set('currentPage', self.currentPage);
-		};
+
+			self.loadEditURLs();
+		}
 
 		// also used from result-row
 		self.showResource = function(resource) {
@@ -262,6 +294,8 @@
 
 			self.onload(data, loadedFromDB, loadedFromServerBackup);
 			self.update();
+
+			self.loadEditURLs();
 		});
 
 		self.plugin.on('started', function() {
