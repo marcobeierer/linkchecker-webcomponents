@@ -165,8 +165,14 @@
 
 			var urls = [];
 			self.paginate().forEach(function(item) {
-				urls.push(item.FoundOnURL);
+				if (self.editURLs[item.FoundOnURL] === undefined) {
+					urls.push(item.FoundOnURL); // only fetch if not cached yet
+				}
 			});
+
+			if (urls.length == 0) {
+				return;
+			}
 
 			var data = {
 				urls: urls
@@ -179,7 +185,9 @@
 				data: data
 			})
 			.done(function(data, textStatus, xhr) {
-				self.editURLs = data; 
+				for (var foundOnURL in data) { // add to existing editURLs obj
+					self.editURLs[foundOnURL] = data[foundOnURL]; 
+				}
 				self.update();
 			});
 		};
