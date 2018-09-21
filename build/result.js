@@ -78,7 +78,7 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 
 		self.loadEditURLs = function() {
 			if (self.editURLsEndpoint == undefined) {
-				return items;
+				return;
 			}
 
 			var urls = [];
@@ -86,10 +86,15 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 				urls.push(item.FoundOnURL);
 			});
 
+			var data = {
+				urls: urls
+			}
+
 			jQuery.ajax({
 				method: 'POST',
 				url: self.editURLsEndpoint,
-				data: JSON.stringify(urls)
+				dataType: 'json',
+				data: data
 			})
 			.done(function(data, textStatus, xhr) {
 				self.editURLs = data;
