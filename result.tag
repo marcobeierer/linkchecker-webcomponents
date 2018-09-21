@@ -148,12 +148,13 @@
 		self.setPageSize = function(size, e) {
 			e.preventDefault();
 
-			self.resetCurrentPage();
-
 			self.pageSize = size;
 
 			lscache.setBucket('linkchecker-settings-');
 			lscache.set('pageSize', self.pageSize);
+
+			// has to be afer self.pageSize = size because otherwise the editURLs are not fetched correctly
+			self.resetCurrentPage();
 		}
 
 		// IMPORTANT it is required to always execute this when self.currentPage is manipulated
@@ -311,13 +312,12 @@
 		};
 
 		self.plugin.on('result-data-ready', function(data, loadedFromDB, loadedFromServerBackup) {
-			self.resetCurrentPage();
 			self.result = [];
 
 			self.onload(data, loadedFromDB, loadedFromServerBackup);
-			self.update();
+			self.resetCurrentPage(); // has to be after onload, otherwise the editURLs are not loaded correctly
 
-			self.loadEditURLs();
+			self.update();
 		});
 
 		self.plugin.on('started', function() {

@@ -68,12 +68,12 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 		self.setPageSize = function(size, e) {
 			e.preventDefault();
 
-			self.resetCurrentPage();
-
 			self.pageSize = size;
 
 			lscache.setBucket('linkchecker-settings-');
 			lscache.set('pageSize', self.pageSize);
+
+			self.resetCurrentPage();
 		}
 
 		self.loadEditURLs = function() {
@@ -225,13 +225,12 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 		};
 
 		self.plugin.on('result-data-ready', function(data, loadedFromDB, loadedFromServerBackup) {
-			self.resetCurrentPage();
 			self.result = [];
 
 			self.onload(data, loadedFromDB, loadedFromServerBackup);
-			self.update();
+			self.resetCurrentPage();
 
-			self.loadEditURLs();
+			self.update();
 		});
 
 		self.plugin.on('started', function() {
