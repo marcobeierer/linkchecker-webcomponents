@@ -160,7 +160,7 @@
 		// TODO is it possible to make this more implicit?
 		self.loadEditURLs = function() {
 			if (self.editURLsEndpoint == undefined) {
-				return items;
+				return;
 			}
 
 			var urls = [];
@@ -168,10 +168,15 @@
 				urls.push(item.FoundOnURL);
 			});
 
+			var data = {
+				urls: urls
+			}
+
 			jQuery.ajax({
 				method: 'POST',
 				url: self.editURLsEndpoint,
-				data: JSON.stringify(urls)
+				dataType: 'json',
+				data: data
 			})
 			.done(function(data, textStatus, xhr) {
 				self.editURLs = data; 
