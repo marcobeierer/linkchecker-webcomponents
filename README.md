@@ -27,6 +27,9 @@
 
 ## Changelog
 
+### 1.14.2
+- Bug fix for broken CSV download in Firefox.
+
 ### 1.14.1
 - Implemented caching for loading of edit links.
 
