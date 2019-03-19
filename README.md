@@ -27,6 +27,10 @@
 
 ## Changelog
 
+### 1.15.0
+- Added form login support.
+- Break very long links so that they don't break the layout.
+
 ### 1.14.2
 - Bug fix for broken CSV download in Firefox.
 

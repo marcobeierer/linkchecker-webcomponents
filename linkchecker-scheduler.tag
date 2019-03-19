@@ -62,8 +62,12 @@
 		self.token = opts.token || '';
 		self.email = opts.email || '';
 
+		self.loginPageURL = opts.loginPageUrl;
+		self.loginFormSelector = opts.loginFormSelector;
+		self.loginData = opts.loginData;
+
 		self.apiURL = 'https://api.marcobeierer.com/scheduler/v1/';
-		if (opts.dev === '1') {
+		if (opts.dev === '1' || opts.dev === '2') {
 			self.apiURL = 'http://marco-desktop:9999/scheduler/v1/';
 		}
 
@@ -98,7 +102,13 @@
 					self.setMessage('Your website isn\'t registered for the scheduler currently. Please use the form below to register your site.', 'info');
 					self.registered = false;
 				} else {
-					self.setMessage('Your website is registered to the scheduler currently. You can use the form below to deregister your site.', 'info');
+					var msg = 'Your website is registered to the scheduler currently. ';
+					if (data.LoginPageURL && data.LoginPageURL != '') {
+						msg += 'Form login is setup and used by the scheduler. ';
+					}
+					msg += 'You can use the form below to deregister your site.';
+
+					self.setMessage(msg, 'info');
 					self.registered = true;
 				}
 			}).fail(function(xhr, textStatus, error) {
@@ -119,7 +129,14 @@
 			e.preventDefault();
 
 			var obj = jQuery(e.target).serializeObject();
+
 			obj.IntervalInNs = parseInt(obj.IntervalInNs); // TODO use type=number as soon as available in serialize-object lib
+			obj.Credentials = {
+				'login_page_url': self.loginPageURL,
+				'form_selector': self.loginFormSelector,
+				'data': self.loginData
+			};
+
 			var data = JSON.stringify(obj);
 
 			jQuery.ajax({

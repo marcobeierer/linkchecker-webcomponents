@@ -15,7 +15,12 @@
 		The crawl-delay set in your robots.txt file is equal or higher than one second, namely { crawlDelayInSeconds } seconds. The crawl-delay defines the time waited between two requests of the Link Checker. This means that it might take very long for the check to finish. It is recommended that you lower the crawl-delay for the Link Checker in your robots.txt. You can use the user agent MB-LinkChecker if you like to define a custom crawl-delay for the Link Checker.
 	</div>
 
+	<div if="{ hasFormLogin() }" class="alert alert-info" style="padding-top: 5px; padding-bottom: 5px; margin-top: -10px;">
+		Form login is setup and used for the next check.
+	</div>
+
 	<message plugin="{ plugin }" name="db" text="" type="warning" dismissible="true" style="padding-top: 5px; padding-bottom: 5px; margin-top: -10px;" />
+
 
 	<ul class="nav nav-tabs" id="tabnav" role="tablist">
 		<li role="presentation" class="active"><a href="#progress{ id }" aria-controls="progress{ id }" role="tab" data-toggle="tab">Progress</a></li>
@@ -227,7 +232,16 @@
 			
 		<div if="{ enableScheduler }" role="tabpanel" class="tab-pane" id="scheduler{ id }">
 			<h3>Scheduler</h3>
-			<linkchecker-scheduler website-url="{ websiteURL }" token="{ token }" email="{ email }" dev="{ dev }"></linkchecker-scheduler>
+			<linkchecker-scheduler 
+				website-url="{ websiteURL }" 
+				token="{ token }" 
+				email="{ email }" 
+				dev="{ dev }"
+				login-page-url="{ loginPageURL }"
+				login-form-selector="{ loginFormSelector }"
+				login-data="{ loginData }"
+				>
+			</linkchecker-scheduler>
 		</div>
 
 		<div role="tabpanel" class="tab-pane" id="professional{ id }">
@@ -281,6 +295,10 @@
 		self.crawlDelayInSeconds = 0;
 		self.resultAvailableOnServer = false;
 		self.editURLsEndpoint = opts.editUrlsEndpoint;
+
+		self.loginPageURL = opts.loginPageUrl;
+		self.loginFormSelector = opts.loginFormSelector;
+		self.loginData = opts.loginData;
 
 		self.id = opts.id || 0; // necessary for nested tabs like in Joomla multi lang version
 		self.email = opts.email || ''; // necessary for scheduler;
@@ -501,6 +519,10 @@
 			return self.token || (self.data.Stats != undefined && self.data.Stats.TokenUsed);
 		}
 
+		self.hasFormLogin = function() {
+			return self.loginPageURL && self.loginPageURL != '' && self.loginFormSelector && self.loginFormSelector != '';
+		}
+
 		/*
 		// resetObject is used because just assigning {} creates a new object with another reference, but the child tags still have a reference to the old object
 		function resetObject(obj) {
@@ -614,12 +636,22 @@
 				}
 
 				var url = getURL(url64);
+				var credentials = '';
+
+				if (self.hasFormLogin()) {
+					credentials = JSON.stringify({
+						'login_page_url': self.loginPageURL,
+						'form_selector': self.loginFormSelector,
+						'data': self.loginData,
+					});
+				}
 
 				jQuery.ajax({
 					method: 'GET',
 					url: url,
 					headers: {
 						'Authorization': tokenHeader,
+						'X-Credentials': credentials,
 					}
 				}).done(function(data) {
 					self.retries = 0;

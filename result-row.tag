@@ -2,7 +2,7 @@
 
 <result-row>
 	<td if="{ resources.length > 0}" style="width: 35%;">
-		<a href="{ url }" target="_blank">{ url }</a>&nbsp;
+		<a style="word-break: break-word;" href="{ url }" target="_blank">{ url }</a>&nbsp;
 		<a if="{ opts.editUrl }" href="{ opts.editUrl }" class="btn btn-sm btn-default btn-edit" target="_blank" role="button">Edit</a>
 	</td>
 	<td if="{ resources.length > 0}" colspan="4">
@@ -11,7 +11,7 @@
 				<tbody>
 					<tr each="{ resource in resources }" if="{ show(resource) }">
 						<td>
-							<a target="_blank" href="{ resource.URL }">{ resource.URL }</a> <span if="{ resource.IsRedirected }" class="badge">Redirected</span>
+							<a style="word-break: break-word;" target="_blank" href="{ resource.URL }">{ resource.URL }</a> <span if="{ resource.IsRedirected }" class="badge">Redirected</span>
 						</td>
 						<td style="width: 9em;">{ resource.Type }</td>
 						<td style="width: 9em;" title="{ resource.StatusText }">{ status(resource) }</td>
