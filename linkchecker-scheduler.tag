@@ -99,12 +99,14 @@
 				}
 			}).done(function(data, textStatus, xhr) {
 				if (xhr.status == 204) { // no content
-					self.setMessage('Your website isn\'t registered for the scheduler currently. Please use the form below to register your site.', 'info');
+					self.setMessage('Your website isn\'t registered for the scheduler. Please use the form below to register your site.', 'info');
 					self.registered = false;
 				} else {
-					var msg = 'Your website is registered to the scheduler currently. ';
+					var msg = 'Your website is registered to the scheduler. ';
 					if (data.LoginPageURL && data.LoginPageURL != '') {
 						msg += 'Form login is setup and used by the scheduler. ';
+					} else {
+						msg += 'Form login isn\'t setup. ';
 					}
 					msg += 'You can use the form below to deregister your site.';
 

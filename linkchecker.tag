@@ -252,7 +252,8 @@
 			<p>The professional version of the Link Checker allows to check a website with up to 500'000 URLs and comes with some additional features. It's for example possible to:</p>
 			<ul>
 				<li>check embedded images,</li>
-				<li>check YouTube videos or</li>
+				<li>check YouTube videos,</li>
+				<li>check login protected pages like membership areas or</li>
 				<li>trigger a check once a day automatically and get a summary by mail.</li>
 			</ul>
 
