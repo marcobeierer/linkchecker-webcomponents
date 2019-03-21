@@ -491,11 +491,18 @@
 
 		// TODO runningRequest opt is just a temporary workaround for development
 		function getURL(url64, runningRequest) {
-			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers + '&disable_cookies=1';
+			// TODO add disableCookies as option?
+			var disableCookies = '1';
+			if (self.hasFormLogin()) {
+				// form login always requires cookies
+				disableCookies = '0';
+			}
+
+			var url = 'https://api.marcobeierer.com/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers + '&disable_cookies=' + disableCookies;
 			if (self.dev == '1' && runningRequest !== true) {
 				url = 'sample_data/current.json?_=' + Date.now();
 			} else if (self.dev == '2') {
-				url = 'http://marco-desktop:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers;
+				url = 'http://marco-desktop:9999/linkchecker/v1/' + url64 + '?origin_system=' + self.originSystem + '&max_fetchers=' + self.maxFetchers + '&disable_cookies=' + disableCookies;
 			}
 			return url;
 		}
