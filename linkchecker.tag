@@ -131,6 +131,14 @@
 								<td>Limit reached</td>
 								<td class="text-right">{ bool2text(data.Stats.LimitReached) }</td>
 							</tr>
+							<tr>
+								<td>Token used</td>
+								<td class="text-right">{ bool2text(data.Stats.TokenUsed) }</td>
+							</tr>
+							<tr>
+								<td>Form login used</td>
+								<td class="text-right">{ bool2text(data.Stats.FormLoginUsed) }</td>
+							</tr>
 						</table>
 					</div>
 				</div>
