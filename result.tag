@@ -467,6 +467,29 @@
 			lscache.setBucket('linkchecker-checked-');
 			lscache.set(resourceURL, datex, 60 * 24 * 30); // in minutes; 60 * 24 * 30 is one month
 		}
+
+		self.setAllWithSameStatusCodeAndDomainMarkedAsWorking = function(resourceURL, resourceStatusCode, datex) {
+			var url = new URL(resourceURL);
+
+			self.result.forEach(function(row) {
+				row.Resources.forEach(function(resource) {
+					var urlx = new URL(resource.URL);
+
+					if (url.hostname == urlx.hostname && resourceStatusCode == resource.StatusCode) {
+						resource.IsMarkedAsWorking = datex;
+
+						// the cache might be set multiple times for the same resource.URL if the same URL is linked on multiple pages
+						// thus the old value is overwritten; this is not optimal qua performance but has no impact on function
+						lscache.setBucket('linkchecker-checked-');
+						lscache.set(resource.URL, datex, 60 * 24 * 30); // in minutes; 60 * 24 * 30 is one month
+
+						//console.log(resource.URL);
+						//console.log(resourceURL);
+						//console.log(' ');
+					}
+				});
+			});
+		}
 	</script>
 	<style>
 		/* not activated because in wordpress the buttons are blue
