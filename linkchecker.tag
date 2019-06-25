@@ -219,11 +219,19 @@
 		<div role="tabpanel" class="tab-pane" id="glossary{ id }">
 			<h3>Glossary</h3>
 			<h4>Unhandled Resources (mainly blocked by robots.txt)</h4>
-			<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls, but not for external links because it does just access individual URLs of the external sites.</p>
-			<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you can mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>
+			<p>Websites can prohibit access for web crawlers like the one used by the Link Checker with the robots exclusion protocol (robots.txt file). The Link Checker does respect the robots exclusion protocol for the website it crawls and also for external links.</p>
 			<p>If the blocked links were found on your website, you can add rules for the Link Checker to your robots.txt file and restart the Link Checker. Please see the <a href="https://www.marcobeierer.com/tools/link-checker-faq" target="_blank">FAQs</a> for further information.</p>
 			
 			<!--<p>The reason for this is that too many popular sites prohibit all crawlers, expect the ones of the well known search engines, by default. If the Link Checker would respect the robots exclusion protocol for external links, the results were useless. Strictly seen the Link Checker also does not crawl the external sites completely and just tries to access individual pages and therefore the behavior is polite and appropriate.</p>-->
+
+			<h5>Mark URLs as Working</h5>
+			<p>If the blocked links were found on external websites, the Link Checker cannot check the link for you and you have to check each blocked link manually. When you have checked a link and it is working, you can use the <em>Mark as Working</em> button in the result table to mark the link. The marker is saved in your browser storage for one month and the date of the last marking is shown in the result table afterwards.</p>
+			
+			<p>The storage period is limited to one month because the manually checked links can also break and it is recommended to recheck them at least once a month. If you like to recheck them before one month has expired, you can enable the filter to show URLs marked as working in the results and click on <em>Checked</em> button to update the date of the last check.</p>
+
+			<p>Saving the markers in the browser storage means that nothing is saved when you are using the private browsing mode of your browser. Also if you empty the cache of your browser, the markers may geht deleted.</p>
+
+			<!--<p>However, some websites take some effort to restrict the access for crawlers and the Link Checker does respect that and does not try to bypass the restrictions. You can find all URLs the Link Checker was not able to access in the table below, so that you could check them manually. If you have done this, you can mark them as working. Each marker is saved for one month in your browsers cache and the date of the last marking is shown in the table below.</p>-->
 
 			<h4>Working Redirects</h4>
 			<p>Non-temporary redirects, even if working correctly, have disadvantages like for example increased loading times and should therefore be fixed. Showing working redirects can be enabled/disabled in the settings of the result tab.</p>
