@@ -17,7 +17,17 @@
 			<p>If you register your site to the scheduler, a link check is automatically triggered once a day and you receive an email notification with a summary report after the check has finished. If a dead link was found, you can use the default Link Checker interface to fetch the detailed results.</p>
 			<form onsubmit="{ register }">
 				<input type="hidden" name="Service" value="Link Checker" />
-				<input type="hidden" name="IntervalInNs" value="86400000000000" />
+
+				<div class="form-group">
+					<label>Interval to check your website</label>
+					<select class="form-control" name="IntervalInNs" default="86400000000000" required>
+						<option value="86400000000000">Daily</option>
+						<option value="604800000000000">Weekly</option>
+						<option value="1209600000000000">Biweekly</option>
+						<option value="2592000000000000">Every 30 days</option>
+					</select>
+				</div>
+				<!--<input type="hidden" name="IntervalInNs" value="86400000000000" />-->
 
 				<div style="display: none;" class="form-group">
 					<label>Website URL</label>

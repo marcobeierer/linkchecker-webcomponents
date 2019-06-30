@@ -27,6 +27,11 @@
 
 ## Changelog
 
+### 1.16.0
+- Added selectable interval (daily, weekly, bi-weekly, every 30 days) to scheduler.
+- Added _Mark all with same status code and domain as working_ function.
+- Improved documentation/glossary.
+
 ### 1.15.0
 - Added form login support.
 - Break very long links so that they don't break the layout.

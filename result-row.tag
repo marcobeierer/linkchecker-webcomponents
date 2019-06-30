@@ -32,8 +32,18 @@
 							</virtual>
 
 							<virtual if="{ resource.IsUnhandled }">
-								<button if="{ !resource.IsMarkedAsWorking }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Mark as Working</button>
-								<button if="{ resource.IsMarkedAsWorking }" title="The resource was manually checked on { new Date(resource.IsMarkedAsWorking).toLocaleDateString() }. Click the button to update date of last check." disabled="{ checkedToday(resource) }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Checked: { checkedDateString(resource) }</button>
+								<div class="btn-group">
+									<button if="{ !resource.IsMarkedAsWorking }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Mark as Working</button>
+									<button if="{ resource.IsMarkedAsWorking }" title="The resource was manually checked on { new Date(resource.IsMarkedAsWorking).toLocaleDateString() }. Click the button to update date of last check." disabled="{ checkedToday(resource) }" class="btn btn-sm btn-primary" onclick="{ markAsWorking }">Checked: { checkedDateString(resource) }</button>
+
+									<button if="{ !resource.IsMarkedAsWorking }" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdownx" aria-haspopup="true" aria-expanded="false">
+										<span class="caret"></span>
+										<span class="sr-only">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-right">
+										<li><a href="#" onclick="{ markAllWithSameStatusCodeAndDomainAsWorking }">Mark all with same status code and domain as working</a></li>
+									</ul>
+								</div>
 							</virtual>
 						</td>
 					</tr>
@@ -88,6 +98,7 @@
 
 		self.markAsFixedOnAllPages = function(e) {
 			e.preventDefault();
+
 			self.parent.setMarkedAsFixedOnAllPages(e.item.resource.URL, e.item.resource.Type);
 			self.parent.update();
 		};
@@ -95,6 +106,16 @@
 		self.markAsWorking = function(e) {
 			var datex = Date.now();
 			self.parent.setMarkedAsWorking(e.item.resource.URL, datex);
+
+			self.parent.update();
+		};
+
+		self.markAllWithSameStatusCodeAndDomainAsWorking = function(e) {
+			e.preventDefault();
+
+			var datex = Date.now();
+			self.parent.setAllWithSameStatusCodeAndDomainMarkedAsWorking(e.item.resource.URL, e.item.resource.StatusCode, datex);
+
 			self.parent.update();
 		};
 
