@@ -29,7 +29,7 @@
 
 ### 1.16.0
 - Added selectable interval (daily, weekly, bi-weekly, every 30 days) to scheduler.
-- Added _Mark all with same status code and domains as working_ function.
+- Added _Mark all with same status code and domain as working_ function.
 - Improved documentation/glossary.
 
 ### 1.15.0
