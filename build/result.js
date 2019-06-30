@@ -375,4 +375,22 @@ riot.tag2('result', '<div class="btn-toolbar toolbar"> <div class="btn-group" ro
 			lscache.setBucket('linkchecker-checked-');
 			lscache.set(resourceURL, datex, 60 * 24 * 30);
 		}
+
+		self.setAllWithSameStatusCodeAndDomainMarkedAsWorking = function(resourceURL, resourceStatusCode, datex) {
+			var url = new URL(resourceURL);
+
+			self.result.forEach(function(row) {
+				row.Resources.forEach(function(resource) {
+					var urlx = new URL(resource.URL);
+
+					if (url.hostname == urlx.hostname && resourceStatusCode == resource.StatusCode) {
+						resource.IsMarkedAsWorking = datex;
+
+						lscache.setBucket('linkchecker-checked-');
+						lscache.set(resource.URL, datex, 60 * 24 * 30);
+
+					}
+				});
+			});
+		}
 });
