@@ -98,7 +98,7 @@
 		}
 
 		status() {
-			if (self.websiteURL == '') {
+			if (self.websiteURL == '' || self.token == '') {
 				return;
 			}
 			jQuery.ajax({

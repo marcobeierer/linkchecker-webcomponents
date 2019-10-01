@@ -251,7 +251,6 @@
 
 		self.hasNextPage = function() {
 			return self.currentPage < (self.countPages() - 1);
-
 		}
 
 		self.hasPreviousPage = function() {
