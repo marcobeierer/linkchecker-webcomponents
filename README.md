@@ -27,6 +27,9 @@
 
 ## Changelog
 
+### 1.16.1
+- Send no scheduler status request if token is not set, because it always results in an error.
+
 ### 1.16.0
 - Added selectable interval (daily, weekly, bi-weekly, every 30 days) to scheduler.
 - Added _Mark all with same status code and domain as working_ function.

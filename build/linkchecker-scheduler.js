@@ -32,7 +32,7 @@ riot.tag2('linkchecker-scheduler', '<div if="{token}" class="alert alert-{messag
 		}.bind(this)
 
 		this.status = function() {
-			if (self.websiteURL == '') {
+			if (self.websiteURL == '' || self.token == '') {
 				return;
 			}
 			jQuery.ajax({
