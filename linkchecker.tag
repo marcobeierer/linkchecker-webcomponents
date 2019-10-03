@@ -29,7 +29,7 @@
 		<li role="presentation"><a href="#statusCodes{ id }" aria-controls="statusCodes{ id }" role="tab" data-toggle="tab">Status Codes</a></li>
 		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
 		<li role="presentation"><a href="#glossary{ id }" aria-controls="glossary{ id }" role="tab" data-toggle="tab">Glossary</a></li>
-		<li role="presentation"><a href="#professional{ id }" aria-controls="professional{ id }" role="tab" data-toggle="tab">Professional Version</a></li>
+		<li if="{ !hasToken() }" role="presentation"><a href="#professional{ id }" aria-controls="professional{ id }" role="tab" data-toggle="tab">Professional Version</a></li>
 		<li role="presentation"><a href="#feedback{ id }" aria-controls="feedback{ id }" role="tab" data-toggle="tab">Your Feedback</a></li>
 	</ul>
 
@@ -264,11 +264,13 @@
 			</linkchecker-scheduler>
 		</div>
 
-		<div role="tabpanel" class="tab-pane" id="professional{ id }">
+		<div if="{ !hasToken() }" role="tabpanel" class="tab-pane" id="professional{ id }">
 			<h3>Professional Version</h3>
+			<!--
 			<div if="{ hasToken() }" class="alert alert-info">
 				Thank you, you are already using the professional version.
 			</div>
+			-->
 			<p>The professional version of the Link Checker allows to check a website with up to 500'000 URLs and comes with some additional features. It's for example possible to:</p>
 			<ul>
 				<li>check embedded images,</li>
