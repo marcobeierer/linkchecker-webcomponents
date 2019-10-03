@@ -29,6 +29,8 @@
 
 ### 1.16.1
 - Send no scheduler status request if token is not set, because it always results in an error.
+- Hide _Professional Version_ tab when token is used.
+- Added option to hide _Your Feedback_ tab.
 
 ### 1.16.0
 - Added selectable interval (daily, weekly, bi-weekly, every 30 days) to scheduler.

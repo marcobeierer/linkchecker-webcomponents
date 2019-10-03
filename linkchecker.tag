@@ -30,7 +30,7 @@
 		<li if="{ enableScheduler }" role="presentation"><a href="#scheduler{ id }" aria-controls="scheduler{ id }" role="tab" data-toggle="tab">Scheduler</a></li>
 		<li role="presentation"><a href="#glossary{ id }" aria-controls="glossary{ id }" role="tab" data-toggle="tab">Glossary</a></li>
 		<li if="{ !hasToken() }" role="presentation"><a href="#professional{ id }" aria-controls="professional{ id }" role="tab" data-toggle="tab">Professional Version</a></li>
-		<li role="presentation"><a href="#feedback{ id }" aria-controls="feedback{ id }" role="tab" data-toggle="tab">Your Feedback</a></li>
+		<li if="{ !hideFeedbackTab }" role="presentation"><a href="#feedback{ id }" aria-controls="feedback{ id }" role="tab" data-toggle="tab">Your Feedback</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -298,7 +298,7 @@
 			<p>If interested, please write me an email to <a href="mailto:email@marcobeierer.com">email@marcobeierer.com</a> for an individual offer.</p>
 		</div>
 
-		<div role="tabpanel" class="tab-pane" id="feedback{ id }">
+		<div if="{ !hideFeedbackTab }" role="tabpanel" class="tab-pane" id="feedback{ id }">
 			<h3>Your Feedback</h3>
 			<feedback />
 		</div>
@@ -318,6 +318,8 @@
 		self.crawlDelayInSeconds = 0;
 		self.resultAvailableOnServer = false;
 		self.editURLsEndpoint = opts.editUrlsEndpoint;
+
+		self.hideFeedbackTab = opts.hideFeedbackTab || false;
 
 		self.loginPageURL = opts.loginPageUrl;
 		self.loginFormSelector = opts.loginFormSelector;
