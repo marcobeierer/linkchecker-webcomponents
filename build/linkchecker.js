@@ -395,6 +395,7 @@ riot.tag2('linkchecker', '<form if="{showButton}" style="margin-bottom: 20px;"> 
 						if (xhr.responseText == '') {
 							self.setMessage("The check of your website failed. Please try it again.", 'danger');
 						} else {
+
 							self.setMessage("The check of your website failed with the error:<br/><strong>" + JSON.parse(xhr.responseText) + "</strong>.", 'danger');
 						}
 					}

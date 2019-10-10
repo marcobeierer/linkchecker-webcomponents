@@ -309,7 +309,7 @@
 
 		self.plugin = riot.observable();
 
-		self.message = '';
+		self.message = ''; // TODO seems not to be used?
 		self.originSystem = opts.originSystem || 'riot';
 		self.data = {};
 		self.dev = opts.dev;
@@ -592,6 +592,7 @@
 			self.plugin.trigger('set-message', text, type, name);
 		}
 
+		// partly shared with sitemap generator
 		setToken(token) {
 			self.token = token.replace(/\s/g, ''); // remove all whitespace (space, breakes, tabs)
 		}
@@ -622,6 +623,7 @@
 			self.start();
 		}
 
+		// partly shared with sitemap generator
 		self.websiteURL64 = function() {
 			var url64 = window.btoa(encodeURIComponent(self.websiteURL).replace(/%([0-9A-F]{2})/g, function(match, p1) {
 				return String.fromCharCode('0x' + p1);
@@ -723,6 +725,7 @@
 						if (xhr.responseText == '') {
 							self.setMessage("The check of your website failed. Please try it again.", 'danger');
 						} else {
+							// TODO is it possible to use xhr.responseJSON directly?
 							self.setMessage("The check of your website failed with the error:<br/><strong>" + JSON.parse(xhr.responseText) + "</strong>.", 'danger'); // TODO why JSON.parse?
 						}
 					} 
